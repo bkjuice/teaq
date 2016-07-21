@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Teaq</id>
+    <version>$version$</version>
+    <title>Teaq Mini-ORM</title>
+    <authors>Bruce Krakower</authors>
+    <owners>Bruce Krakower</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Teaq is a mini-ORM that offers query generation, object materialization, relational mapping and query batching services.</summary>
+    <description>Teaq is a mini-ORM that offers object materialization, relational mapping and query batching services. Teaq offers a simple API to do common database interactions with SQL Server. Performance is most important, as is low startup cost. In addition, queries can be arbitrarily batched to minimize server round trips for any scenario.</description>
+    <copyright>Copyright ©  2015</copyright>
+    <licenseUrl>https://teaq.codeplex.com/license</licenseUrl>
+    <projectUrl>https://teaq.codeplex.com/</projectUrl>
+    <tags>ORM "SQL Server" Entity SQL JSON</tags>
+  </metadata>
+</package>

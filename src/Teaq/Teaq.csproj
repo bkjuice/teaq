@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C933AB0A-3A6C-4DF0-997F-3E4C63F3EE0E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Teaq</RootNamespace>
+    <AssemblyName>Teaq</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>True</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Preconditions</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <DocumentationFile>bin\Release\Teaq.XML</DocumentationFile>
+    <BuildPackage>true</BuildPackage>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>True</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>False</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>True</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Preconditions</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Static Analysis|AnyCPU'">
+    <OutputPath>bin\Static Analysis\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\Teaq.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>True</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>False</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>True</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>True</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>True</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Preconditions</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\ColumnDataType.cs" />
+    <Compile Include="Configuration\DataModel.cs" />
+    <Compile Include="Configuration\EntityConfiguration.cs" />
+    <Compile Include="Configuration\EntityModelBuilder.cs" />
+    <Compile Include="DataReaderExtensions.Iterators.cs" />
+    <Compile Include="DataReaderExtensions.Converter.cs" />
+    <Compile Include="DataFieldSetter.cs" />
+    <Compile Include="IDataModel.cs" />
+    <Compile Include="Configuration\IDataModelBuilder.cs" />
+    <Compile Include="Configuration\IEntityConcurrencyPropertyBuilder.cs" />
+    <Compile Include="Configuration\IEntityConfiguration.cs" />
+    <Compile Include="Configuration\IEntityModelBuilder.cs" />
+    <Compile Include="Configuration\IEntityPropertyBuilder.cs" />
+    <Compile Include="Configuration\NullPolicyKind.cs" />
+    <Compile Include="Configuration\RuntimeDataConfigurationExtensions.cs" />
+    <Compile Include="BatchContext.cs" />
+    <Compile Include="BatchProcessor.cs" />
+    <Compile Include="BatchWriter.cs" />
+    <Compile Include="Repository.cs" />
+    <Compile Include="DataContextBase.cs" />
+    <Compile Include="DataHandler.cs" />
+    <Compile Include="DataReaderJsonExtensions.cs" />
+    <Compile Include="DataReaderExtensions.Readers.cs" />
+    <Compile Include="DataConnectionExtensions.cs" />
+    <Compile Include="EmbeddedParameter.cs" />
+    <Compile Include="Expressions\EntityExpressionParser.cs" />
+    <Compile Include="Expressions\EntitySelectorVisitor.cs" />
+    <Compile Include="Expressions\SqlParameterExtensions.cs" />
+    <Compile Include="FixedList.cs" />
+    <Compile Include="JsonOutputBuilder.Buffer.cs" />
+    <Compile Include="JsonOutputBuilder.Instances.cs" />
+    <Compile Include="QueryGeneration\InsertBuilder{T}.cs" />
+    <Compile Include="QueryGeneration\DeleteBuilder{T}.cs" />
+    <Compile Include="QueryGeneration\QueryCommand{T}.cs" />
+    <Compile Include="QueryGeneration\SelectBuilder{T}.cs" />
+    <Compile Include="QueryGeneration\StringBuilderCache.cs" />
+    <Compile Include="QueryGeneration\UpdateBuilder{T}.cs" />
+    <Compile Include="QueryGeneration\QueryStatementBuilder{T}.cs" />
+    <Compile Include="SqlCommandAsyncExtensions.cs" />
+    <Compile Include="UdtTypeEnumerator.cs" />
+    <Compile Include="FastReflection\ArrayDescription.cs" />
+    <Compile Include="FastReflection\CollectionDescription.cs" />
+    <Compile Include="FastReflection\CommonBindings.cs" />
+    <Compile Include="FastReflection\CommonUseType.cs" />
+    <Compile Include="FastReflection\DictionaryDescription.cs" />
+    <Compile Include="FastReflection\FieldDescription.cs" />
+    <Compile Include="FastReflection\ILExtensions.cs" />
+    <Compile Include="FastReflection\MemberDescription.cs" />
+    <Compile Include="FastReflection\MethodDescription.cs" />
+    <Compile Include="FastReflection\MethodKey.cs" />
+    <Compile Include="FastReflection\PrimitiveExtensions.cs" />
+    <Compile Include="FastReflection\PropertyDescription.cs" />
+    <Compile Include="FastReflection\ReflectionExtensions.cs" />
+    <Compile Include="FastReflection\TypeCache.cs" />
+    <Compile Include="FastReflection\TypeDescription.cs" />
+    <Compile Include="FluencyExtensions.cs" />
+    <Compile Include="IConnectionBuilder.cs" />
+    <Compile Include="IBatchWriter.cs" />
+    <Compile Include="IBatchReader.cs" />
+    <Compile Include="IDataHandler.cs" />
+    <Compile Include="IBatchContext.cs" />
+    <Compile Include="IDataContext.cs" />
+    <Compile Include="JoinHandler.cs" />
+    <Compile Include="JoinMap{TJoined}.cs" />
+    <Compile Include="JoinType.cs" />
+    <Compile Include="JsonMapping.cs" />
+    <Compile Include="JsonOutputBuilder.cs" />
+    <Compile Include="JsonOutputValueKind.cs" />
+    <Compile Include="KeyGeneration\NativeMethods.cs" />
+    <Compile Include="KeyGeneration\SequenceCache32.cs" />
+    <Compile Include="KeyGeneration\SequenceCache64.cs" />
+    <Compile Include="KeyGeneration\SequenceProvider.cs" />
+    <Compile Include="KeyGeneration\SequentialGuid.cs" />
+    <Compile Include="KeyGeneration\Snowflake.cs" />
+    <Compile Include="KeyGeneration\SnowflakeClockRegressionException.cs" />
+    <Compile Include="KeyGeneration\SnowflakeConfigurationException.cs" />
+    <Compile Include="KeyGeneration\SnowflakeException.cs" />
+    <Compile Include="KeyGeneration\SnowflakeWorkerIdRange.cs" />
+    <Compile Include="BatchReader.cs" />
+    <Compile Include="DataContext.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryExtensions.cs" />
+    <Compile Include="QueryGeneration\IQueryBuilder{T}.cs" />
+    <Compile Include="QueryGeneration\IQueryCompletion.cs" />
+    <Compile Include="QueryGeneration\IQueryGroupedSpecification.cs" />
+    <Compile Include="QueryGeneration\IQuerySelectFilterSpecification.cs" />
+    <Compile Include="QueryGeneration\IQuerySelectOrderSpecification.cs" />
+    <Compile Include="QueryGeneration\IQuerySelectSpecification.cs" />
+    <Compile Include="QueryBatch.cs" />
+    <Compile Include="QueryGeneration\QueryBuilder{T}.cs" />
+    <Compile Include="QueryGeneration\QueryCommand.cs" />
+    <Compile Include="QueryGeneration\QueryPrepExtensions.cs" />
+    <Compile Include="QueryGeneration\QueryType.cs" />
+    <Compile Include="SqlConnectionBuilder.cs" />
+    <Compile Include="SqlSequenceProvider.cs" />
+    <Compile Include="UdtColumnExcludeAttribute.cs" />
+    <Compile Include="UdtColumnOrderAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Teaq.nuspec" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Target Name="CleanPackageOutputs" BeforeTargets="BuildPackage">
+    <Message Text="Cleaning build output packages..." />
+    <ItemGroup>
+      <PackageOutputsToClean Include="$(TargetDir)*.nupkg" />
+    </ItemGroup>
+    <Delete Files="@(PackageOutputsToClean)" ContinueOnError="True" />
+  </Target>
+  <Target Name="CleanStagedPackages" BeforeTargets="BuildPackage">
+    <Message Text="Cleaning staged packages..." />
+    <ItemGroup>
+      <PackagesToClean Include="$(SolutionDir)packageStaging\$(ProjectName)*.nupkg" />
+    </ItemGroup>
+    <Delete Files="@(PackagesToClean)" ContinueOnError="true" />
+  </Target>
+  <Target Name="StagePackages" AfterTargets="BuildPackage">
+    <Message Text="Cleaning staged packages..." />
+    <ItemGroup>
+      <PackagesBuilt Include="$(TargetDir)*.nupkg" />
+      <PackagesToClean Include="$(SolutionDir)packageStaging\$(ProjectName)*.nupkg" />
+    </ItemGroup>
+    <Delete Files="@(PackagesToClean)" ContinueOnError="true" />
+    <Copy ContinueOnError="true" SourceFiles="@(PackagesBuilt)" DestinationFiles="@(PackagesBuilt->'$(SolutionDir)packageStaging\%(Filename)%(Extension)')" />
+  </Target>
+</Project>
