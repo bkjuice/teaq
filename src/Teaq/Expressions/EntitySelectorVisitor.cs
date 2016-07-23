@@ -209,6 +209,7 @@ namespace Teaq.Expressions
                 throw new NotSupportedException("Only 'Contains' is currently supported.");
             }
 
+            // TODO: Support IsNullOrEmpty / Whitespace as special cases...
             var arg = (MemberExpression)node.Arguments[0];
 
             Type tableType = null;
@@ -226,7 +227,7 @@ namespace Teaq.Expressions
             }
 
             this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
-            this.QueryClause.Append(sourceColumn).Append(" in ");
+            this.QueryClause.AppendIdentifier(sourceColumn).Append(" in ");
             this.QueryClause.Append("(");
 
             // IList to avoid yet another enumerator, if possible:
@@ -291,7 +292,7 @@ namespace Teaq.Expressions
             if (this.currentMemberExpressionNullableWithHasValue)
             {
                 this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
-                this.QueryClause.Append(name).Append(" Is Not NULL");
+                this.QueryClause.AppendIdentifier(name).Append(" Is Not NULL");
                 this.currentMemberExpressionNullableWithHasValue = false;
                 this.CloseIfGrouped();
             }
@@ -357,7 +358,7 @@ namespace Teaq.Expressions
             string predefinedName;
             if (this.TryPredefinedParameter(sourceColumn, out predefinedName))
             {
-                this.QueryClause.Append(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(predefinedName);
+                this.QueryClause.AppendIdentifier(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(predefinedName);
             }
             else
             {
@@ -374,11 +375,11 @@ namespace Teaq.Expressions
                         -1);
 
                     this.Parameters.Add(parameter);
-                    this.QueryClause.Append(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(parameter.ParameterName);
+                    this.QueryClause.AppendIdentifier(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(parameter.ParameterName);
                 }
                 else
                 {
-                    this.QueryClause.Append(sourceColumn).Append(supportedDbNullSymbols[node.NodeType]).Append("NULL");
+                    this.QueryClause.AppendIdentifier(sourceColumn).Append(supportedDbNullSymbols[node.NodeType]).Append("NULL");
                 }
             }
 

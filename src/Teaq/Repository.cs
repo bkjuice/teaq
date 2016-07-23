@@ -15,6 +15,20 @@ namespace Teaq
         public readonly static IDataModel Default = BuildModel(a => { });
 
         /// <summary>
+        /// The default string type.
+        /// </summary>
+        internal static StringDataType DefaultStringType = StringDataType.Varchar;
+
+        /// <summary>
+        /// Sets the default data type to use when handling strings not explicitly defined using a model.
+        /// </summary>
+        /// <param name="defaultType">The default type to use.</param>
+        public static void SetDefaultStringType(StringDataType defaultType)
+        {
+            DefaultStringType = defaultType;
+        }
+
+        /// <summary>
         /// Builds the default context.
         /// </summary>
         /// <param name="connection">The connection string.</param>
@@ -134,6 +148,22 @@ namespace Teaq
             var builder = new DataModel();
             configurationCallback(builder);
             return builder;
+        }
+
+        /// <summary>
+        /// The kind of data type to use as a default unless otherwise specified.
+        /// </summary>
+        public enum StringDataType
+        {
+            /// <summary>
+            /// Specifies varchar as the default string data type unless explicitly specified using a model definition.
+            /// </summary>
+            Varchar,
+
+            /// <summary>
+            /// Specifies nvarchar as the default string data type unless explicitly specified using a model definition.
+            /// </summary>
+            NVarchar
         }
     }
 }

@@ -23,10 +23,10 @@ namespace Teaq.Expressions
         /// <summary>
         /// The order by tokens.
         /// </summary>
-        private static readonly Dictionary<string, string> orderByTokens = new Dictionary<string, string>
+        private static readonly Dictionary<string, Func<string, string>> orderByBuilders = new Dictionary<string, Func<string, string>>
             {
-                { "OrderBy", "order by {0}" },
-                { "OrderByDescending", "order by {0} desc" }
+                [ "OrderBy"] =  s => "order by " + s,
+                [ "OrderByDescending"] = s=> $"order by {s} desc" 
             };
 
         /// <summary>
@@ -327,8 +327,8 @@ namespace Teaq.Expressions
             // Compile type check ensures this is not null and has 2 arguments:
             var methodExpr = orderByExpression.Body as MethodCallExpression;
 
-            string token;
-            if (!orderByTokens.TryGetValue(methodExpr.Method.Name, out token))
+            Func<string, string> builder;
+            if (!orderByBuilders.TryGetValue(methodExpr.Method.Name, out builder))
             {
                 throw new NotSupportedException("Expected OrderBy or OrderByDescending method call.");
             }
@@ -342,7 +342,7 @@ namespace Teaq.Expressions
 
             var targetProperty = ((LambdaExpression)arguments[1]).ParsePropertyName();
             var target = typeof(T);
-            return token.Replace("{0}", target.AsUnqualifiedTable(config) + "." + targetProperty);
+            return builder(target.AsUnqualifiedTable(config) + "." + targetProperty.EnsureBracketedIdentifier());
         }
     }
 }

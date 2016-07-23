@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
+using Teaq.Configuration;
 
 namespace Teaq.QueryGeneration
 {
@@ -268,7 +269,7 @@ namespace Teaq.QueryGeneration
         {
             this.selectBuilder = new SelectBuilder<T>(this.DataModel, columns);
             this.selectBuilder.Top = top;
-            this.selectBuilder.Alias = tableAlias;
+            this.selectBuilder.Alias = tableAlias?.EnsureBracketedIdentifier();
             this.statementBuilder = this.selectBuilder;
             return this;
         }

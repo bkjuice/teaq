@@ -34,13 +34,13 @@ namespace Teaq.Tests
         [TestMethod]
         public void AsQualifiedColumnReturnsColumnNameWithTypeQualifier()
         {
-            "MyColumn".AsQualifiedColumn(null, null, typeof(Customer)).Should().Be("Customer.MyColumn");
+            "MyColumn".AsQualifiedColumn(null, null, typeof(Customer)).Should().Be("[Customer].[MyColumn]");
         }
 
         [TestMethod]
         public void AsQualifiedColumnUsesTableAliasAsExpected()
         {
-            "MyColumn".AsQualifiedColumn("X", null, typeof(Customer)).Should().Be("X.MyColumn");
+            "MyColumn".AsQualifiedColumn("X", null, typeof(Customer)).Should().Be("[X].[MyColumn]");
         }
 
         [TestMethod]
@@ -51,7 +51,7 @@ namespace Teaq.Tests
                     builder.Entity<Customer>("dbo", "Customer2");
                 });
 
-            "MyColumn".AsQualifiedColumn(null, model.GetEntityConfig(typeof(Customer)), typeof(Customer)).Should().Be("Customer2.MyColumn");
+            "MyColumn".AsQualifiedColumn(null, model.GetEntityConfig(typeof(Customer)), typeof(Customer)).Should().Be("[Customer2].[MyColumn]");
         }
 
         [TestMethod]
@@ -62,13 +62,13 @@ namespace Teaq.Tests
                 builder.Entity<Customer>("dbo", "Customer2");
             });
 
-            "MyColumn".AsQualifiedColumn("X", model.GetEntityConfig(typeof(Customer)), typeof(Customer)).Should().Be("X.MyColumn");
+            "MyColumn".AsQualifiedColumn("X", model.GetEntityConfig(typeof(Customer)), typeof(Customer)).Should().Be("[X].[MyColumn]");
         }
 
         [TestMethod]
         public void AsQualifiedTableDefaultsToDbo()
         {
-            typeof(Customer).AsQualifiedTable(null).Should().Be("[dbo].Customer");
+            typeof(Customer).AsQualifiedTable(null).Should().Be("[dbo].[Customer]");
         }
 
         [TestMethod]
@@ -79,7 +79,7 @@ namespace Teaq.Tests
                 builder.Entity<Customer>("dbo2");
             });
 
-            typeof(Customer).AsQualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("dbo2.Customer");
+            typeof(Customer).AsQualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("[dbo2].[Customer]");
         }
 
         [TestMethod]
@@ -90,7 +90,7 @@ namespace Teaq.Tests
                 builder.Entity<Customer>("dbo2", "Customer2");
             });
 
-            typeof(Customer).AsQualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("dbo2.Customer2");
+            typeof(Customer).AsQualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("[dbo2].[Customer2]");
         }
 
         [TestMethod]
@@ -101,7 +101,7 @@ namespace Teaq.Tests
                 builder.Entity<Customer>("dbo2", "Customer2");
             });
 
-            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("Customer2");
+            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("[Customer2]");
         }
 
         [TestMethod]
@@ -112,7 +112,7 @@ namespace Teaq.Tests
                 builder.Entity<Customer>("dbo2", string.Empty);
             });
 
-            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("Customer");
+            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("[Customer]");
         }
 
         [TestMethod]
@@ -123,7 +123,7 @@ namespace Teaq.Tests
                 builder.Entity<Customer>("dbo2");
             });
 
-            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("Customer");
+            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("[Customer]");
         }
 
         [TestMethod]
@@ -133,7 +133,7 @@ namespace Teaq.Tests
             {
             });
 
-            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("Customer");
+            typeof(Customer).AsUnqualifiedTable(model.GetEntityConfig(typeof(Customer))).Should().Be("[Customer]");
         }
     }
 }

@@ -19,7 +19,7 @@ Public Class Usages
         Dim command = model.BuildSelectCommand(Of IAbstractVbEntity)(
             Function(a) a.Id = 6)
 
-        command.CommandText.Should().Contain("where ConcreteEntity.Id")
+        command.CommandText.Should().Contain("where [ConcreteEntity].[Id]")
     End Sub
 
     <TestMethod()>

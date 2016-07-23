@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Teaq.Configuration;
 using Teaq.QueryGeneration;
 
 namespace Teaq.Tests
@@ -12,6 +11,20 @@ namespace Teaq.Tests
     [TestClass]
     public class QueryBuilderTests
     {
+        [TestMethod]
+        public void QueryBuilderStringsDefaultToNVarcharWhenSetGlobally()
+        {
+            Repository.SetDefaultStringType(Repository.StringDataType.NVarchar);
+
+            var command = Repository.Default.ForEntity<Customer>().BuildSelect()
+                .Where(c => c.CustomerKey == "XYZ").ToCommand();
+
+            command.GetParameters()[0].SqlDbType.Should().Be(SqlDbType.NVarChar);
+
+            Repository.SetDefaultStringType(Repository.StringDataType.Varchar);
+        }
+
+
         [TestMethod]
         public void QueryBuilderHandlesNullNotEqualExpression()
         {
@@ -65,7 +78,7 @@ namespace Teaq.Tests
                 });
 
             var command = model.BuildSelectCommand<IAbstractEntity>(a => a.Id == 6);
-            command.CommandText.Should().Contain("where ConcreteEntity.Id");
+            command.CommandText.Should().Contain("where [ConcreteEntity].[Id]");
         }
 
         [TestMethod]
@@ -198,7 +211,7 @@ namespace Teaq.Tests
                 .Where(a => a.CustomerId == 50).OrderBy(items => items.OrderByDescending(a => a.AddressId)).ToCommand();
 
             command.CommandText.Should().NotBeNullOrEmpty();
-            command.CommandText.Should().Contain("group by Address.AddressId, Address.CustomerId\r\n");
+            command.CommandText.Should().Contain("group by [Address].[AddressId], [Address].[CustomerId]\r\n");
         }
 
         [TestMethod]
@@ -241,7 +254,7 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(1);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select TOP 5 Entity.Id");
+            queryCommand.CommandText.Should().Contain("select TOP 5 [Entity].[Id]");
         }
 
         [TestMethod]
@@ -256,7 +269,7 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(0);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select TOP 5 Customer.CustomerKey\r\n from");
+            queryCommand.CommandText.Should().Contain("select TOP 5 [Customer].[CustomerKey]\r\n from");
         }
 
         [TestMethod]
@@ -273,7 +286,7 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(1);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("from someSchema.CustomerTable");
+            queryCommand.CommandText.Should().Contain("from [someSchema].[CustomerTable]");
         }
 
         [TestMethod]
@@ -307,8 +320,8 @@ namespace Teaq.Tests
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
             queryCommand.CommandText.Should().Contain("select ");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("Customer.CustomerId = @p");
-            queryCommand.CommandText.Should().Contain("\r\n order by Customer.CustomerId");
+            queryCommand.CommandText.Should().Contain("[Customer].[CustomerId] = @p");
+            queryCommand.CommandText.Should().Contain("\r\n order by [Customer].[CustomerId]");
         }
 
         [TestMethod]
@@ -322,7 +335,7 @@ namespace Teaq.Tests
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
             queryCommand.CommandText.Should().Contain("select ");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("Customer.CustomerId = @p");
+            queryCommand.CommandText.Should().Contain("[Customer].[CustomerId] = @p");
         }
 
         [TestMethod]
@@ -342,9 +355,9 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(0);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select Customer.CustomerKey\r\n from");
+            queryCommand.CommandText.Should().Contain("select [Customer].[CustomerKey]\r\n from");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("Customer.CustomerId = @clientId");
+            queryCommand.CommandText.Should().Contain("[Customer].[CustomerId] = @clientId");
         }
 
         [TestMethod]
@@ -356,9 +369,9 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(0);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select Customer.CustomerKey\r\n from");
+            queryCommand.CommandText.Should().Contain("select [Customer].[CustomerKey]\r\n from");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("Customer.CustomerKey Is NULL");
+            queryCommand.CommandText.Should().Contain("[Customer].[CustomerKey] Is NULL");
         }
 
         [TestMethod]
@@ -376,9 +389,9 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(1);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select Customer.CustomerKey\r\n from");
+            queryCommand.CommandText.Should().Contain("select [Customer].[CustomerKey]\r\n from");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("Customer.CustomerId = @p");
+            queryCommand.CommandText.Should().Contain("[Customer].[CustomerId] = @p");
         }
 
         [TestMethod]
@@ -390,9 +403,9 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(1);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select Customer.CustomerKey\r\n from");
+            queryCommand.CommandText.Should().Contain("select [Customer].[CustomerKey]\r\n from");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("Customer.CustomerId = @p");
+            queryCommand.CommandText.Should().Contain("[Customer].[CustomerId] = @p");
         }
 
         [TestMethod]
@@ -409,9 +422,9 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(1);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select A.CustomerKey\r\n from [dbo].Customer A (nolock)");
+            queryCommand.CommandText.Should().Contain("select [A].[CustomerKey]\r\n from [dbo].[Customer] [A] (nolock)");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("A.CustomerId = @p");
+            queryCommand.CommandText.Should().Contain("[A].[CustomerId] = @p");
         }
 
         [TestMethod]
@@ -429,9 +442,9 @@ namespace Teaq.Tests
             queryCommand.GetParameters().Should().NotBeNull();
             queryCommand.GetParameters().GetLength(0).Should().Be(1);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
-            queryCommand.CommandText.Should().Contain("select A.CustomerKey, A.Inception\r\n from [dbo].Customer A (nolock)");
+            queryCommand.CommandText.Should().Contain("select [A].[CustomerKey], [A].[Inception]\r\n from [dbo].[Customer] [A] (nolock)");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("A.CustomerId = @p");
+            queryCommand.CommandText.Should().Contain("[A].[CustomerId] = @p");
         }
 
         [TestMethod]
@@ -445,7 +458,7 @@ namespace Teaq.Tests
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
             queryCommand.CommandText.Should().Contain("delete ");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("Customer.CustomerId = @p");
+            queryCommand.CommandText.Should().Contain("[Customer].[CustomerId] = @p");
         }
 
         [TestMethod]
@@ -459,7 +472,7 @@ namespace Teaq.Tests
             queryCommand.GetParameters()[0].Value.Should().Be(5);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
             queryCommand.CommandText.Should().Contain("insert ");
-            queryCommand.CommandText.Should().Contain("CustomerId");
+            queryCommand.CommandText.Should().Contain("[CustomerId]");
         }
 
         [TestMethod]
@@ -475,7 +488,7 @@ namespace Teaq.Tests
             queryCommand.GetParameters()[0].Value.Should().Be(5);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
             queryCommand.CommandText.Should().Contain("insert ");
-            queryCommand.CommandText.Should().Contain("CustomerId");
+            queryCommand.CommandText.Should().Contain("[CustomerId]");
         }
 
         [TestMethod]
@@ -503,7 +516,7 @@ namespace Teaq.Tests
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
             queryCommand.CommandText.Should().Contain("update ");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("CustomerId = @");
+            queryCommand.CommandText.Should().Contain("[CustomerId] = @");
             queryCommand.CommandText.Should().NotContain("CustomerId,");
         }
 
@@ -533,8 +546,11 @@ namespace Teaq.Tests
             queryCommand.GetParameters().GetLength(0).Should().Be(expectedParamsCount);
             queryCommand.CommandText.Should().NotBeNullOrEmpty();
             queryCommand.CommandText.Should().Contain("update ");
+            queryCommand.CommandText.Should().Contain("[Inception]");
+            queryCommand.CommandText.Should().Contain("[Modified]");
+            queryCommand.CommandText.Should().Contain("[Change]");
             queryCommand.CommandText.Should().Contain("where ");
-            queryCommand.CommandText.Should().Contain("CustomerId = @");
+            queryCommand.CommandText.Should().Contain("[CustomerId] = @");
             queryCommand.CommandText.Should().NotContain("CustomerId,");
         }
 
@@ -560,8 +576,8 @@ namespace Teaq.Tests
                 .ToCommand();
                 
             command.CommandText.Should().NotBeNullOrEmpty();
-            command.CommandText.Should().Contain(", Address.CustomerId");
-            command.CommandText.Should().Contain("dbo.Customer\r\nInner Join dbo.Address on Customer.CustomerId = Address.CustomerId");
+            command.CommandText.Should().Contain(", [Address].[CustomerId]");
+            command.CommandText.Should().Contain("[dbo].[Customer]\r\nInner Join [dbo].[Address] on [Customer].[CustomerId] = [Address].[CustomerId]");
         }
     }
 }

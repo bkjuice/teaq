@@ -60,7 +60,7 @@ namespace Teaq.QueryGeneration
             for (int i = 0; i < parameters.GetLength(0); i++)
             {
                 setStatement
-                    .Append(parameters[i].SourceColumn)
+                    .AppendIdentifier(parameters[i].SourceColumn)
                     .Append(" = ")
                     .Append(parameters[i].ParameterName)
                     .Append(", ");

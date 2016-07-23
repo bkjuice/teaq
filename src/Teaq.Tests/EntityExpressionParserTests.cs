@@ -29,9 +29,9 @@ namespace Teaq.Tests
             var result = combinedExpr.Parameterize("@p", out clause);
 
             clause.Should().NotBeEmpty();
-            clause.Should().Contain("Customer.CustomerId = @p");
+            clause.Should().Contain("[Customer].[CustomerId] = @p");
             clause.Should().Contain("and");
-            clause.Should().Contain("Customer.Change = @px1");
+            clause.Should().Contain("[Customer].[Change] = @px1");
             result.Should().NotBeNull();
             result.GetLength(0).Should().Be(2);
            
@@ -54,9 +54,9 @@ namespace Teaq.Tests
             var result = combinedExpr.Parameterize("@p", out clause);
 
             clause.Should().NotBeEmpty();
-            clause.Should().Contain("Customer.CustomerId = @p");
+            clause.Should().Contain("[Customer].[CustomerId] = @p");
             clause.Should().Contain("or");
-            clause.Should().Contain("Customer.Change = @px1");
+            clause.Should().Contain("[Customer].[Change] = @px1");
             result.Should().NotBeNull();
             result.GetLength(0).Should().Be(2);
         }
@@ -109,7 +109,7 @@ namespace Teaq.Tests
         {
             Expression<Func<Customer, Address, bool>> onExpression = (c, a) => c.CustomerId == a.CustomerId;
             var joinExpr = onExpression.ParseJoinExpression();
-            joinExpr.Should().Contain("Customer.CustomerId = Address.CustomerId");
+            joinExpr.Should().Contain("[Customer].[CustomerId] = [Address].[CustomerId]");
         }
 
         [TestMethod]
@@ -144,7 +144,7 @@ namespace Teaq.Tests
         {
             Expression<Func<IEnumerable<Customer>, IOrderedEnumerable<Customer>>> orderByExpression = items => items.OrderBy(c => c.CustomerId);
             var clause = orderByExpression.ParseOrderByClause();
-            clause.Should().Be("order by Customer.CustomerId");
+            clause.Should().Be("order by [Customer].[CustomerId]");
         }
 
         [TestMethod]
@@ -152,7 +152,7 @@ namespace Teaq.Tests
         {
             Expression<Func<IEnumerable<Customer>, IOrderedEnumerable<Customer>>> orderByExpression = items => items.OrderByDescending(c => c.CustomerId);
             var clause = orderByExpression.ParseOrderByClause();
-            clause.Should().Be("order by Customer.CustomerId desc");
+            clause.Should().Be("order by [Customer].[CustomerId] desc");
         }
 
         [TestMethod]
@@ -190,7 +190,7 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("CustomerWithNullableId.RelatedCustomerId in (@p, @pn1, @pn2)");
+            queryClause.Should().Be("[CustomerWithNullableId].[RelatedCustomerId] in (@p, @pn1, @pn2)");
             parameters.GetLength(0).Should().Be(3);
         }
 
@@ -204,7 +204,7 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("CustomerWithNullable.Deleted Is Not NULL");
+            queryClause.Should().Be("[CustomerWithNullable].[Deleted] Is Not NULL");
             parameters.GetLength(0).Should().Be(0);
         }
 
@@ -218,7 +218,7 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not (CustomerWithNullable.Deleted Is Not NULL)");
+            queryClause.Should().Be("not ([CustomerWithNullable].[Deleted] Is Not NULL)");
             parameters.GetLength(0).Should().Be(0);
         }
 
@@ -232,7 +232,7 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not (CustomerWithNullable.CustomerId = @p and CustomerWithNullable.Deleted Is Not NULL)");
+            queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and [CustomerWithNullable].[Deleted] Is Not NULL)");
             parameters.GetLength(0).Should().Be(1);
         }
 
@@ -246,7 +246,7 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not (CustomerWithNullable.CustomerId = @p and not (CustomerWithNullable.Deleted Is Not NULL or CustomerWithNullable.CustomerKey Is NULL))");
+            queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and not ([CustomerWithNullable].[Deleted] Is Not NULL or [CustomerWithNullable].[CustomerKey] Is NULL))");
             parameters.GetLength(0).Should().Be(1);
         }
 
@@ -260,7 +260,7 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not (CustomerWithNullable.CustomerId = @p and not (not (CustomerWithNullable.Deleted Is Not NULL) or CustomerWithNullable.CustomerKey Is NULL))");
+            queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and not (not ([CustomerWithNullable].[Deleted] Is Not NULL) or [CustomerWithNullable].[CustomerKey] Is NULL))");
             parameters.GetLength(0).Should().Be(1);
         }
 
@@ -274,7 +274,7 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not ((CustomerWithNullable.CustomerId = @p or CustomerWithNullable.CustomerId = @px1) and not (CustomerWithNullable.Deleted Is Not NULL or CustomerWithNullable.CustomerKey Is NULL))");
+            queryClause.Should().Be("not (([CustomerWithNullable].[CustomerId] = @p or [CustomerWithNullable].[CustomerId] = @px1) and not ([CustomerWithNullable].[Deleted] Is Not NULL or [CustomerWithNullable].[CustomerKey] Is NULL))");
             parameters.GetLength(0).Should().Be(2);
         }
 
@@ -372,7 +372,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@clientId", out queryClause);
-            queryClause.Should().Be("Customer.CustomerId = @clientId");
+            queryClause.Should().Be("[Customer].[CustomerId] = @clientId");
 
             parameters.GetLength(0).Should().Be(1);
             parameters[0].Value.Should().Be(50);
@@ -386,7 +386,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@clientId", out queryClause);
-            queryClause.Should().Be("Customer.CustomerId = @clientId");
+            queryClause.Should().Be("[Customer].[CustomerId] = @clientId");
 
             parameters.GetLength(0).Should().Be(1);
             parameters[0].Value.Should().Be(50);
@@ -400,7 +400,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@clientKey", out queryClause);
-            queryClause.Should().Be("Customer.CustomerKey = @clientKey");
+            queryClause.Should().Be("[Customer].[CustomerKey] = @clientKey");
 
             parameters.GetLength(0).Should().Be(1);
             parameters[0].Value.Should().Be("TestKey");
@@ -418,7 +418,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@p", out queryClause, locals: locals);
-            queryClause.Should().Be("Customer.CustomerKey = @clientKey");
+            queryClause.Should().Be("[Customer].[CustomerKey] = @clientKey");
             parameters.GetLength(0).Should().Be(0);
         }
 
@@ -437,7 +437,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@p", out queryClause, locals: locals);
-            queryClause.Should().Be("(Customer.CustomerId = @clientId and Customer.CustomerKey = @clientKey)");
+            queryClause.Should().Be("([Customer].[CustomerId] = @clientId and [Customer].[CustomerKey] = @clientKey)");
             parameters.GetLength(0).Should().Be(0);
         }
 
@@ -449,7 +449,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@Inception", out queryClause);
-            queryClause.Should().Be("Customer.Inception >= @Inception");
+            queryClause.Should().Be("[Customer].[Inception] >= @Inception");
 
             parameters.GetLength(0).Should().Be(1);
             parameters[0].Value.Should().Be(Inception);
@@ -464,7 +464,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@lastModifyDateTime", out queryClause);
-            queryClause.Should().Be("Customer.Modified >= @lastModifyDateTime");
+            queryClause.Should().Be("[Customer].[Modified] >= @lastModifyDateTime");
 
             parameters.GetLength(0).Should().Be(1);
             parameters[0].Value.Should().Be(lastModifyDateTime);
@@ -478,7 +478,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@lastModifyDateTime", out queryClause);
-            queryClause.Should().Be("Customer.Modified >= @lastModifyDateTime");
+            queryClause.Should().Be("[Customer].[Modified] >= @lastModifyDateTime");
 
             parameters.GetLength(0).Should().Be(1);
             parameters[0].Value.Should().Be(lastModifyDateTime);

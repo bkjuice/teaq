@@ -141,7 +141,8 @@ namespace Teaq.Expressions
             }
             else if (value.GetType().TypeHandle.Equals(typeof(string).TypeHandle))
             {
-                parameter.SqlDbType = SqlDbType.VarChar;
+                parameter.SqlDbType =
+                    Repository.DefaultStringType == Repository.StringDataType.Varchar ? SqlDbType.VarChar : SqlDbType.NVarChar;
             }
 
             parameter.SourceColumn = sourceColumnName;

@@ -45,8 +45,8 @@ namespace Teaq.Configuration
         /// <param name="tableName">Name of the table.</param>
         public EntityConfiguration(string schemaName, string tableName)
         {
-            this.TableName = tableName;
-            this.SchemaName = schemaName;
+            this.TableName = tableName.EnsureBracketedIdentifier();
+            this.SchemaName = schemaName.EnsureBracketedIdentifier();
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Teaq.Configuration
                 this.propertyColumnReverseMappings = new Dictionary<string, string>();
             }
 
-            this.propertyColumnMappings.Add(propertyName, columnName);
+            this.propertyColumnMappings.Add(propertyName, columnName.EnsureBracketedIdentifier());
             this.propertyColumnReverseMappings.Add(columnName, propertyName);
         }
 

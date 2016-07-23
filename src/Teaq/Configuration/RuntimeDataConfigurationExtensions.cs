@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
+using System.Text;
 
 namespace Teaq.Configuration
 {
@@ -7,25 +9,31 @@ namespace Teaq.Configuration
     /// </summary>
     internal static class RuntimeDataConfigurationExtensions
     {
-        /// <summary>
-        /// Ensures the provided type is a concrete class. This method is null-safe.
-        /// </summary>
-        /// <typeparam name="T">The target type to verify.</typeparam>
-        /// <param name="dataModel">The data model.</param>
-        /// <returns>
-        /// The concrete mapped type or the provided type if not found.
-        /// </returns>
+        internal static StringBuilder AppendIdentifier(this StringBuilder builder, string identifier)
+        {
+            return builder.Append(identifier.EnsureBracketedIdentifier());
+        }
+
+        internal static string EnsureBracketedIdentifier(this string identifier)
+        {
+            Contract.Requires(string.IsNullOrEmpty(identifier) == false);
+
+            // HOT path, if this is partially qualified, just use it...if the caller can't get this right, 
+            // the error will make the issue obvious:
+            if (identifier[0] == '[')
+            {
+                return identifier;
+            }
+
+            // per the reference source, this overload of concat is highly optimized to use underlying native code:
+            return "[" + identifier + ']';
+        }
+
         internal static Type EnsureConcreteType<T>(this IDataModel dataModel)
         {
             return dataModel?.GetConcreteType<T>() ?? typeof(T);
         }
 
-        /// <summary>
-        /// Tries to get the entity configuration. This method is null safe but may return null.
-        /// </summary>
-        /// <typeparam name="T">The entity type.</typeparam>
-        /// <param name="dataModel">The data model.</param>
-        /// <returns>The entity configuration or null if not defined.</returns>
         internal static IEntityConfiguration TryGetEntityConfig<T>(this IDataModel dataModel)
         {
             return dataModel?.GetEntityConfig(typeof(T));

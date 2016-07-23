@@ -48,7 +48,7 @@ namespace Teaq.QueryGeneration
             var tableValues = new StringBuilder(insertParameters.Length * 32);
             for (int i = 0; i < insertParameters.GetLength(0); i++)
             {
-                columnList.Append(insertParameters[i].SourceColumn).Append(", ");
+                columnList.AppendIdentifier(insertParameters[i].SourceColumn).Append(", ");
                 tableValues.Append(insertParameters[i].ParameterName).Append(", ");
             }
 

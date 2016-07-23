@@ -119,10 +119,16 @@ namespace Teaq.QueryGeneration
             var prefix = tableAlias + ".";
             if (len == 1)
             {
-                return prefix + selectColumnList[0];
+                return prefix + selectColumnList[0].EnsureBracketedIdentifier();
             }
             else
             {
+                // This sort of sucks...any other way to handle this?
+                for(int i = 0; i < selectColumnList.Length; i++)
+                {
+                    selectColumnList[i] = selectColumnList[i].EnsureBracketedIdentifier();
+                }
+
                 var union = ", " + tableAlias + ".";
                 return prefix + string.Join(union, selectColumnList);
             }
@@ -146,12 +152,12 @@ namespace Teaq.QueryGeneration
         {
             if (!string.IsNullOrEmpty(tableAlias))
             {
-                return tableAlias + "." + columnName;
+                return tableAlias.EnsureBracketedIdentifier() + "." + columnName.EnsureBracketedIdentifier();
             }
             else
             {
                 var tableName = entityType.AsUnqualifiedTable(config);
-                return tableName + "." + columnName;
+                return tableName + "." + columnName.EnsureBracketedIdentifier();
             }
         }
 
@@ -165,7 +171,7 @@ namespace Teaq.QueryGeneration
         {
             Contract.Requires(target != null);
 
-            return config == null ? "[dbo]." + target.Name : config.SchemaName + "." + config.TableName;
+            return config == null ? "[dbo]." + target.Name.EnsureBracketedIdentifier() : config.SchemaName + "." + config.TableName;
         }
 
         /// <summary>
@@ -174,15 +180,11 @@ namespace Teaq.QueryGeneration
         /// <param name="target">The target.</param>
         /// <param name="config">The config.</param>
         /// <returns>The unqualified table name.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Design",
-            "CA1011:ConsiderPassingBaseTypesAsParameters", 
-            Justification = "System.Type better aligns with upstream usage scenarios.")]
         public static string AsUnqualifiedTable(this Type target, IEntityConfiguration config)
         {
             Contract.Requires(target != null);
 
-            return config?.TableName ?? target.Name;
+            return config?.TableName ?? target.Name.EnsureBracketedIdentifier();
         }
     }
 }
