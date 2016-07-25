@@ -91,7 +91,7 @@ namespace Teaq.Tests
                 });
 
             model.GetEntityConfig(typeof(SomeType1)).Should().NotBeNull();
-            model.GetEntityConfig(typeof(SomeType1)).ColumnMapping("MappedProperty").Should().Be("[Mapped]");
+            model.GetEntityConfig(typeof(SomeType1)).ColumnMapping("MappedProperty").Should().Be("Mapped");
             model.GetEntityConfig(typeof(SomeType1)).PropertyMapping("Mapped").Should().Be("MappedProperty");
         }
 
@@ -121,7 +121,7 @@ namespace Teaq.Tests
 
             model.GetEntityConfig(typeof(SomeType2)).Should().NotBeNull();
             model.GetEntityConfig(typeof(SomeType2)).ConcurrencyProperty.Should().Be("ConcurrencyToken");
-            model.GetEntityConfig(typeof(SomeType2)).ColumnMapping("ConcurrencyToken").Should().Be("[Mapped]");
+            model.GetEntityConfig(typeof(SomeType2)).ColumnMapping("ConcurrencyToken").Should().Be("Mapped");
         }
 
         [TestMethod]

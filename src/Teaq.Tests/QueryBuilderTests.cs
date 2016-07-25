@@ -12,6 +12,66 @@ namespace Teaq.Tests
     public class QueryBuilderTests
     {
         [TestMethod]
+        public void SelectQueryParameterWithColumnMappingDoesNotAddBracketsToParameterName()
+        {
+            var model = Repository.BuildModel(
+                builder =>
+                {
+                    builder.Entity<Customer>()
+                    .Column(e => e.CustomerId).HasMapping("ID");
+                });
+
+
+            var q = model.ForEntity<Customer>().BuildSelect().Where(e => e.CustomerId == 1).ToCommand();
+            q.GetParameters()[0].ParameterName.Should().NotContain("[");
+            q.GetParameters()[0].ParameterName.Should().NotContain("]");
+        }
+
+        [TestMethod]
+        public void UpdateQueryParameterWithColumnMappingDoesNotAddBracketsToParameterName()
+        {
+            var model = Repository.BuildModel(m =>
+            {
+                m.Entity<UserTenancy>("dbo", "UsersToTenancies")
+                    .Column(e => e.UserName).IsNVarChar(256)
+                    .Column(e => e.TenancyKey).HasMapping("Key");
+            });
+
+            var modified = new UserTenancy { UserName = "modified", TenancyKey = "123" };
+            var userTenancy = new UserTenancy { UserName = "original", TenancyKey = "123" };
+
+            var command = model.ForEntity<UserTenancy>()
+               .BuildUpdate(modified, e => e.UserName == userTenancy.UserName)
+               .ToCommand();
+
+            
+            command.GetParameters()[1].ParameterName.Should().NotContain("[");
+            command.GetParameters()[1].ParameterName.Should().NotContain("]");
+        }
+
+        [TestMethod]
+        public void InsertQueryParameterWithColumnMappingDoesNotAddBracketsToParameterName()
+        {
+            var model = Repository.BuildModel(m =>
+            {
+                m.Entity<UserTenancy>("dbo", "UsersToTenancies")
+                    .Column(e => e.UserName).IsNVarChar(256)
+                    .Column(e => e.TenancyKey).HasMapping("Key");
+            });
+
+            var modified = new UserTenancy { UserName = "modified", TenancyKey = "123" };
+            var userTenancy = new UserTenancy { UserName = "original", TenancyKey = "123" };
+
+            var command = model.ForEntity<UserTenancy>()
+               .BuildInsert(modified)
+               .ToCommand();
+
+            command.GetParameters()[1].ParameterName.Should().NotContain("[");
+            command.GetParameters()[1].ParameterName.Should().NotContain("]");
+        }
+
+
+        [TestMethod]
         public void QueryBuilderStringsDefaultToNVarcharWhenSetGlobally()
         {
             Repository.SetDefaultStringType(Repository.StringDataType.NVarchar);

@@ -546,4 +546,11 @@ namespace Teaq.Tests
 
         public string CustomerKey { get; set; }
     }
+
+    public class UserTenancy
+    {
+        public string UserName { get; set; }
+
+        public string TenancyKey { get; set; }
+    }
 }

@@ -136,7 +136,7 @@ namespace Teaq.Configuration
                 this.propertyColumnReverseMappings = new Dictionary<string, string>();
             }
 
-            this.propertyColumnMappings.Add(propertyName, columnName.EnsureBracketedIdentifier());
+            this.propertyColumnMappings.Add(propertyName, columnName);
             this.propertyColumnReverseMappings.Add(columnName, propertyName);
         }
 
