@@ -13,57 +13,6 @@ namespace Teaq.Tests
     public class EntityExpressionParserTests
     {
         [TestMethod]
-        public void AndExpressionCreatesExpectedExpressionResult()
-        {
-            int id = 5;
-            byte lastChangeType = 3;
-
-            var client = new Customer { CustomerId = 5, Change = 2 };
-
-            Expression<Func<Customer, bool>> expr1 = c => c.CustomerId == id;
-            Expression<Func<Customer, bool>> expr2 = c => c.Change == lastChangeType;
-
-            Expression<Func<Customer, bool>> combinedExpr = expr1.And(expr2);
-
-            string clause;
-            var result = combinedExpr.Parameterize("@p", out clause);
-
-            clause.Should().NotBeEmpty();
-            clause.Should().Contain("[Customer].[CustomerId] = @p");
-            clause.Should().Contain("and");
-            clause.Should().Contain("[Customer].[Change] = @px1");
-            result.Should().NotBeNull();
-            result.GetLength(0).Should().Be(2);
-           
-        }
-
-        [TestMethod]
-        public void OrExpressionCreatesExpectedExpressionResult()
-        {
-            int id = 5;
-            byte lastChangeType = 3;
-
-            var client = new Customer { CustomerId = 5, Change = 2 };
-
-            Expression<Func<Customer, bool>> expr1 = c => c.CustomerId == id;
-            Expression<Func<Customer, bool>> expr2 = c => c.Change == lastChangeType;
-
-            Expression<Func<Customer, bool>> combinedExpr = expr1.Or(expr2);
-
-            string clause;
-            var result = combinedExpr.Parameterize("@p", out clause);
-
-            clause.Should().NotBeEmpty();
-            clause.Should().Contain("[Customer].[CustomerId] = @p");
-            clause.Should().Contain("or");
-            clause.Should().Contain("[Customer].[Change] = @px1");
-            result.Should().NotBeNull();
-            result.GetLength(0).Should().Be(2);
-        }
-
-        //public static string ParseJoinExpression<T, TJoined>(this Expression<Func<T, TJoined, bool>> onExpression, IDataModel model = null, string aliasForT = null, string aliasForTJoined = null)
-
-        [TestMethod]
         public void ParseJoinExpressionThrowsNotSupportedExceptionWhenLeftNotPropertyExpression()
         {
             var stub = new InvalidJoinExpressionStub();

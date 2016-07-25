@@ -17,7 +17,7 @@ namespace Teaq.Profiling
 #if !INSTR
             var stopwatch = Stopwatch.StartNew();
 #endif
-            var scenario = new SimpleFluentStatementScenario(DataConfiguration.Default, SimpleFluentStatementScenario.GetCustomerInstance());
+            var scenario = new SimpleFluentStatementScenario(Repository.Default, SimpleFluentStatementScenario.GetCustomerInstance());
             var count = 0;
             for (int i = 0; i < iterations; ++i)
             {

@@ -21,42 +21,10 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void TryNextBatchIndexReturnsNullIfBatchSpecIsNull()
-        {
-            QueryBatch b = null;
-            var next = b.TryNextBatchIndex();
-            next.HasValue.Should().BeFalse();
-        }
-
-        [TestMethod]
-        public void TryNextBatchIndexReturnsValueIfBatchSpecIsNotNull()
-        {
-            var b = new QueryBatch();
-            var next = b.TryNextBatchIndex();
-            next.HasValue.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public void ValueOrDbNullReturnsDbNullWhenNull()
-        {
-            object test = null;
-            var result = test.ValueOrDBNull();
-            result.Should().Be(DBNull.Value);
-        }
-
-        [TestMethod]
-        public void ValueOrDbNullReturnsValueWhenNotNull()
-        {
-            object test = "test";
-            var result = test.ValueOrDBNull();
-            result.Should().Be("test");
-        }
-
-        [TestMethod]
         public void MakeParameterCreatesDbNullWhenNull()
         {
             string value = null;
-            var parameter = value.MakeParameter("value", "", -1, -1, -1);
+            var parameter = value.MakeParameter("value", null, "", -1, -1, -1);
             parameter.Value.Should().Be(DBNull.Value);
         }
 
@@ -64,7 +32,7 @@ namespace Teaq.Tests
         public void MakeParameterCreatesVarCharByDefault()
         {
             string value = "test";
-            var parameter = value.MakeParameter("value", "", -1, -1, -1);
+            var parameter = value.MakeParameter("value", null, "", -1, -1, -1);
             parameter.Value.Should().Be("test");
             parameter.SqlDbType.Should().Be(SqlDbType.VarChar);
         }
@@ -73,7 +41,7 @@ namespace Teaq.Tests
         public void MakeParameterUsesBatchQualifier()
         {
             string value = "test";
-            var parameter = value.MakeParameter("test", "@test", 1, -1, -1);
+            var parameter = value.MakeParameter("test", null, "@test", 1, -1, -1);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1");
         }
@@ -82,7 +50,7 @@ namespace Teaq.Tests
         public void MakeParameterUsesBatchAndParameterQualifiers()
         {
             string value = "test";
-            var parameter = value.MakeParameter("test", "@test",1, 2, -1);
+            var parameter = value.MakeParameter("test", null, "@test", 1, 2, -1);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1x2");
         }
@@ -116,7 +84,7 @@ namespace Teaq.Tests
         public void MakeParameterUsesBatchAndParameterAndIndexQualifiers()
         {
             string value = "test";
-            var parameter = value.MakeParameter("test", "@test", batchQualifier: 1, parameterQualifier: 2, indexer: 5);
+            var parameter = value.MakeParameter("test", null, "@test", batchQualifier: 1, parameterQualifier: 2, indexer: 5);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1x2n5");
         }
