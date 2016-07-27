@@ -213,9 +213,9 @@
     <Compile Include="DataReaderExtensions.Readers.cs" />
     <Compile Include="DataConnectionExtensions.cs" />
     <Compile Include="EmbeddedParameter.cs" />
-    <Compile Include="Expressions\EntityExpressionParser.cs" />
-    <Compile Include="Expressions\EntitySelectorVisitor.cs" />
-    <Compile Include="Expressions\SqlParameterExtensions.cs" />
+    <Compile Include="QueryGeneration\EntityExpressionParser.cs" />
+    <Compile Include="QueryGeneration\EntitySelectorVisitor.cs" />
+    <Compile Include="QueryGeneration\SqlParameterExtensions.cs" />
     <Compile Include="FixedList.cs" />
     <Compile Include="JsonOutputBuilder.Buffer.cs" />
     <Compile Include="JsonOutputBuilder.Instances.cs" />
@@ -288,6 +288,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Teaq.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Expressions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

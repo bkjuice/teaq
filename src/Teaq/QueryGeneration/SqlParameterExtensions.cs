@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Teaq.Configuration;
 
-namespace Teaq.Expressions
+namespace Teaq.QueryGeneration
 {
     internal static class SqlParameterExtensions
     {

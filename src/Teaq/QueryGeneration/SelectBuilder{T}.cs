@@ -6,7 +6,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using Teaq.Configuration;
-using Teaq.Expressions;
 
 namespace Teaq.QueryGeneration
 {

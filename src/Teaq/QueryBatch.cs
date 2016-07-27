@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
-using Teaq.Expressions;
 using Teaq.QueryGeneration;
 
 namespace Teaq

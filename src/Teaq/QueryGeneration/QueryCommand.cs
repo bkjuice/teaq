@@ -1,5 +1,4 @@
 ﻿using System.Data.SqlClient;
-using Teaq.Expressions;
 
 namespace Teaq.QueryGeneration
 {

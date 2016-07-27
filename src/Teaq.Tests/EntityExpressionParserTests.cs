@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Teaq.Expressions;
+using Teaq.QueryGeneration;
 
 namespace Teaq.Tests
 {
@@ -136,7 +136,7 @@ namespace Teaq.Tests
             Expression<Func<CustomerWithNullableId, bool>> expr = c => ids.Contains(c.RelatedCustomerId.Value);
 
             string queryClause;
-            var parameters = expr.Parameterize("@p", out queryClause);
+            var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
             queryClause.Should().Be("[CustomerWithNullableId].[RelatedCustomerId] in (@p, @pn1, @pn2)");
@@ -150,7 +150,7 @@ namespace Teaq.Tests
             Expression<Func<CustomerWithNullable, bool>> expr = c => c.Deleted.HasValue;
 
             string queryClause;
-            var parameters = expr.Parameterize("@p", out queryClause);
+            var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
             queryClause.Should().Be("[CustomerWithNullable].[Deleted] Is Not NULL");
@@ -164,7 +164,7 @@ namespace Teaq.Tests
             Expression<Func<CustomerWithNullable, bool>> expr = c => !c.Deleted.HasValue;
 
             string queryClause;
-            var parameters = expr.Parameterize("@p", out queryClause);
+            var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
             queryClause.Should().Be("not ([CustomerWithNullable].[Deleted] Is Not NULL)");
@@ -178,7 +178,7 @@ namespace Teaq.Tests
             Expression<Func<CustomerWithNullable, bool>> expr = c => !(c.CustomerId == 5 && c.Deleted.HasValue);
 
             string queryClause;
-            var parameters = expr.Parameterize("@p", out queryClause);
+            var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
             queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and [CustomerWithNullable].[Deleted] Is Not NULL)");
@@ -192,7 +192,7 @@ namespace Teaq.Tests
             Expression<Func<CustomerWithNullable, bool>> expr = c => !(c.CustomerId == 5 && !(c.Deleted.HasValue || c.CustomerKey == null));
 
             string queryClause;
-            var parameters = expr.Parameterize("@p", out queryClause);
+            var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
             queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and not ([CustomerWithNullable].[Deleted] Is Not NULL or [CustomerWithNullable].[CustomerKey] Is NULL))");
@@ -206,7 +206,7 @@ namespace Teaq.Tests
             Expression<Func<CustomerWithNullable, bool>> expr = c => !(c.CustomerId == 5 && !(!c.Deleted.HasValue || c.CustomerKey == null));
 
             string queryClause;
-            var parameters = expr.Parameterize("@p", out queryClause);
+            var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
             queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and not (not ([CustomerWithNullable].[Deleted] Is Not NULL) or [CustomerWithNullable].[CustomerKey] Is NULL))");
@@ -220,7 +220,7 @@ namespace Teaq.Tests
             Expression<Func<CustomerWithNullable, bool>> expr = c => !((c.CustomerId == 5 || c.CustomerId == 4) && !(c.Deleted.HasValue || c.CustomerKey == null));
 
             string queryClause;
-            var parameters = expr.Parameterize("@p", out queryClause);
+            var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
             queryClause.Should().Be("not (([CustomerWithNullable].[CustomerId] = @p or [CustomerWithNullable].[CustomerId] = @px1) and not ([CustomerWithNullable].[Deleted] Is Not NULL or [CustomerWithNullable].[CustomerKey] Is NULL))");
@@ -233,7 +233,7 @@ namespace Teaq.Tests
             IEnumerable<int> items = new List<int>();
             Expression<Func<Customer, bool>> expression = c => items.Contains(c.CustomerId);
             string queryClause;
-            Action test = () => expression.Parameterize("@p", out queryClause);
+            Action test = () => expression.Parameterize("@p", null, out queryClause);
             test.ShouldThrow<NotSupportedException>();
         }
 
@@ -243,7 +243,7 @@ namespace Teaq.Tests
             var items = new NonIListCollection<int>(new List<int> { 1, 2 });
             Expression<Func<Customer, bool>> expression = c => items.Contains(c.CustomerId);
             string queryClause;
-            var parameters = expression.Parameterize("@p", out queryClause);
+            var parameters = expression.Parameterize("@p", null, out queryClause);
             parameters.Should().NotBeNull();
             parameters.GetLength(0).Should().Be(2);
         }
@@ -254,7 +254,7 @@ namespace Teaq.Tests
             var items = new NonIListCollection<int>(new List<int> { 1, 2 });
             Expression<Func<Customer, bool>> expression = c => items.InvalidContains(c.CustomerId);
             string queryClause;
-            Action test = () => expression.Parameterize("@p", out queryClause);
+            Action test = () => expression.Parameterize("@p", null, out queryClause);
             test.ShouldThrow<NotSupportedException>();
         }
 
@@ -264,7 +264,7 @@ namespace Teaq.Tests
             var client = new CustomerWithNestedProperty();
             Expression<Func<CustomerWithNestedProperty, bool>> expression = c => c.Keys.CustomerId == 5;
             string queryClause;
-            Action test = () => expression.Parameterize("@p", out queryClause);
+            Action test = () => expression.Parameterize("@p", null, out queryClause);
             test.ShouldNotThrow();
         }
 
@@ -274,7 +274,7 @@ namespace Teaq.Tests
             Expression<Func<Address, bool>> expr = e => e.CustomerId == 55 && e.Change == 1;
             
             string queryClause;
-            Action test = () => expr.Parameterize("@test", out queryClause);
+            Action test = () => expr.Parameterize("@test", null, out queryClause);
             test.ShouldNotThrow();
         }
 
@@ -284,7 +284,7 @@ namespace Teaq.Tests
             Expression<Func<Address, bool>> expr = e => e.CustomerId == 55 && e.Change == (byte)1;
 
             string queryClause;
-            Action test = () => expr.Parameterize("@test", out queryClause);
+            Action test = () => expr.Parameterize("@test", null, out queryClause);
             test.ShouldNotThrow();
         }
 
@@ -296,7 +296,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => c.Modified <= lastModifyDateTime && c.Inception <= DateTime.MaxValue;
 
             string queryClause;
-            var parameters = e.Parameterize("compositeExpr", out queryClause);
+            var parameters = e.Parameterize("compositeExpr", null, out queryClause);
 
             parameters.GetLength(0).Should().Be(2);
         }
@@ -309,7 +309,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => items.Contains(c.CustomerId) && c.Inception <= DateTime.MaxValue;
 
             string queryClause;
-            var parameters = e.Parameterize("@compositeExpr", out queryClause, columnQualifier: "Extent1");
+            var parameters = e.Parameterize("@compositeExpr", null, out queryClause, columnQualifier: "Extent1");
 
             parameters.GetLength(0).Should().Be(5);
         }
@@ -320,7 +320,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => c.CustomerId == 50;
 
             string queryClause;
-            var parameters = e.Parameterize("@clientId", out queryClause);
+            var parameters = e.Parameterize("@clientId", null, out queryClause);
             queryClause.Should().Be("[Customer].[CustomerId] = @clientId");
 
             parameters.GetLength(0).Should().Be(1);
@@ -334,7 +334,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => c.CustomerId == id;
 
             string queryClause;
-            var parameters = e.Parameterize("@clientId", out queryClause);
+            var parameters = e.Parameterize("@clientId", null, out queryClause);
             queryClause.Should().Be("[Customer].[CustomerId] = @clientId");
 
             parameters.GetLength(0).Should().Be(1);
@@ -348,7 +348,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => c.CustomerKey == key;
 
             string queryClause;
-            var parameters = e.Parameterize("@clientKey", out queryClause);
+            var parameters = e.Parameterize("@clientKey", null, out queryClause);
             queryClause.Should().Be("[Customer].[CustomerKey] = @clientKey");
 
             parameters.GetLength(0).Should().Be(1);
@@ -366,7 +366,7 @@ namespace Teaq.Tests
             locals[0].SourceColumn = "CustomerKey";
 
             string queryClause;
-            var parameters = e.Parameterize("@p", out queryClause, locals: locals);
+            var parameters = e.Parameterize("@p", null, out queryClause, locals: locals);
             queryClause.Should().Be("[Customer].[CustomerKey] = @clientKey");
             parameters.GetLength(0).Should().Be(0);
         }
@@ -385,7 +385,7 @@ namespace Teaq.Tests
             locals[1].SourceColumn = "CustomerId";
 
             string queryClause;
-            var parameters = e.Parameterize("@p", out queryClause, locals: locals);
+            var parameters = e.Parameterize("@p", null, out queryClause, locals: locals);
             queryClause.Should().Be("([Customer].[CustomerId] = @clientId and [Customer].[CustomerKey] = @clientKey)");
             parameters.GetLength(0).Should().Be(0);
         }
@@ -397,7 +397,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => c.Inception >= Inception;
 
             string queryClause;
-            var parameters = e.Parameterize("@Inception", out queryClause);
+            var parameters = e.Parameterize("@Inception", null, out queryClause);
             queryClause.Should().Be("[Customer].[Inception] >= @Inception");
 
             parameters.GetLength(0).Should().Be(1);
@@ -412,7 +412,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => c.Modified >= lastModifyDateTime;
 
             string queryClause;
-            var parameters = e.Parameterize("@lastModifyDateTime", out queryClause);
+            var parameters = e.Parameterize("@lastModifyDateTime", null, out queryClause);
             queryClause.Should().Be("[Customer].[Modified] >= @lastModifyDateTime");
 
             parameters.GetLength(0).Should().Be(1);
@@ -426,7 +426,7 @@ namespace Teaq.Tests
             Expression<Func<Customer, bool>> e = c => c.Modified >= lastModifyDateTime;
 
             string queryClause;
-            var parameters = e.Parameterize("@lastModifyDateTime", out queryClause);
+            var parameters = e.Parameterize("@lastModifyDateTime", null, out queryClause);
             queryClause.Should().Be("[Customer].[Modified] >= @lastModifyDateTime");
 
             parameters.GetLength(0).Should().Be(1);

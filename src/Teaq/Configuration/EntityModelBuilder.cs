@@ -2,7 +2,7 @@
 using System.Data;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
-using Teaq.Expressions;
+using Teaq.QueryGeneration;
 
 namespace Teaq.Configuration
 {

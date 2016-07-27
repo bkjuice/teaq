@@ -5,15 +5,8 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using Teaq.Configuration;
-using Teaq.QueryGeneration;
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage(
-    "Microsoft.Design", 
-    "CA1020:AvoidNamespacesWithFewTypes", 
-    Scope = "namespace", 
-    Target = "Teaq.Expressions")]
-
-namespace Teaq.Expressions
+namespace Teaq.QueryGeneration
 {
     internal static class EntityExpressionParser
     {
@@ -22,17 +15,6 @@ namespace Teaq.Expressions
                 [ "OrderBy"] =  s => "order by " + s,
                 [ "OrderByDescending"] = s=> $"order by {s} desc" 
             };
-
-        public static SqlParameter[] Parameterize<T>(
-            this Expression<Func<T, bool>> entityExpression, 
-            string parameterName, 
-            out string queryClause, 
-            IDataModel model = null, 
-            SqlParameter[] locals = null, 
-            string columnQualifier = null)
-        {
-            return entityExpression.Parameterize(parameterName, null, out queryClause, model, locals, columnQualifier);
-        }
 
         public static SqlParameter[] Parameterize<T>(
             this Expression<Func<T, bool>> entityExpression, 

@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Text;
-using Teaq.Expressions;
 using Teaq.QueryGeneration;
 
 namespace Teaq

@@ -8,9 +8,8 @@ using System.Reflection;
 using System.Text;
 using Teaq.Configuration;
 using Teaq.FastReflection;
-using Teaq.QueryGeneration;
 
-namespace Teaq.Expressions
+namespace Teaq.QueryGeneration
 {
     internal sealed class EntitySelectorVisitor : ExpressionVisitor
     {

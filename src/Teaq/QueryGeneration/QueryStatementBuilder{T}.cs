@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Teaq.Configuration;
-using Teaq.Expressions;
 using Teaq.FastReflection;
 
 namespace Teaq.QueryGeneration
