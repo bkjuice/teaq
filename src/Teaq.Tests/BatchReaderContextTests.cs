@@ -28,7 +28,7 @@ namespace Teaq.Tests
             batch.Add<Customer>("test");
 
             var myConnection = "someConnectionString";
-            using (var readerContext = Repository.BuildBatchReader(myConnection, connectionBuilder.Object, batch))
+            using (var readerContext = Repository.BuildBatchReader(myConnection, batch, connectionBuilder.Object))
             {
                 readerContext.EnumerateEntitySet<Customer>().Count().Should().Be(0);
             }
@@ -53,7 +53,7 @@ namespace Teaq.Tests
             var batch = new QueryBatch();
             batch.Add<Customer>("test");
 
-            var context = Repository.BuildBatchReader("test", connectionBuilder.Object, batch);
+            var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object);
             context.NextResult();
             context.EnumerateEntitySet<Customer>();
 
@@ -80,7 +80,7 @@ namespace Teaq.Tests
             var batch = new QueryBatch();
             batch.Add<Customer>("test");
 
-            using (var context = Repository.BuildBatchReader("test", connectionBuilder.Object, batch))
+            using (var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object))
             {
                 context.NextResult();
                 var result = context.EnumerateEntitySet<Customer>();
@@ -165,7 +165,7 @@ namespace Teaq.Tests
             var batch = new QueryBatch();
             batch.Add<Customer>("test");
 
-            using (var context = Repository.BuildBatchReader("test", connectionBuilder.Object, batch))
+            using (var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object))
             {
                 context.NextResult();
                 var result = context.ReadEntitySet<Customer>();
@@ -211,7 +211,7 @@ namespace Teaq.Tests
             var batch = new QueryBatch();
             batch.Add<Customer>("test");
 
-            using (var context = Repository.BuildBatchReader("test", connectionBuilder.Object, batch))
+            using (var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object))
             {
                 context.NextResult();
                 var result = context.ReadEntitySet<Customer>();

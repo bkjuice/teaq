@@ -23,7 +23,7 @@ namespace Teaq.Tests
             var batch = new QueryBatch();
             batch.Add<Customer>("test");
 
-            using (var context = Repository.BuildBatchWriter("test", connectionBuilder.Object, batch))
+            using (var context = Repository.BuildBatchWriter("test", batch, connectionBuilder.Object))
             {
                 context.SaveChanges();
             }
@@ -46,7 +46,7 @@ namespace Teaq.Tests
             var batch = new QueryBatch();
             batch.Add<Customer>("test");
 
-            using (var context = Repository.BuildBatchWriter("test", connectionBuilder.Object, batch))
+            using (var context = Repository.BuildBatchWriter("test", batch, connectionBuilder.Object))
             {
                 await context.SaveChangesAsync();
             }

@@ -18,7 +18,7 @@ namespace Teaq.Tests
         public void BuildBatchWriterContextWithConnectionStringAndBuilderAndBatchReturnsValidInstanceWithReferencedTypes()
         {
             var batch = new QueryBatch();
-            var context = Repository.BuildBatchWriter("test", new SqlConnectionBuilder(), batch);
+            var context = Repository.BuildBatchWriter("test", batch, new SqlConnectionBuilder());
             context.Should().NotBeNull();
             context.QueryBatch.Should().BeSameAs(batch);
         }

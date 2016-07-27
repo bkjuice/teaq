@@ -74,14 +74,14 @@ namespace Teaq.Tests
         [TestMethod]
         public void QueryBuilderStringsDefaultToNVarcharWhenSetGlobally()
         {
-            Repository.SetDefaultStringType(Repository.StringDataType.NVarchar);
+            Repository.SetDefaultStringType(SqlStringType.NVarchar);
 
             var command = Repository.Default.ForEntity<Customer>().BuildSelect()
                 .Where(c => c.CustomerKey == "XYZ").ToCommand();
 
             command.GetParameters()[0].SqlDbType.Should().Be(SqlDbType.NVarChar);
 
-            Repository.SetDefaultStringType(Repository.StringDataType.Varchar);
+            Repository.SetDefaultStringType(SqlStringType.Varchar);
         }
 
 
