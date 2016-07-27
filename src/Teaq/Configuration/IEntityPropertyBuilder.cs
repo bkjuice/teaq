@@ -70,6 +70,12 @@ namespace Teaq.Configuration
         IEntityPropertyBuilder<T> IsVarChar(int size);
 
         /// <summary>
+        /// Defines the current column as computed.
+        /// </summary>
+        /// <returns></returns>
+        IEntityPropertyBuilder<T> IsComputed();
+
+        /// <summary>
         /// Defines a property configuration for the specified entity type.
         /// </summary>
         /// <typeparam name="TValue">The type of the value.</typeparam>

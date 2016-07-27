@@ -68,6 +68,32 @@ namespace Teaq.Configuration
         }
 
         /// <summary>
+        /// Specified the concurrency token property.
+        /// </summary>
+        /// <param name="propertyExpression">The property expression.</param>
+        /// <returns>The current builder instance.</returns>
+        /// <returns></returns>
+        public IEntityConcurrencyPropertyBuilder<T> ConcurrencyToken(Expression<Func<T, byte[]>> propertyExpression)
+        {
+            this.currentProperty = propertyExpression.ParsePropertyName();
+            this.Config.ConcurrencyProperty = this.currentProperty;
+            this.Config.AddComputedColumn(this.currentProperty);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets a value indicating the specified property is a key.
+        /// </summary>
+        /// <returns>
+        /// The fluent interface to continue property definition.
+        /// </returns>
+        public IEntityPropertyBuilder<T> IsComputed()
+        {
+            this.Config.AddComputedColumn(this.currentProperty);
+            return this;
+        }
+
+        /// <summary>
         /// Sets a value indicating the specified property is a key.
         /// </summary>
         /// <returns>
@@ -87,8 +113,8 @@ namespace Teaq.Configuration
         /// </returns>
         public IEntityPropertyBuilder<T> IsIdentity()
         {
-            this.Config.AddKeyColumn(this.currentProperty);
-            this.Config.AddComputedColumn(this.currentProperty);
+            this.IsKey();
+            this.IsComputed();
             this.Config.HasIdentity = true;
             return this;
         }
@@ -172,20 +198,6 @@ namespace Teaq.Configuration
                     Size = size
                 });
 
-            return this;
-        }
-
-        /// <summary>
-        /// Specified the concurrency token property.
-        /// </summary>
-        /// <param name="propertyExpression">The property expression.</param>
-        /// <returns>The current builder instance.</returns>
-        /// <returns></returns>
-        public IEntityConcurrencyPropertyBuilder<T> ConcurrencyToken(Expression<Func<T, byte[]>> propertyExpression)
-        {
-            this.currentProperty = propertyExpression.ParsePropertyName();
-            this.Config.ConcurrencyProperty = this.currentProperty;
-            this.Config.AddComputedColumn(this.currentProperty);
             return this;
         }
 
