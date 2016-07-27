@@ -82,7 +82,7 @@
   <ItemGroup>
     <Compile Include="DataReaderExtensionTests.cs" />
     <Compile Include="DataConnectionExtensionTests.cs" />
-    <Compile Include="EntityExpressionParserTests.cs" />
+    <Compile Include="ExpressionParserTests.cs" />
     <Compile Include="EntityModelBuilderTests.cs" />
     <Compile Include="FastReflection\CollectionDescriptionTests.cs" />
     <Compile Include="FastReflection\ILGeneratorTests.cs" />
@@ -127,7 +127,7 @@
     <Compile Include="QueryBuilderTests.cs" />
     <Compile Include="QueryCommandTests.cs" />
     <Compile Include="QueryExtensionsTests.cs" />
-    <Compile Include="QueryPrepExtensionsTests.cs" />
+    <Compile Include="QueryBuilderExtensionsTests.cs" />
     <Compile Include="SqlConnectionBuilderTests.cs" />
     <Compile Include="SqlParameterExtensionTests.cs" />
     <Compile Include="SupportingData.cs" />

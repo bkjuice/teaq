@@ -10,7 +10,7 @@ using Teaq.QueryGeneration;
 namespace Teaq.Tests
 {
     [TestClass]
-    public class EntityExpressionParserTests
+    public class ExpressionParserTests
     {
         [TestMethod]
         public void ParseJoinExpressionThrowsNotSupportedExceptionWhenLeftNotPropertyExpression()

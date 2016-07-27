@@ -202,7 +202,6 @@
     <Compile Include="Configuration\IEntityModelBuilder.cs" />
     <Compile Include="Configuration\IEntityPropertyBuilder.cs" />
     <Compile Include="Configuration\NullPolicyKind.cs" />
-    <Compile Include="Configuration\RuntimeDataConfigurationExtensions.cs" />
     <Compile Include="BatchContext.cs" />
     <Compile Include="BatchProcessor.cs" />
     <Compile Include="BatchWriter.cs" />
@@ -213,8 +212,8 @@
     <Compile Include="DataReaderExtensions.Readers.cs" />
     <Compile Include="DataConnectionExtensions.cs" />
     <Compile Include="EmbeddedParameter.cs" />
-    <Compile Include="QueryGeneration\EntityExpressionParser.cs" />
-    <Compile Include="QueryGeneration\EntitySelectorVisitor.cs" />
+    <Compile Include="QueryGeneration\ExpressionParser.cs" />
+    <Compile Include="QueryGeneration\QueryPredicateVisitor.cs" />
     <Compile Include="QueryGeneration\SqlParameterExtensions.cs" />
     <Compile Include="FixedList.cs" />
     <Compile Include="JsonOutputBuilder.Buffer.cs" />
@@ -279,7 +278,7 @@
     <Compile Include="QueryBatch.cs" />
     <Compile Include="QueryGeneration\QueryBuilder{T}.cs" />
     <Compile Include="QueryGeneration\QueryCommand.cs" />
-    <Compile Include="QueryGeneration\QueryPrepExtensions.cs" />
+    <Compile Include="QueryGeneration\QueryBuilderExtensions.cs" />
     <Compile Include="QueryGeneration\QueryType.cs" />
     <Compile Include="SqlConnectionBuilder.cs" />
     <Compile Include="SqlSequenceProvider.cs" />

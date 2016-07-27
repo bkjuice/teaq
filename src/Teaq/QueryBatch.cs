@@ -223,7 +223,7 @@ namespace Teaq
         /// <returns>True if the name exists, false otherwise.</returns>
         public bool GlobalNameExists(string parameterOrColumnName)
         {
-            return this.globalNames != null && this.globalNames.Contains(parameterOrColumnName);
+            return this.globalNames?.Contains(parameterOrColumnName) == true;
         }
 
         /// <summary>
@@ -506,8 +506,8 @@ namespace Teaq
         /// <param name="parameterName">Name of the parameter.</param>
         private void VerifyForParameterTracking(string sourceColumnName, string parameterName)
         {
-            Contract.Requires<ArgumentNullException>(string.IsNullOrEmpty(sourceColumnName) == false);
-            Contract.Requires<ArgumentNullException>(string.IsNullOrEmpty(parameterName) == false);
+            Contract.Requires(string.IsNullOrEmpty(sourceColumnName) == false);
+            Contract.Requires(string.IsNullOrEmpty(parameterName) == false);
 
             if (this.globalNames == null)
             {

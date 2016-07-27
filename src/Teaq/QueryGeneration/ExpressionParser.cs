@@ -4,11 +4,12 @@ using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using Teaq.Configuration;
 
 namespace Teaq.QueryGeneration
 {
-    internal static class EntityExpressionParser
+    internal static class ExpressionParser
     {
         private static readonly Dictionary<string, Func<string, string>> orderByBuilders = new Dictionary<string, Func<string, string>>
             {
@@ -25,7 +26,7 @@ namespace Teaq.QueryGeneration
             SqlParameter[] locals = null, 
             string columnQualifier = null)
         {
-            var visitor = new EntitySelectorVisitor(parameterName, model, batch, locals);
+            var visitor = new QueryPredicateVisitor(parameterName, model, batch, locals);
             if (!string.IsNullOrEmpty(columnQualifier))
             {
                 visitor.AddTableAlias(typeof(T), columnQualifier);
@@ -104,12 +105,12 @@ namespace Teaq.QueryGeneration
 
                 if (constRightExpr.Value == null)
                 {
-                    return table1Column + EntitySelectorVisitor.SupportedDbNullSymbol(binaryExpr.NodeType) + "NULL";
+                    return table1Column + QueryPredicateVisitor.SupportedDbNullSymbol(binaryExpr.NodeType) + "NULL";
                 }
                 else
                 {
                     return table1Column + 
-                        EntitySelectorVisitor.SupportedSymbol(binaryExpr.NodeType) + 
+                        QueryPredicateVisitor.SupportedSymbol(binaryExpr.NodeType) + 
                         constRightExpr.Value.ToString();
                 }
             }
@@ -118,7 +119,7 @@ namespace Teaq.QueryGeneration
                 var tJoined = typeof(TJoined);
                 var joinedConfig = model?.GetEntityConfig(tJoined);
                 return table1Column +
-                    EntitySelectorVisitor.SupportedSymbol(binaryExpr.NodeType) +
+                    QueryPredicateVisitor.SupportedSymbol(binaryExpr.NodeType) +
                     rightExpr.Member.Name.AsQualifiedColumn(aliasForTJoined, joinedConfig, tJoined);
             }
         }
@@ -146,6 +147,29 @@ namespace Teaq.QueryGeneration
             var targetProperty = ((LambdaExpression)arguments[1]).ParsePropertyName();
             var target = typeof(T);
             return builder(target.AsUnqualifiedTable(config) + "." + targetProperty.EnsureBracketedIdentifier());
+        }
+
+        internal static StringBuilder AppendSqlIdentifier(this StringBuilder builder, string identifier)
+        {
+            Contract.Requires(builder != null);
+            Contract.Requires(string.IsNullOrEmpty(identifier) == false);
+
+            return builder.Append(identifier.EnsureBracketedIdentifier());
+        }
+
+        internal static string EnsureBracketedIdentifier(this string identifier)
+        {
+            Contract.Requires(string.IsNullOrEmpty(identifier) == false);
+
+            // HOT path, if this is partially qualified, just use it...if the caller can't get this right, 
+            // the error will make the issue obvious:
+            if (identifier[0] == '[')
+            {
+                return identifier;
+            }
+
+            // per the reference source, this overload of concat is highly optimized to use underlying native code:
+            return "[" + identifier + ']';
         }
     }
 }

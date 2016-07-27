@@ -6,6 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Reflection;
 using Teaq.Configuration;
 using Teaq.FastReflection;
+using Teaq.QueryGeneration;
 
 namespace Teaq
 {

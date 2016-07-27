@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
-using Teaq.Configuration;
+using Teaq.QueryGeneration;
 
 namespace Teaq.Tests
 {

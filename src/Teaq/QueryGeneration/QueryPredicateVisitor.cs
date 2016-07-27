@@ -11,7 +11,7 @@ using Teaq.FastReflection;
 
 namespace Teaq.QueryGeneration
 {
-    internal sealed class EntitySelectorVisitor : ExpressionVisitor
+    internal sealed class QueryPredicateVisitor : ExpressionVisitor
     {
         #region Expression Lookups
 
@@ -51,7 +51,7 @@ namespace Teaq.QueryGeneration
 
         private int parameterQualifier;
 
-        private bool currentMemberExpressionNullableWithHasValue;
+        private bool expressionIsNullableHasValue;
 
         private int openNestedGroupings;
 
@@ -59,7 +59,7 @@ namespace Teaq.QueryGeneration
 
         private Dictionary<Type, string> tableAliases;
 
-        public EntitySelectorVisitor(
+        public QueryPredicateVisitor(
             string baseParameterName,
             IDataModel model,
             QueryBatch batch,
@@ -71,11 +71,7 @@ namespace Teaq.QueryGeneration
             this.batch = batch;
             this.model = model;
 
-            if (batch != null)
-            {
-                this.currentBatchIndex = batch.NextBatchIndex();
-            }
-
+            this.currentBatchIndex = batch?.NextBatchIndex();
             this.predefinedLocals = predefinedLocals;
         }
 
@@ -107,9 +103,7 @@ namespace Teaq.QueryGeneration
 
         public void FinalizeExpression()
         {
-            while (this.CloseIfGrouped())
-            {
-            }
+            while (this.CloseIfGrouped()) ;
         }
 
         protected override Expression VisitMethodCall(MethodCallExpression node)
@@ -145,7 +139,7 @@ namespace Teaq.QueryGeneration
             }
 
             this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
-            this.QueryClause.AppendIdentifier(sourceColumn).Append(" in ");
+            this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(" in ");
             this.QueryClause.Append("(");
 
             // IList to avoid yet another enumerator, if possible:
@@ -200,16 +194,16 @@ namespace Teaq.QueryGeneration
         {
             Type tableType;
             var name = ExtractMemberName(node, this.model, out tableType);
-            if (this.currentMemberExpressionNullableWithHasValue)
+            if (this.expressionIsNullableHasValue)
             {
                 this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
-                this.QueryClause.AppendIdentifier(name).Append(" Is Not NULL");
-                this.currentMemberExpressionNullableWithHasValue = false;
+                this.QueryClause.AppendSqlIdentifier(name).Append(" Is Not NULL");
+                this.expressionIsNullableHasValue = false;
                 this.CloseIfGrouped();
             }
-            else if (string.Compare(name, "HasValue", StringComparison.Ordinal) == 0)
+            else if (string.Compare(name, "HasValue", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                this.currentMemberExpressionNullableWithHasValue = true;
+                this.expressionIsNullableHasValue = true;
             }
 
             return base.VisitMember(node);
@@ -254,7 +248,7 @@ namespace Teaq.QueryGeneration
             string predefinedName;
             if (this.TryPredefinedParameter(sourceColumn, out predefinedName))
             {
-                this.QueryClause.AppendIdentifier(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(predefinedName);
+                this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(predefinedName);
             }
             else
             {
@@ -271,11 +265,11 @@ namespace Teaq.QueryGeneration
                         -1);
 
                     this.Parameters.Add(parameter);
-                    this.QueryClause.AppendIdentifier(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(parameter.ParameterName);
+                    this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(supportedSymbols[node.NodeType]).Append(parameter.ParameterName);
                 }
                 else
                 {
-                    this.QueryClause.AppendIdentifier(sourceColumn).Append(supportedDbNullSymbols[node.NodeType]).Append("NULL");
+                    this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(supportedDbNullSymbols[node.NodeType]).Append("NULL");
                 }
             }
 
@@ -378,7 +372,7 @@ namespace Teaq.QueryGeneration
 
         private static bool MatchName(string sourceName, string globalName)
         {
-            return string.Compare(sourceName, globalName, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Equals(sourceName, globalName, StringComparison.OrdinalIgnoreCase);
         }
 
         private ColumnDataType GetColumnDataType(Type entityType, string sourceColumn)
@@ -412,41 +406,32 @@ namespace Teaq.QueryGeneration
         {
             predefinedName = null;
 
-            // Try local scope first:
             var locals = this.predefinedLocals;
-            if (locals != null)
+            for (int i = 0; i < locals?.Length; i++)
             {
-                for (int i = 0; i < this.predefinedLocals.GetLength(0); i++)
+                var p = locals[i];
+                if (MatchName(p.SourceColumn, sourceColumnName))
                 {
-                    if (MatchName(locals[i].SourceColumn, sourceColumnName))
+                    predefinedName = p.ParameterName;
+                    return true;
+                }
+            }
+
+            if (this.batch?.GlobalNameExists(sourceColumnName) == true)
+            {
+                var parameters = this.batch.EmbeddedParameters();
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    var p = parameters[i];
+                    if (MatchName(sourceColumnName, p.SourceColumnName))
                     {
-                        predefinedName = locals[i].ParameterName;
+                        predefinedName = p.ParameterName;
                         return true;
                     }
                 }
             }
 
-            if (this.batch == null)
-            {
-                return false;
-            }
-
-            if (!this.batch.GlobalNameExists(sourceColumnName))
-            {
-                return false;
-            }
-
-            var parameters = this.batch.EmbeddedParameters();
-            var len = parameters.Count;
-            for (int i = 0; i < len; i++)
-            {
-                if (MatchName(sourceColumnName, parameters[i].SourceColumnName))
-                {
-                    predefinedName = parameters[i].ParameterName;
-                }
-            }
-
-            return true;
+            return false;
         }
 
         private bool CloseIfGrouped()

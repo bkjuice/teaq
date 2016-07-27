@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.SqlServer.Server;
 using Teaq.Configuration;
 using Teaq.FastReflection;
+using Teaq.QueryGeneration;
 
 namespace Teaq
 {

@@ -5,12 +5,12 @@ using Teaq.QueryGeneration;
 namespace Teaq.Tests
 {
     [TestClass]
-    public class QueryPrepExtensionsTests
+    public class QueryBuilderExtensionsTests
     {
         [TestMethod]
         public void ExtractSelectColumnListUsesExplicitColumns()
         {
-            QueryPrepExtensions.ExtractSelectColumnList(typeof(Customer), null, new string[] { "Id" })
+            QueryBuilderExtensions.ExtractSelectColumnList(typeof(Customer), null, new string[] { "Id" })
                 .Should()
                 .NotContain("CustomerKey");
         }
@@ -18,7 +18,7 @@ namespace Teaq.Tests
         [TestMethod]
         public void ExtractSelectColumnListIngoresNullExplicitColumns()
         {
-            QueryPrepExtensions.ExtractSelectColumnList(typeof(Customer), null, null)
+            QueryBuilderExtensions.ExtractSelectColumnList(typeof(Customer), null, null)
                 .Should()
                 .Contain("CustomerKey");
         }
@@ -26,7 +26,7 @@ namespace Teaq.Tests
         [TestMethod]
         public void ExtractSelectColumnListIngoresEmptyExplicitColumns()
         {
-            QueryPrepExtensions.ExtractSelectColumnList(typeof(Customer), null, new string[] { })
+            QueryBuilderExtensions.ExtractSelectColumnList(typeof(Customer), null, new string[] { })
                 .Should()
                 .Contain("CustomerKey");
         }
