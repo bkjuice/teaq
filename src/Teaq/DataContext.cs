@@ -239,8 +239,7 @@ namespace Teaq
         /// </returns>
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
         {
-            return await this.QueryAsync(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model, command.GetParameters());
-
+            return await this.QueryAsync(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
         }
 
         /// <summary>
@@ -269,7 +268,7 @@ namespace Teaq
         /// </returns>
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, IDataModel model = null)
         {
-            return await this.QueryAsync(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model, command.GetParameters());
+            return await this.QueryAsync(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
         }
 
         /// <summary>
