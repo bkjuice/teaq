@@ -75,6 +75,19 @@ namespace Teaq.Tests.Stubs
         public byte Change { get; set; }
     }
 
+    public class CustomerWithMappedKey
+    {
+        public int CustomerId { get; set; }
+
+        public string Key { get; set; }
+
+        public DateTime Inception { get; set; }
+
+        public DateTimeOffset Modified { get; set; }
+
+        public byte Change { get; set; }
+    }
+
     public class CustomerWithNullable
     {
         public int CustomerId { get; set; }
