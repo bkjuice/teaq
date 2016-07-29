@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Teaq.Tests.Stubs;
 
 namespace Teaq.Tests
 {

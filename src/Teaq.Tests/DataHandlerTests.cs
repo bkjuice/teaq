@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using FluentAssertions;
 using Teaq.Tests;
+using Teaq.Tests.Stubs;
 
 namespace Teaq.Tests
 {

@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Teaq.Configuration;
+using Teaq.Tests.Stubs;
 
 namespace Teaq.Tests
 {

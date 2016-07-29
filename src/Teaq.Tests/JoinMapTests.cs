@@ -3,6 +3,7 @@ using System.Reflection;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Teaq.FastReflection;
+using Teaq.Tests.Stubs;
 
 namespace Teaq.Tests
 {

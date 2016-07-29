@@ -6,6 +6,7 @@ using Teaq.Tests;
 using FluentAssertions;
 using System.Configuration;
 using System.Threading.Tasks;
+using Teaq.Tests.Stubs;
 
 namespace Teaq.IntegrationTests
 {

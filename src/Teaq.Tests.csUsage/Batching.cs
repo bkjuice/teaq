@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Teaq.Tests.Stubs;
 
 namespace Teaq.Tests.csUsage
 {

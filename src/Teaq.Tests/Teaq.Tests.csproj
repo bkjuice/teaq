@@ -130,8 +130,18 @@
     <Compile Include="QueryBuilderExtensionsTests.cs" />
     <Compile Include="SqlConnectionBuilderTests.cs" />
     <Compile Include="SqlParameterExtensionTests.cs" />
-    <Compile Include="SupportingData.cs" />
-    <Compile Include="SupportingTypes.cs" />
+    <Compile Include="Stubs\DbConnectionStub.cs" />
+    <Compile Include="Stubs\IDataHelper.cs" />
+    <Compile Include="Stubs\EntityTableHelper{T}.cs" />
+    <Compile Include="Stubs\DbCommandStub.cs" />
+    <Compile Include="Stubs\DataHandlerStub{T}.cs" />
+    <Compile Include="Stubs\DBParameterCollectionStub.cs" />
+    <Compile Include="Stubs\QueryBuilderStub{T}.cs" />
+    <Compile Include="Stubs\InvalidJoinExpressionStub.cs" />
+    <Compile Include="Stubs\InvalidOrderByExpressionStub.cs" />
+    <Compile Include="Stubs\ValueTableHelper{T}.cs" />
+    <Compile Include="Stubs\TableHelper.cs" />
+    <Compile Include="Stubs\EntityTypes.cs" />
     <Compile Include="JsonBufferedOutputBuilderTests.cs" />
     <Compile Include="DataReaderJsonExtensionTests.cs" />
     <Compile Include="UdtTypeEnumeratorTests.cs" />
@@ -141,6 +151,7 @@
     <Compile Include="BatchWriterContextTests.cs" />
     <Compile Include="RepositoryTests.cs" />
     <Compile Include="CLRVerificationTests.cs" />
+    <Compile Include="DataContextTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
