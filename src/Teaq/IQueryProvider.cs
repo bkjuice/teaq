@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using Teaq.QueryGeneration;
 
-namespace Teaq.QueryGeneration
+namespace Teaq
 {
     /// <summary>
     /// Implementations of this interface provide the ability to synchronously query the target repository

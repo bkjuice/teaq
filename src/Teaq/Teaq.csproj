@@ -205,10 +205,10 @@
     <Compile Include="BatchContext.cs" />
     <Compile Include="BatchProcessor.cs" />
     <Compile Include="BatchWriter.cs" />
-    <Compile Include="QueryGeneration\IAsyncQueryProvider.cs" />
-    <Compile Include="QueryGeneration\IAsyncNonQueryProvider.cs" />
-    <Compile Include="QueryGeneration\INonQueryProvider.cs" />
-    <Compile Include="QueryGeneration\IQueryProvider.cs" />
+    <Compile Include="IAsyncQueryProvider.cs" />
+    <Compile Include="IAsyncNonQueryProvider.cs" />
+    <Compile Include="INonQueryProvider.cs" />
+    <Compile Include="IQueryProvider.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="DataContextBase.cs" />
     <Compile Include="DataHandler.cs" />

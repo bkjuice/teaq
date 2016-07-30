@@ -1,5 +1,4 @@
 ﻿using System;
-using Teaq.QueryGeneration;
 
 namespace Teaq
 {
