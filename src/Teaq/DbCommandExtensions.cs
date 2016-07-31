@@ -292,6 +292,20 @@ namespace Teaq
             return command;
         }
 
+        /// <summary>
+        /// Creates a command clean-up callback.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <returns>The cleanup action to use when enumerating results.</returns>
+        public static Action CleanupCallback(this IDbCommand command)
+        {
+            return () =>
+            {
+                command?.Connection?.Close();
+                command?.Dispose();
+            };
+        }
+
         ////private static async Task<List<T>> ReadEntitiesAsync<T>(this IDbCommand command, IDataHandler<T> handler, IDataModel model, NullPolicyKind policy, int count)
         ////{
         ////    Contract.Requires(command != null);

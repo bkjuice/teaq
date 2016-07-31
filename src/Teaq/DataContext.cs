@@ -13,6 +13,8 @@ namespace Teaq
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "The interface is all that is visible to the library user.")]
     public sealed partial class DataContext : DataContextBase, IDataContext
     {
+        private const int DefaultBufferSize = 64;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DataContext" /> class.
         /// </summary>
@@ -89,7 +91,7 @@ namespace Teaq
             }
         }
 
-        private IEnumerable<T?> QueryNullableValues<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T: struct
+        private List<string> QueryStringValues(string commandText, IDbDataParameter[] parameters, Func<IDataReader, string> handler)
         {
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
@@ -97,8 +99,59 @@ namespace Teaq
                         .BuildTextCommand(commandText, parameters)
                         .Open()
                         .ExecuteReader()
-                        .ReadNullableValues(handler);
+                        .EnumerateStringValuesInternal(handler, null)
+                        .ToList(DefaultBufferSize);
             }
+        }
+
+        private async Task<IEnumerable<string>> QueryStringValuesAsync(string commandText, IDbDataParameter[] parameters, Func<IDataReader, string> handler)
+        {
+            var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
+            return 
+                (await command.Open().ExecuteReaderAsync())
+                .EnumerateStringValuesInternal(handler, command.CleanupCallback());
+        }
+
+        private List<T?> QueryNullableValues<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T: struct
+        {
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                return connection
+                        .BuildTextCommand(commandText, parameters)
+                        .Open()
+                        .ExecuteReader()
+                        .EnumerateNullableValuesInternal(handler, null)
+                        .ToList(DefaultBufferSize);
+            }
+        }
+
+        private async Task<IEnumerable<T?>> QueryNullableValuesAsync<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T : struct
+        {
+            var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
+            return 
+                (await command.Open().ExecuteReaderAsync())
+                .EnumerateNullableValuesInternal(handler, command.CleanupCallback());
+        }
+
+        private List<T> QueryValues<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T : struct
+        {
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                return connection
+                        .BuildTextCommand(commandText, parameters)
+                        .Open()
+                        .ExecuteReader()
+                        .EnumerateValuesInternal(handler, null)
+                        .ToList(DefaultBufferSize);
+            }
+        }
+
+        private async Task<IEnumerable<T>> QueryValuesAsync<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T : struct
+        {
+            var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
+            return
+                (await command.Open().ExecuteReaderAsync())
+                .EnumerateValuesInternal(handler, command.CleanupCallback());
         }
 
         private List<TEntity> Query<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, IDataModel model, params IDbDataParameter[] parameters)
@@ -111,7 +164,8 @@ namespace Teaq
                         .BuildTextCommand(commandText, parameters)
                         .Open()
                         .ExecuteReader()
-                        .ReadEntities(readerHandler, model, 64, NullPolicyKind.IncludeAsDefaultValue);
+                        .EnumerateEntitiesInternal(readerHandler, model, NullPolicyKind.IncludeAsDefaultValue, null)
+                        .ToList(DefaultBufferSize);
             }
         }
 
@@ -120,19 +174,9 @@ namespace Teaq
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 
             var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
-
-            command.Open();
             return 
-                (await command.ExecuteReaderAsync())
-                .EnumerateEntities(
-                    readerHandler, 
-                    model, 
-                    NullPolicyKind.IncludeAsDefaultValue, 
-                    () =>
-                    {
-                        command.Connection.Close();
-                        command.Dispose();
-                    });
+                (await command.Open().ExecuteReaderAsync())
+                    .EnumerateEntitiesInternal(readerHandler, model, NullPolicyKind.IncludeAsDefaultValue, command.CleanupCallback());
         }
     }
 }

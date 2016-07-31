@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using Teaq.Configuration;
 using Teaq.QueryGeneration;
 
 namespace Teaq
@@ -28,7 +27,7 @@ namespace Teaq
         {
             Contract.Requires<ArgumentNullException>(command != null);
 
-            throw new NotImplementedException();
+            return this.QueryNullableValues(command.CommandText, command.GetParameters(), handler).ToList(64);
         }
 
         /// <summary>
@@ -41,11 +40,11 @@ namespace Teaq
         /// The collection of values with null values included.
         /// </returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task<IEnumerable<T?>> QueryNullableValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
+        public async Task<IEnumerable<T?>> QueryNullableValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
         {
             Contract.Requires<ArgumentNullException>(command != null);
 
-            throw new NotImplementedException();
+            return await this.QueryNullableValuesAsync(command.CommandText, command.GetParameters(), handler);
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace Teaq
         {
             Contract.Requires<ArgumentNullException>(command != null);
 
-            throw new NotImplementedException();
+            return this.QueryStringValues(command.CommandText, command.GetParameters(), handler);
         }
 
         /// <summary>
@@ -73,11 +72,11 @@ namespace Teaq
         /// The collection of string values.
         /// </returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task<IEnumerable<string>> QueryStringValuesAsync(QueryCommand command, Func<IDataReader, string> handler = null)
+        public async Task<IEnumerable<string>> QueryStringValuesAsync(QueryCommand command, Func<IDataReader, string> handler = null)
         {
             Contract.Requires<ArgumentNullException>(command != null);
 
-            throw new NotImplementedException();
+            return await this.QueryStringValuesAsync(command.CommandText, command.GetParameters(), handler);
         }
 
         /// <summary>
@@ -94,7 +93,7 @@ namespace Teaq
         {
             Contract.Requires<ArgumentNullException>(command != null);
 
-            throw new NotImplementedException();
+            return this.QueryValues(command.CommandText, command.GetParameters(), handler).ToList(64);
         }
 
         /// <summary>
@@ -107,11 +106,11 @@ namespace Teaq
         /// The collection of values with null values ommitted.
         /// </returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Task<IEnumerable<T>> QueryValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
+        public async Task<IEnumerable<T>> QueryValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
         {
             Contract.Requires<ArgumentNullException>(command != null);
 
-            throw new NotImplementedException();
+            return await this.QueryValuesAsync(command.CommandText, command.GetParameters(), handler);
         }
     }
 }

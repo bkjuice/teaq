@@ -225,7 +225,7 @@ namespace Teaq
         {
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
-            return reader?.EnumerateEntities<T>(null, dataModel, nullPolicy, onCompleteCallback) ?? EnumerateEmpty<T>(onCompleteCallback);
+            return reader?.EnumerateEntitiesInternal<T>(null, dataModel, nullPolicy, onCompleteCallback) ?? EnumerateEmpty<T>(onCompleteCallback);
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Teaq
             Contract.Requires<ArgumentNullException>(handler != null);
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
-            return reader.EnumerateEntities<T>(handler, null, nullPolicy, onCompleteCallback) ?? EnumerateEmpty<T>(onCompleteCallback);
+            return reader.EnumerateEntitiesInternal<T>(handler, null, nullPolicy, onCompleteCallback) ?? EnumerateEmpty<T>(onCompleteCallback);
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace Teaq
             Contract.Requires<ArgumentException>(estimatedRowCount >= 0);
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
-            return reader.ReadEntities<T>(null, dataModel, estimatedRowCount, nullPolicy);
+            return reader.ReadEntitiesInternal<T>(null, dataModel, estimatedRowCount, nullPolicy);
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace Teaq
             Contract.Requires<ArgumentException>(estimatedRowCount >= 0);
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
-            return reader.ReadEntities<T>(handler, null, estimatedRowCount, nullPolicy);
+            return reader.ReadEntitiesInternal<T>(handler, null, estimatedRowCount, nullPolicy);
         }
 
         internal static IEnumerable<string> EnumerateStringValuesInternal(this IDataReader reader, Func<IDataReader, string> handler, Action onCompleteCallback = null)
@@ -341,7 +341,7 @@ namespace Teaq
             return EnumerateEmpty<T>(onCompleteCallback);
         }
 
-        internal static List<T> ReadEntities<T>(
+        internal static List<T> ReadEntitiesInternal<T>(
             this IDataReader reader,
             IDataHandler<T> handler,
             IDataModel dataModel,
@@ -351,10 +351,10 @@ namespace Teaq
             Contract.Requires(estimatedRowCount >= 0);
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
-            return reader.EnumerateEntities<T>(handler, dataModel, nullPolicy, null).ToList(estimatedRowCount);
+            return reader.EnumerateEntitiesInternal<T>(handler, dataModel, nullPolicy, null).ToList(estimatedRowCount);
         }
 
-        internal static IEnumerable<T> EnumerateEntities<T>(
+        internal static IEnumerable<T> EnumerateEntitiesInternal<T>(
             this IDataReader reader,
             IDataHandler<T> handler,
             IDataModel dataModel,

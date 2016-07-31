@@ -216,13 +216,13 @@ namespace Teaq
         private List<TEntity> ReadEntitySet<TEntity>(IDataModel model, IDataHandler<TEntity> handler)
         {
             this.CheckPendingEnumerable("read the current result as a list");
-            return this.currentReader.ReadEntities(handler, model, 64, NullPolicyKind.IncludeAsDefaultValue);
+            return this.currentReader.ReadEntitiesInternal(handler, model, 64, NullPolicyKind.IncludeAsDefaultValue);
         }
 
         private IEnumerable<TEntity> EnumerateEntitySet<TEntity>(IDataModel model, IDataHandler<TEntity> handler)
         {
             this.SetForEnumeration();
-            return this.currentReader?.EnumerateEntities(handler, model, NullPolicyKind.IncludeAsDefaultValue, this.HandleCompletedEnumeration) ?? new List<TEntity>();
+            return this.currentReader?.EnumerateEntitiesInternal(handler, model, NullPolicyKind.IncludeAsDefaultValue, this.HandleCompletedEnumeration) ?? new List<TEntity>();
         }
 
         private void SetForEnumeration()
