@@ -192,6 +192,9 @@
     <Compile Include="Configuration\DataModel.cs" />
     <Compile Include="Configuration\EntityConfiguration.cs" />
     <Compile Include="Configuration\EntityModelBuilder.cs" />
+    <Compile Include="DataContext.IValueQueryProvider.cs" />
+    <Compile Include="DataContext.INonQueryProvider.cs" />
+    <Compile Include="DataContext.IEntityQueryProvider.cs" />
     <Compile Include="DataReaderExtensions.Iterators.cs" />
     <Compile Include="DataReaderExtensions.Converter.cs" />
     <Compile Include="DataFieldSetter.cs" />

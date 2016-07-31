@@ -4,7 +4,6 @@ using System.Data;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Teaq.Configuration;
-using Teaq.QueryGeneration;
 
 namespace Teaq
 {
@@ -12,7 +11,7 @@ namespace Teaq
     /// Concrete implementation of a ADO.NET persistence context.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "The interface is all that is visible to the library user.")]
-    public sealed class DataContext : DataContextBase, IDataContext
+    public sealed partial class DataContext : DataContextBase, IDataContext
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DataContext" /> class.
@@ -33,171 +32,6 @@ namespace Teaq
             : base(connectionString, connectionBuilder)
         {
             Contract.Requires(string.IsNullOrEmpty(connectionString) == false);
-        }
-
-        /// <summary>
-        /// Executes a query built using a fluent expression.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The query built using a fluent expression.</param>
-        /// <param name="model">The optional data model.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
-        {
-            return this.Query(command.CommandText, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Executes a query built using a fluent expression.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The command built from the data model.</param>
-        /// <param name="readerHandler">The data reader handler.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
-        {
-            return this.Query(command.CommandText, readerHandler, null, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Queries the repository for a collection of entities.
-        /// </summary>
-        /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
-        /// <param name="command">The command to execute.</param>
-        /// <param name="handler">The handler to read individual entities from the data reader.</param>
-        /// <returns>
-        /// The collection of entities.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
-        {
-            return this.Query(command.CommandText, new DelegatingReaderHandler<TEntity>(handler), null, command.GetParameters());
-
-        }
-
-        /// <summary>
-        /// Executes a query built using a fluent expression.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The query built using a fluent expression.</param>
-        /// <param name="model">The optional data model.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
-        {
-            return await this.QueryAsync(command.CommandText, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Executes a query built using a fluent expression to be materialized by a custom handler.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The query built using a fluent expression.</param>
-        /// <param name="readerHandler">The data reader handler to use.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
-        {
-            return await this.QueryAsync(command.CommandText, readerHandler, null, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Queries the repository asynchronously for a collection of entities.
-        /// </summary>
-        /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
-        /// <param name="command">The command to execute.</param>
-        /// <param name="handler">The handler to read individual entities from the data reader.</param>
-        /// <returns>
-        /// The awaitable collection of entities.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
-        {
-            return await this.QueryAsync(command.CommandText, new DelegatingReaderHandler<TEntity>(handler), null, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Executes the given command and returns the number of rows affected.
-        /// </summary>
-        /// <param name="command">The command built from a configured data model.</param>
-        /// <returns>
-        /// The number of rows affected.
-        /// </returns>
-        public int ExecuteNonQuery(QueryCommand command)
-        {
-            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
-            {
-                var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
-                dbCommand.Open();
-                return dbCommand.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
-        /// Executes the given command and returns the number of rows affected.
-        /// </summary>
-        /// <param name="command">The command built from a configured data model.</param>
-        /// <returns>
-        /// An awaitable result with the number of rows affected.
-        /// </returns>
-        public async Task<int> ExecuteNonQueryAsync(QueryCommand command)
-        {
-            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
-            {
-                var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
-                dbCommand.Open();
-                return await dbCommand.ExecuteNonQueryAsync();
-            }
-        }
-
-        /// <summary>
-        /// Executes the command and returns the first value in the first row, if one exists.
-        /// </summary>
-        /// <typeparam name="TValue">The type of the value to return.</typeparam>
-        /// <param name="command">The command to execute.</param>
-        /// <returns>The first value in the first row returned by the query.</returns>
-        public TValue? ExecuteScalar<TValue>(QueryCommand command) where TValue : struct
-        {
-            return Convert<TValue>(this.ExecuteScalar(command.CommandText, command.GetParameters()));
-        }
-
-        /// <summary>
-        /// Executes the command and returns the first value in the first row as a string, if one exists.
-        /// </summary>
-        /// <param name="command">The command to execute.</param>
-        /// <returns>
-        /// The first value in the first row returned by the query.
-        /// </returns>
-        public string ExecuteScalar(QueryCommand command)
-        {
-            return Convert(this.ExecuteScalar(command.CommandText, command.GetParameters()));
-        }
-
-        /// <summary>
-        /// Executes the command asynchronously and returns the first value in the first row, if one exists.
-        /// </summary>
-        /// <typeparam name="TValue">The type of the value to return.</typeparam>
-        /// <param name="command">The command to execute.</param>
-        /// <returns>The first value in the first row returned by the query.</returns>
-        public async Task<TValue?> ExecuteScalarAsync<TValue>(QueryCommand command) where TValue : struct
-        {
-            return Convert<TValue>(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
-        }
-
-        /// <summary>
-        /// Executes the command asynchronously and returns the first value in the first row as a string, if one exists.
-        /// </summary>
-        /// <param name="command">The command to execute.</param>
-        /// <returns>
-        /// The first value in the first row returned by the query.
-        /// </returns>
-        public async Task<string> ExecuteScalarAsync(QueryCommand command)
-        {
-            return Convert(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
         }
 
         private static bool ResultIsNull(object result)
@@ -255,6 +89,18 @@ namespace Teaq
             }
         }
 
+        private IEnumerable<T?> QueryNullableValues<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T: struct
+        {
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                return connection
+                        .BuildTextCommand(commandText, parameters)
+                        .Open()
+                        .ExecuteReader()
+                        .ReadNullableValues(handler);
+            }
+        }
+
         private List<TEntity> Query<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, IDataModel model, params IDbDataParameter[] parameters)
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
@@ -263,7 +109,9 @@ namespace Teaq
             {
                 return connection
                         .BuildTextCommand(commandText, parameters)
-                        .ReadEntities(readerHandler, model, NullPolicyKind.IncludeAsDefaultValue, 64);
+                        .Open()
+                        .ExecuteReader()
+                        .ReadEntities(readerHandler, model, 64, NullPolicyKind.IncludeAsDefaultValue);
             }
         }
 
@@ -271,9 +119,20 @@ namespace Teaq
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 
-            return await this.ConnectionBuilder.Create(this.ConnectionString)
-                .BuildTextCommand(commandText, parameters)
-                .EnumerateEntitiesAsync(readerHandler, model, NullPolicyKind.IncludeAsDefaultValue);
+            var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
+
+            command.Open();
+            return 
+                (await command.ExecuteReaderAsync())
+                .EnumerateEntities(
+                    readerHandler, 
+                    model, 
+                    NullPolicyKind.IncludeAsDefaultValue, 
+                    () =>
+                    {
+                        command.Connection.Close();
+                        command.Dispose();
+                    });
         }
     }
 }

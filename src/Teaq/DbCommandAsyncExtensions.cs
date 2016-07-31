@@ -8,7 +8,7 @@ namespace Teaq
     /// <summary>
     /// Sponsor class containing extension methods to invoke <see cref="IDbCommand"/> execute methods asynchronously.
     /// </summary>
-    internal static class DbCommandAsyncExtensions
+    public static class DbCommandAsyncExtensions
     {
         /// <summary>
         /// Executes the provide command asynchronously and returns an awaitable data reader instance.

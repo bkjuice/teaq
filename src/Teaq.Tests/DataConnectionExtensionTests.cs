@@ -14,46 +14,46 @@ namespace Teaq.Tests
     [TestClass]
     public class DataConnectionExtensionTests
     {
-        [TestMethod]
-        public async Task EnumerateEntitiesAsyncReturnsEnumerableEntitiesAsExpected()
-        {
-            var tableHelper = new TableHelper("Id");
-            tableHelper.AddRow(1);
-            tableHelper.AddRow(2);
-            var connection = new Mock<IDbConnection>();
-            var command = new Mock<IDbCommand>();
+        ////[TestMethod]
+        ////public async Task EnumerateEntitiesAsyncReturnsEnumerableEntitiesAsExpected()
+        ////{
+        ////    var tableHelper = new TableHelper("Id");
+        ////    tableHelper.AddRow(1);
+        ////    tableHelper.AddRow(2);
+        ////    var connection = new Mock<IDbConnection>();
+        ////    var command = new Mock<IDbCommand>();
 
-            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>()))
-                .Returns(() =>
-                    tableHelper.GetReader()
-                );
+        ////    command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>()))
+        ////        .Returns(() =>
+        ////            tableHelper.GetReader()
+        ////        );
 
-            connection.Setup(c => c.CreateCommand()).Returns(command.Object);
-            command.SetupGet(c => c.Connection).Returns(connection.Object);
+        ////    connection.Setup(c => c.CreateCommand()).Returns(command.Object);
+        ////    command.SetupGet(c => c.Connection).Returns(connection.Object);
 
-            var enumerable = await command.Object.EnumerateEntitiesAsync<int>();
-            enumerable.Count().Should().Be(2);
-        }
+        ////    var enumerable = await command.Object.EnumerateEntitiesAsync<int>();
+        ////    enumerable.Count().Should().Be(2);
+        ////}
 
-        [TestMethod]
-        public void EnumerateEntitiesReturnsEnumerableEntitiesAsExpected()
-        {
-            var tableHelper = new TableHelper("Id");
-            tableHelper.AddRow(1);
-            tableHelper.AddRow(2);
-            var connection = new Mock<IDbConnection>();
-            var command = new Mock<IDbCommand>();
+        ////[TestMethod]
+        ////public void EnumerateEntitiesReturnsEnumerableEntitiesAsExpected()
+        ////{
+        ////    var tableHelper = new TableHelper("Id");
+        ////    tableHelper.AddRow(1);
+        ////    tableHelper.AddRow(2);
+        ////    var connection = new Mock<IDbConnection>();
+        ////    var command = new Mock<IDbCommand>();
 
-            command.Setup(c => c.ExecuteReader())
-                .Returns(()=>
-                    tableHelper.GetReader()
-                );
+        ////    command.Setup(c => c.ExecuteReader())
+        ////        .Returns(()=>
+        ////            tableHelper.GetReader()
+        ////        );
 
-            connection.Setup(c => c.CreateCommand()).Returns(command.Object);
-            command.SetupGet(c => c.Connection).Returns(connection.Object);
+        ////    connection.Setup(c => c.CreateCommand()).Returns(command.Object);
+        ////    command.SetupGet(c => c.Connection).Returns(connection.Object);
 
-            command.Object.EnumerateEntities<int>().Count().Should().Be(2);
-        }
+        ////    command.Object.EnumerateEntities<int>().Count().Should().Be(2);
+        ////}
 
         [TestMethod]
         public void BuildCommandSetsCommandTextAsExpected()
@@ -141,50 +141,50 @@ namespace Teaq.Tests
             connection.Verify(c => c.Open(), Times.Never());
         }
 
-        [TestMethod]
-        public void ReadEntityOfTInvokesExecuteReader()
-        {
-            var connection = new Mock<IDbConnection>();
-            var command = new Mock<IDbCommand>();
+        ////[TestMethod]
+        ////public void ReadEntityOfTInvokesExecuteReader()
+        ////{
+        ////    var connection = new Mock<IDbConnection>();
+        ////    var command = new Mock<IDbCommand>();
 
-            connection.Setup(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-            command.Setup(c => c.ExecuteReader()).Verifiable();
-            command.SetupGet(c => c.Connection).Returns(connection.Object);
+        ////    connection.Setup(c => c.CreateCommand()).Returns(command.Object).Verifiable();
+        ////    command.Setup(c => c.ExecuteReader()).Verifiable();
+        ////    command.SetupGet(c => c.Connection).Returns(connection.Object);
 
-            command.Object.ReadEntities<object>();
-            command.Verify(c => c.ExecuteReader(), Times.Once());
-        }
+        ////    command.Object.ReadEntities<object>();
+        ////    command.Verify(c => c.ExecuteReader(), Times.Once());
+        ////}
 
-        [TestMethod]
-        public void ReadFirstEntityReturnsDefault()
-        {
-            var connection = new Mock<IDbConnection>();
-            var command = new Mock<IDbCommand>();
-            var reader = new Mock<IDataReader>();
+        ////[TestMethod]
+        ////public void ReadFirstEntityReturnsDefault()
+        ////{
+        ////    var connection = new Mock<IDbConnection>();
+        ////    var command = new Mock<IDbCommand>();
+        ////    var reader = new Mock<IDataReader>();
 
-            connection.Setup(c => c.CreateCommand()).Returns(command.Object);
-            command.Setup(c => c.ExecuteReader()).Returns(reader.Object);
-            command.SetupGet(c => c.Connection).Returns(connection.Object);
-            command.Object.ReadFirstEntity<object>().Should().BeNull();
-        }
+        ////    connection.Setup(c => c.CreateCommand()).Returns(command.Object);
+        ////    command.Setup(c => c.ExecuteReader()).Returns(reader.Object);
+        ////    command.SetupGet(c => c.Connection).Returns(connection.Object);
+        ////    command.Object.ReadFirstEntity<object>().Should().BeNull();
+        ////}
 
-        [TestMethod]
-        public void ReadFirstEntityReturnsFirstRow()
-        {
-            var tableHelper = new EntityTableHelper<Customer>();
-            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
+        ////[TestMethod]
+        ////public void ReadFirstEntityReturnsFirstRow()
+        ////{
+        ////    var tableHelper = new EntityTableHelper<Customer>();
+        ////    tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
+        ////    tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
 
-            var connection = new Mock<IDbConnection>();
-            var command = new Mock<IDbCommand>();
+        ////    var connection = new Mock<IDbConnection>();
+        ////    var command = new Mock<IDbCommand>();
 
-            connection.Setup(c => c.CreateCommand()).Returns(command.Object);
-            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
-            command.SetupGet(c => c.Connection).Returns(connection.Object);
+        ////    connection.Setup(c => c.CreateCommand()).Returns(command.Object);
+        ////    command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+        ////    command.SetupGet(c => c.Connection).Returns(connection.Object);
 
-            var entity = command.Object.ReadFirstEntity<Customer>();
-            entity.Should().NotBeNull();
-            entity.CustomerId.Should().Be(1);
-        }
+        ////    var entity = command.Object.ReadFirstEntity<Customer>();
+        ////    entity.Should().NotBeNull();
+        ////    entity.CustomerId.Should().Be(1);
+        ////}
     }
 }

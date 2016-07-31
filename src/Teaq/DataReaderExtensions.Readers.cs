@@ -15,7 +15,7 @@ namespace Teaq
     public static partial class DataReaderExtensions
     {
         /// <summary>
-        /// Enumerates the primitive values from the result set at column position 0, exluding null values.
+        /// Enumerates the primitive values from the result set at column position 0.
         /// </summary>
         /// <param name="reader">The reader to be read.</param>
         /// <param name="onCompleteCallback">The callback used once iteration is complete.</param>
@@ -24,10 +24,56 @@ namespace Teaq
         /// </returns>
         public static IEnumerable<string> EnumerateStringValues(this IDataReader reader, Action onCompleteCallback = null) 
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
             Contract.Ensures(Contract.Result<IEnumerable<string>>() != null);
 
-            return reader.EnumerateStringValuesInternal(onCompleteCallback);
+            return reader.EnumerateStringValuesInternal(null, onCompleteCallback);
+        }
+
+        /// <summary>
+        /// Enumerates the primitive values from the result set at column using the provided handler function.
+        /// </summary>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="handler">The handler to use when reading string records.</param>
+        /// <param name="onCompleteCallback">The callback used once iteration is complete.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        public static IEnumerable<string> EnumerateStringValues(this IDataReader reader, Func<IDataReader, string> handler, Action onCompleteCallback = null)
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<string>>() != null);
+
+            return reader.EnumerateStringValuesInternal(handler, onCompleteCallback);
+        }
+
+        /// <summary>
+        /// Enumerates the primitive values from the result set at column position 0.
+        /// </summary>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="estimatedRowCount">The optional estimated row count to optimize the list initial buffer size.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        public static List<string> ReadStringValues(this IDataReader reader, int estimatedRowCount = 64)
+        {
+            Contract.Ensures(Contract.Result<List<string>>() != null);
+
+            return reader.EnumerateStringValuesInternal(null, null).ToList(estimatedRowCount);
+        }
+
+        /// <summary>
+        /// Enumerates the primitive values from the result set using the provided handler function.
+        /// </summary>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="handler">The handler to use when reading string records.</param>
+        /// <param name="estimatedRowCount">The optional estimated row count to optimize the list initial buffer size.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        public static List<string> ReadStringValues(this IDataReader reader, Func<IDataReader, string> handler, int estimatedRowCount = 64)
+        {
+            Contract.Ensures(Contract.Result<List<string>>() != null);
+
+            return reader.EnumerateStringValuesInternal(handler, null).ToList(estimatedRowCount);
         }
 
         /// <summary>
@@ -39,25 +85,9 @@ namespace Teaq
         /// <returns>The collection of values with null values ommitted.</returns>
         public static IEnumerable<T> EnumerateValues<T>(this IDataReader reader, Action onCompleteCallback = null) where T: struct
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
             return reader.EnumerateValuesInternal<T>(null, onCompleteCallback);
-        }
-
-        /// <summary>
-        /// Enumerates the primitive values from the result set at column position 0.
-        /// </summary>
-        /// <typeparam name="T">The value type.</typeparam>
-        /// <param name="reader">The reader to be read.</param>
-        /// <param name="onCompleteCallback">The callback used once iteration is complete.</param>
-        /// <returns>The collection of values with null values included.</returns>
-        public static IEnumerable<T?> EnumerateNullableValues<T>(this IDataReader reader, Action onCompleteCallback = null) where T : struct
-        {
-            Contract.Requires<ArgumentNullException>(reader != null);
-            Contract.Ensures(Contract.Result<IEnumerable<T?>>() != null);
-
-            return reader.EnumerateNullableValuesInternal<T>(null, onCompleteCallback);
         }
 
         /// <summary>
@@ -72,15 +102,61 @@ namespace Teaq
         /// </returns>
         public static IEnumerable<T> EnumerateValues<T>(this IDataReader reader, Func<IDataReader, T?> handler, Action onCompleteCallback = null) where T : struct
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
-            Contract.Requires<ArgumentNullException>(handler != null);
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
             return reader.EnumerateValuesInternal(handler, onCompleteCallback);
         }
 
         /// <summary>
+        /// Enumerates the primitive values from the result set at column position 0 excluding null values.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="estimatedRowCount">The optional estimated row count to optimize the list initial buffer size.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        public static List<T> ReadValues<T>(this IDataReader reader, int estimatedRowCount = 64) 
+            where T: struct
+        {
+            Contract.Ensures(Contract.Result<List<T>>() != null);
+
+            return reader.EnumerateValuesInternal<T>(null, null).ToList(estimatedRowCount);
+        }
+
+        /// <summary>
+        /// Enumerates the primitive values from the result set using the provided handler function.
+        /// </summary>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="handler">The handler to use when reading string records.</param>
+        /// <param name="estimatedRowCount">The optional estimated row count to optimize the list initial buffer size.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        public static List<T> ReadValues<T>(this IDataReader reader, Func<IDataReader, T?> handler, int estimatedRowCount = 64)
+            where T: struct
+        {
+            Contract.Ensures(Contract.Result<List<T>>() != null);
+
+            return reader.EnumerateValuesInternal(handler, null).ToList(estimatedRowCount);
+        }
+
+        /// <summary>
         /// Enumerates the primitive values from the result set at column position 0.
+        /// </summary>
+        /// <typeparam name="T">The value type.</typeparam>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="onCompleteCallback">The callback used once iteration is complete.</param>
+        /// <returns>The collection of values with null values included.</returns>
+        public static IEnumerable<T?> EnumerateNullableValues<T>(this IDataReader reader, Action onCompleteCallback = null) where T : struct
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<T?>>() != null);
+
+            return reader.EnumerateNullableValuesInternal<T>(null, onCompleteCallback);
+        }
+       
+        /// <summary>
+        /// Enumerates the primitive values from the result set using the provided handler function.
         /// </summary>
         /// <typeparam name="T">The value type.</typeparam>
         /// <param name="reader">The reader to be read.</param>
@@ -89,11 +165,44 @@ namespace Teaq
         /// <returns>The collection of values with null values included.</returns>
         public static IEnumerable<T?> EnumerateNullableValues<T>(this IDataReader reader, Func<IDataReader, T?> handler, Action onCompleteCallback = null) where T : struct
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
             Contract.Requires<ArgumentNullException>(handler != null);
             Contract.Ensures(Contract.Result<IEnumerable<T?>>() != null);
 
             return reader.EnumerateNullableValuesInternal(handler, onCompleteCallback);
+        }
+
+        /// <summary>
+        /// Enumerates the primitive values from the result set at column position 0 including null values.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="estimatedRowCount">The optional estimated row count to optimize the list initial buffer size.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        public static List<T?> ReadNullableValues<T>(this IDataReader reader, int estimatedRowCount = 64)
+            where T : struct
+        {
+            Contract.Ensures(Contract.Result<List<T?>>() != null);
+
+            return reader.EnumerateNullableValuesInternal<T>(null, null).ToList(estimatedRowCount);
+        }
+
+        /// <summary>
+        /// Enumerates the primitive values from the result set using the provided handler function.
+        /// </summary>
+        /// <param name="reader">The reader to be read.</param>
+        /// <param name="handler">The handler to use when reading string records.</param>
+        /// <param name="estimatedRowCount">The optional estimated row count to optimize the list initial buffer size.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        public static List<T?> ReadNullableValues<T>(this IDataReader reader, Func<IDataReader, T?> handler, int estimatedRowCount = 64)
+            where T : struct
+        {
+            Contract.Ensures(Contract.Result<List<T?>>() != null);
+
+            return reader.EnumerateNullableValuesInternal(handler, null).ToList(estimatedRowCount);
         }
 
         /// <summary>
@@ -114,7 +223,6 @@ namespace Teaq
             Action onCompleteCallback = null,
             NullPolicyKind nullPolicy = NullPolicyKind.IncludeAsDefaultValue)
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
             return reader?.EnumerateEntities<T>(null, dataModel, nullPolicy, onCompleteCallback) ?? EnumerateEmpty<T>(onCompleteCallback);
@@ -139,7 +247,6 @@ namespace Teaq
             Action onCompleteCallback = null,
             NullPolicyKind nullPolicy = NullPolicyKind.IncludeAsDefaultValue)
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
             Contract.Requires<ArgumentNullException>(handler != null);
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
@@ -164,11 +271,10 @@ namespace Teaq
             int estimatedRowCount = 64,
             NullPolicyKind nullPolicy = NullPolicyKind.IncludeAsDefaultValue)
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
             Contract.Requires<ArgumentException>(estimatedRowCount >= 0);
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
-            return ReadEntities<T>(reader, null, dataModel, estimatedRowCount, nullPolicy);
+            return reader.ReadEntities<T>(null, dataModel, estimatedRowCount, nullPolicy);
         }
 
         /// <summary>
@@ -189,20 +295,24 @@ namespace Teaq
             int estimatedRowCount = 64,
             NullPolicyKind nullPolicy = NullPolicyKind.IncludeAsDefaultValue)
         {
-            Contract.Requires<ArgumentNullException>(reader != null);
             Contract.Requires<ArgumentNullException>(handler != null);
             Contract.Requires<ArgumentException>(estimatedRowCount >= 0);
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
-            return ReadEntities<T>(reader, handler, null, estimatedRowCount, nullPolicy);
+            return reader.ReadEntities<T>(handler, null, estimatedRowCount, nullPolicy);
         }
 
-        internal static IEnumerable<string> EnumerateStringValuesInternal(this IDataReader reader, Action onCompleteCallback = null)
+        internal static IEnumerable<string> EnumerateStringValuesInternal(this IDataReader reader, Func<IDataReader, string> handler, Action onCompleteCallback = null)
         {
             Contract.Requires(reader != null);
             Contract.Ensures(Contract.Result<IEnumerable<string>>() != null);
 
-            return new SimpleTypeIterator<string>(reader, NullPolicyKind.IncludeAsDefaultValue, onCompleteCallback);
+            if (reader != null)
+            {
+                return new StringIterator(reader, handler, onCompleteCallback);
+            }
+
+            return EnumerateEmpty<string>(onCompleteCallback);
         }
 
         internal static IEnumerable<T?> EnumerateNullableValuesInternal<T>(this IDataReader reader, Func<IDataReader, T?> handler, Action onCompleteCallback = null) where T : struct
@@ -210,7 +320,12 @@ namespace Teaq
             Contract.Requires(reader != null);
             Contract.Ensures(Contract.Result<IEnumerable<T?>>() != null);
 
-            return new ValueIterator<T>(reader, handler, onCompleteCallback);
+            if (reader != null)
+            {
+                return new ValueIterator<T>(reader, handler, onCompleteCallback);
+            }
+
+            return EnumerateEmpty<T?>(onCompleteCallback);
         }
 
         internal static IEnumerable<T> EnumerateValuesInternal<T>(this IDataReader reader, Func<IDataReader, T?> handler, Action onCompleteCallback = null) where T : struct
@@ -218,7 +333,12 @@ namespace Teaq
             Contract.Requires(reader != null);
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
 
-            return (new ValueIterator<T>(reader, handler, onCompleteCallback)).Where(v => v.HasValue).Select(v => v.Value);
+            if (reader != null)
+            {
+                return (new ValueIterator<T>(reader, handler, onCompleteCallback)).Where(v => v.HasValue).Select(v => v.Value);
+            }
+
+            return EnumerateEmpty<T>(onCompleteCallback);
         }
 
         internal static List<T> ReadEntities<T>(
@@ -228,13 +348,10 @@ namespace Teaq
             int estimatedRowCount,
             NullPolicyKind nullPolicy)
         {
-            Contract.Requires(reader != null);
             Contract.Requires(estimatedRowCount >= 0);
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
-            var results = new List<T>(estimatedRowCount);
-            results.AddRange(reader?.EnumerateEntities<T>(handler, dataModel, nullPolicy, null) ?? EnumerateEmpty<T>(null));
-            return results;
+            return reader.EnumerateEntities<T>(handler, dataModel, nullPolicy, null).ToList(estimatedRowCount);
         }
 
         internal static IEnumerable<T> EnumerateEntities<T>(
@@ -244,21 +361,30 @@ namespace Teaq
             NullPolicyKind nullPolicy,
             Action onCompleteCallback)
         {
-            Contract.Requires(reader != null);
-
-            if (handler != null)
+            if (reader != null)
             {
-                return new CustomHandlerIterator<T>(reader, handler, onCompleteCallback);
+
+                if (handler != null)
+                {
+                    return new CustomHandlerIterator<T>(reader, handler, onCompleteCallback);
+                }
+
+                if (typeof(T).TypeHandle.IsPrimitiveOrStringOrNullable())
+                {
+                    return new SimpleTypeIterator<T>(reader, nullPolicy, onCompleteCallback);
+                }
+
+                return new ComplexTypeIterator<T>(reader, dataModel, onCompleteCallback);
             }
 
-            // TODO: EnumerateValues...T : struct
-            // TODO: EnumerateStrings....
-            if (typeof(T).TypeHandle.IsPrimitiveOrStringOrNullable())
-            {
-                return new SimpleTypeIterator<T>(reader, nullPolicy, onCompleteCallback);
-            }
+            return EnumerateEmpty<T>(onCompleteCallback);
+        }
 
-            return new ComplexTypeIterator<T>(reader, dataModel, onCompleteCallback);
+        internal static List<T> ToList<T>(this IEnumerable<T> items, int initialCapacity)
+        {
+            var result = new List<T>(initialCapacity);
+            result.AddRange(items);
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
