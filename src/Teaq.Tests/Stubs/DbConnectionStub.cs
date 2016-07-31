@@ -5,9 +5,23 @@ namespace Teaq.Tests.Stubs
 {
     public class DbConnectionStub : IDbConnection
     {
+        private IDbCommand mockCommand;
+
         public IDbTransaction MockTransaction { get; set; }
 
-        public IDbCommand MockCommand { get; set; }
+        public IDbCommand MockCommand
+        {
+            get
+            {
+                return this.mockCommand;
+            }
+
+            set
+            {
+                this.mockCommand = value;
+                this.mockCommand.Connection = this;
+            }
+        }
 
         public bool CloseInvoked { get; private set; }
 
@@ -48,6 +62,7 @@ namespace Teaq.Tests.Stubs
             if (this.MockCommand == null)
             {
                 this.MockCommand = new DbCommandStub();
+                this.MockCommand.Connection = this;
             }
 
             return this.MockCommand;

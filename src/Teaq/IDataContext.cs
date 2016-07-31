@@ -3,10 +3,12 @@
 namespace Teaq
 {
     /// <summary>
-    /// Testable surrogate interface used to abstract data access control. 
-    /// This interface reduces the data context surface that must be mocked for unit testing.
+    /// Interface that composes all repository query capabilities offered by Teaq.
     /// </summary>
-    public interface IDataContext : IAsyncNonQueryProvider, IAsyncQueryProvider, INonQueryProvider, IQueryProvider, IDisposable
+    public interface IDataContext : 
+        INonQueryProvider, 
+        IEntityQueryProvider, 
+        IDisposable
     {
         /// <summary>
         /// Gets the connection string to the underlying data store.

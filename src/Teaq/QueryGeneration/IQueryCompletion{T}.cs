@@ -1,4 +1,6 @@
-﻿namespace Teaq.QueryGeneration
+﻿using System.Data;
+
+namespace Teaq.QueryGeneration
 {
     /// <summary>
     /// Fluent interface to complete the query build process.
@@ -18,7 +20,7 @@
         IQueryCompletion<T> WithOption(string optionClause);
 
         /// <summary>
-        /// Builds the resulting query command and clears all query builder internal state.
+        /// Builds the result of the fluent query method chain.
         /// </summary>
         /// <returns>
         /// The query command.
@@ -26,7 +28,7 @@
         QueryCommand<T> ToCommand();
 
         /// <summary>
-        /// Adds to the underlying query batch and clears all internal state.
+        /// Adds the query to the batch.
         /// </summary>
         /// <param name="batch">The batch.</param>
         /// <param name="canSplitBatch">if set to <c>true</c> the query [can be split into a separate batch if needed].</param>

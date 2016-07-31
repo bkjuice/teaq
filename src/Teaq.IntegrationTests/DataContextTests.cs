@@ -28,7 +28,7 @@ namespace Teaq.IntegrationTests
 
             var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
             var command = model.ForEntity<Customer>().BuildInsert(customer).ToCommand();
-            var customerId = context.Query<int>(command.CommandText, command.GetParameters()).FirstOrDefault();
+            var customerId = context.ExecuteScalar<int>(command).GetValueOrDefault();
             customerId.Should().BeGreaterThan(0);
         }
 
@@ -48,10 +48,10 @@ namespace Teaq.IntegrationTests
 
             var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
             var command = model.ForEntity<Customer>().BuildInsert(customer).ToCommand();
-            context.ExecuteNonQuery(command.CommandText, command.GetParameters());
+            context.ExecuteNonQuery(command);
 
             var query = model.BuildSelectCommand<Customer>(c => c.CustomerKey == customerKey);
-            customer2 = context.Query<Customer>(query.CommandText, query.GetParameters()).FirstOrDefault();
+            customer2 = context.Query<Customer>(query).FirstOrDefault();
             customer2.CustomerId.Should().BeGreaterThan(0);
         }
 
@@ -80,11 +80,11 @@ namespace Teaq.IntegrationTests
             var address = new Address { Change = 3 };
             var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
             var insertCustomer = model.ForEntity<CustomerWithAddress>().BuildInsert(customer).ToCommand();
-            customer.CustomerId = context.Query<int>(insertCustomer.CommandText, insertCustomer.GetParameters()).FirstOrDefault();
+            customer.CustomerId = context.ExecuteScalar<int>(insertCustomer).GetValueOrDefault();
             address.CustomerId = customer.CustomerId;
 
             var insertAddress = model.ForEntity<Address>().BuildInsert(address).ToCommand();
-            address.AddressId = context.Query<int>(insertAddress.CommandText, insertAddress.GetParameters()).FirstOrDefault();
+            address.AddressId = context.ExecuteScalar<int>(insertAddress).GetValueOrDefault();
 
             var joinHandler = new JoinHandler<CustomerWithAddress>(model);
             joinHandler.GetMap().AddJoinSplit<Address>((c, a) => c.Address = a);
@@ -124,7 +124,7 @@ namespace Teaq.IntegrationTests
 
             var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
             var command = model.ForEntity<Customer>().BuildInsert(customer).ToCommand();
-            context.ExecuteNonQuery(command.CommandText, command.GetParameters());
+            context.ExecuteNonQuery(command);
 
             var query = model.BuildSelectCommand<Customer>(c => c.CustomerKey == customerKey);
             var customer2 = context.Query(query, model).FirstOrDefault();
@@ -234,18 +234,18 @@ namespace Teaq.IntegrationTests
 
             var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
             var command = model.ForEntity<Customer>().BuildInsert(customer).ToCommand();
-            context.ExecuteNonQuery(command.CommandText, command.GetParameters());
+            context.ExecuteNonQuery(command);
 
             var query = model.BuildSelectCommand<Customer>(c => c.CustomerKey == customerKey);
-            customer2 = context.Query<Customer>(query.CommandText, model, query.GetParameters()).FirstOrDefault();
+            customer2 = context.Query(query).FirstOrDefault();
 
             customer2.CustomerId.Should().BeGreaterThan(0);
 
             customer2.Change = 1;
             var update = model.ForEntity<Customer>().BuildUpdate(customer2, c => c.CustomerId == customer2.CustomerId).ToCommand();
-            context.ExecuteNonQuery(update.CommandText, update.GetParameters());
+            context.ExecuteNonQuery(update);
 
-            var updatedCustomer = context.Query<Customer>(query.CommandText, model, query.GetParameters()).FirstOrDefault();
+            var updatedCustomer = context.Query(query).FirstOrDefault();
             updatedCustomer.Change.Should().Be(1);
         }
 
@@ -265,16 +265,16 @@ namespace Teaq.IntegrationTests
 
             var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
             var command = model.ForEntity<Customer>().BuildInsert(customer).ToCommand();
-            context.ExecuteNonQuery(command.CommandText, command.GetParameters());
+            context.ExecuteNonQuery(command);
 
             var query = model.BuildSelectCommand<Customer>(c => c.CustomerKey == customerKey);
-            customer2 = context.Query<Customer>(query.CommandText, model, query.GetParameters()).FirstOrDefault();
+            customer2 = context.Query(query).FirstOrDefault();
             customer2.CustomerId.Should().BeGreaterThan(0);
 
             var delete = model.BuildDeleteCommand<Customer>(c => c.CustomerId == customer2.CustomerId);
-            context.ExecuteNonQuery(delete.CommandText, delete.GetParameters());
+            context.ExecuteNonQuery(delete);
 
-            var deletedCustomer = context.Query<Customer>(query.CommandText, model, query.GetParameters()).FirstOrDefault();
+            var deletedCustomer = context.Query(query).FirstOrDefault();
             deletedCustomer.Should().BeNull();
         }
 

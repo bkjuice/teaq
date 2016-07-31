@@ -28,7 +28,7 @@ namespace Teaq.QueryGeneration
             return sqlParams;
         }
 
-        public static SqlParameter MakeParameter(
+        public static SqlParameter MakeQualifiedParameter(
             this object value,
             string sourceColumnName,
             ColumnDataType dataType,
@@ -38,6 +38,13 @@ namespace Teaq.QueryGeneration
             int? indexer)
         {
             var name = parameterBaseName.GetQualifiedParameterName(batchQualifier, parameterQualifier, indexer);
+            var parameter = value.MakeParameter(name, dataType);
+            parameter.SourceColumn = sourceColumnName;
+            return parameter;
+        }
+
+        public static SqlParameter MakeParameter(this object value, string name, ColumnDataType dataType)
+        {
             if (value == null)
             {
                 value = DBNull.Value;
@@ -68,7 +75,6 @@ namespace Teaq.QueryGeneration
                     Repository.DefaultStringType == SqlStringType.Varchar ? SqlDbType.VarChar : SqlDbType.NVarChar;
             }
 
-            parameter.SourceColumn = sourceColumnName;
             return parameter;
         }
 

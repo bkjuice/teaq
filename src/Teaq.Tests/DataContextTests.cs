@@ -59,6 +59,7 @@ namespace Teaq.Tests
             connectionStub.MockCommand = command.Object;
             command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader()).Verifiable();
             command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader()).Verifiable();
+            command.SetupGet(c => c.Connection).Returns(connectionStub);
         }
 
         private static Mock<IConnectionBuilder> BuildConnectionMock(out DbConnectionStub connectionStub)

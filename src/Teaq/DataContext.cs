@@ -46,7 +46,7 @@ namespace Teaq
         /// </returns>
         public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
         {
-            return this.Query(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
+            return this.Query(command.CommandText, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
         }
 
         /// <summary>
@@ -60,172 +60,22 @@ namespace Teaq
         /// </returns>
         public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
         {
-            return this.Query(command.CommandText, CommandType.Text, readerHandler, null, command.GetParameters());
+            return this.Query(command.CommandText, readerHandler, null, command.GetParameters());
         }
 
         /// <summary>
-        /// Executes a query built using a fluent expression.
+        /// Queries the repository for a collection of entities.
         /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The command built from the data model.</param>
-        /// <param name="model">The optional data model.</param>
+        /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
+        /// <param name="command">The command to execute.</param>
+        /// <param name="handler">The handler to read individual entities from the data reader.</param>
         /// <returns>
-        /// An enumerable collection of results of the specified type.
+        /// The collection of entities.
         /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand command, IDataModel model = null)
+        public List<TEntity> Query<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
-            return this.Query(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
-        }
+            return this.Query(command.CommandText, new DelegatingReaderHandler<TEntity>(handler), null, command.GetParameters());
 
-        /// <summary>
-        /// Executes a query built using a fluent expression.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The command built from the data model.</param>
-        /// <param name="readerHandler">The data reader handler.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand command, IDataHandler<TEntity> readerHandler)
-        {
-            return this.Query(command.CommandText, CommandType.Text, readerHandler, null, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(string commandText, params object[] parameters)
-        {
-            return this.Query(commandText, CommandType.Text, default(IDataHandler<TEntity>), null, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="model">The optional data model.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(string commandText, IDataModel model = null, params object[] parameters)
-        {
-            return this.Query(commandText, CommandType.Text, default(IDataHandler<TEntity>), model, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(string commandText, CommandType commandKind, params object[] parameters)
-        {
-            return this.Query(commandText, commandKind, default(IDataHandler<TEntity>), null, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="model">The optional data model.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(string commandText, CommandType commandKind, IDataModel model = null, params object[] parameters)
-        {
-            return this.Query(commandText, commandKind, default(IDataHandler<TEntity>), model, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="readerHandler">The data reader handler.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, params object[] parameters)
-        {
-            return this.Query(commandText, CommandType.Text, readerHandler, null, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="readerHandler">The data reader handler.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An enumerable collection of results of the specified type.
-        /// </returns>
-        public List<TEntity> Query<TEntity>(string commandText, CommandType commandKind, IDataHandler<TEntity> readerHandler, params object[] parameters)
-        {
-            return this.Query(commandText, commandKind, readerHandler, null, parameters);
-        }
-
-        /// <summary>
-        /// Executes the given command and returns the number of rows affected.
-        /// </summary>
-        /// <param name="command">The command built from a configured data model.</param>
-        /// <returns>
-        /// The number of rows affected.
-        /// </returns>
-        public int ExecuteNonQuery(QueryCommand command)
-        {
-            return this.ExecuteNonQuery(command.CommandText, CommandType.Text, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Executes the given command and returns the number of rows affected.
-        /// </summary>
-        /// <param name="commandText">The command string.</param>
-        /// <param name="parameters">The parameters to apply to the command string.</param>
-        /// <returns>
-        /// The number of rows affected.
-        /// </returns>
-        public int ExecuteNonQuery(string commandText, params object[] parameters)
-        {
-            return this.ExecuteNonQuery(commandText, CommandType.Text, parameters);
-        }
-
-        /// <summary>
-        /// Executes the given command and returns the number of rows affected.
-        /// </summary>
-        /// <param name="commandText">The command string.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="parameters">The parameters to apply to the command string.</param>
-        /// <returns>
-        /// The number of rows affected.
-        /// </returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Security",
-            "CA2100:Review SQL queries for security vulnerabilities",
-            Justification = "Not subject to user input and expected parameterization.")]
-        public int ExecuteNonQuery(string commandText, CommandType commandKind, params object[] parameters)
-        {
-            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
-            {
-                return connection.ExecuteNonQuery(commandText, parameters, commandKind);
-            }
         }
 
         /// <summary>
@@ -239,7 +89,7 @@ namespace Teaq
         /// </returns>
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
         {
-            return await this.QueryAsync(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
+            return await this.QueryAsync(command.CommandText, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
         }
 
         /// <summary>
@@ -253,127 +103,38 @@ namespace Teaq
         /// </returns>
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
         {
-            return await this.QueryAsync(command.CommandText, CommandType.Text, readerHandler, null, command.GetParameters());
-
+            return await this.QueryAsync(command.CommandText, readerHandler, null, command.GetParameters());
         }
 
         /// <summary>
-        /// Executes a query built using a fluent expression.
+        /// Queries the repository asynchronously for a collection of entities.
         /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The query built using a fluent expression.</param>
-        /// <param name="model">The optional data model.</param>
+        /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
+        /// <param name="command">The command to execute.</param>
+        /// <param name="handler">The handler to read individual entities from the data reader.</param>
         /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
+        /// The awaitable collection of entities.
         /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, IDataModel model = null)
+        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
-            return await this.QueryAsync(command.CommandText, CommandType.Text, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
+            return await this.QueryAsync(command.CommandText, new DelegatingReaderHandler<TEntity>(handler), null, command.GetParameters());
         }
 
         /// <summary>
-        /// Executes a query built using a fluent expression to be materialized by a custom handler.
+        /// Executes the given command and returns the number of rows affected.
         /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="command">The query built using a fluent expression.</param>
-        /// <param name="readerHandler">The data reader handler to use.</param>
+        /// <param name="command">The command built from a configured data model.</param>
         /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
+        /// The number of rows affected.
         /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, IDataHandler<TEntity> readerHandler)
+        public int ExecuteNonQuery(QueryCommand command)
         {
-            return await this.QueryAsync(command.CommandText, CommandType.Text, readerHandler, null, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, params object[] parameters)
-        {
-            return await this.QueryAsync(commandText, CommandType.Text, default(IDataHandler<TEntity>), null, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="model">The optional data model.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, IDataModel model = null, params object[] parameters)
-        {
-            return await this.QueryAsync(commandText, CommandType.Text, default(IDataHandler<TEntity>), model, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, CommandType commandKind, params object[] parameters)
-        {
-            return await this.QueryAsync(commandText, commandKind, default(IDataHandler<TEntity>), null, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="model">The optional data model.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, CommandType commandKind, IDataModel model = null, params object[] parameters)
-        {
-            return await this.QueryAsync(commandText, commandKind, default(IDataHandler<TEntity>), model, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="readerHandler">The data reader handler.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, params object[] parameters)
-        {
-            return await this.QueryAsync(commandText, CommandType.Text, readerHandler, null, parameters);
-        }
-
-        /// <summary>
-        /// Executes a query directly against the backing store.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of item that will be returned in the expected result set.</typeparam>
-        /// <param name="commandText">The sql statement to execute.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="readerHandler">The data reader handler.</param>
-        /// <param name="parameters">Parameters to pass to the Sql statement. This cannot be null but may be empty.</param>
-        /// <returns>
-        /// An awaitable, enumerable collection of results of the specified type.
-        /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, CommandType commandKind, IDataHandler<TEntity> readerHandler, params object[] parameters)
-        {
-            return await this.QueryAsync(commandText, commandKind, readerHandler, null, parameters);
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
+                dbCommand.Open();
+                return dbCommand.ExecuteNonQuery();
+            }
         }
 
         /// <summary>
@@ -385,59 +146,134 @@ namespace Teaq
         /// </returns>
         public async Task<int> ExecuteNonQueryAsync(QueryCommand command)
         {
-            return await this.ExecuteNonQueryAsync(command.CommandText, CommandType.Text, command.GetParameters());
-        }
-
-        /// <summary>
-        /// Executes the given command and returns the number of rows affected.
-        /// </summary>
-        /// <param name="commandText">The command string.</param>
-        /// <param name="parameters">The parameters to apply to the command string.</param>
-        /// <returns>
-        /// An awaitable result with the number of rows affected.
-        /// </returns>
-        public async Task<int> ExecuteNonQueryAsync(string commandText, params object[] parameters)
-        {
-            return await this.ExecuteNonQueryAsync(commandText, CommandType.Text, parameters);
-        }
-
-        /// <summary>
-        /// Executes the given command and returns the number of rows affected.
-        /// </summary>
-        /// <param name="commandText">The command string.</param>
-        /// <param name="commandKind">The kind of command to execute.</param>
-        /// <param name="parameters">The parameters to apply to the command string.</param>
-        /// <returns>
-        /// An awaitable result with the number of rows affected.
-        /// </returns>
-        public async Task<int> ExecuteNonQueryAsync(string commandText, CommandType commandKind, params object[] parameters)
-        {
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
-                return await connection.ExecuteNonQueryAsync(commandText, parameters, commandKind);
+                var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
+                dbCommand.Open();
+                return await dbCommand.ExecuteNonQueryAsync();
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Security",
-            "CA2100:Review SQL queries for security vulnerabilities",
-            Justification = "Not subject to user input and expected parameterization.")]
-        private List<TEntity> Query<TEntity>(string commandText, CommandType commandKind, IDataHandler<TEntity> readerHandler, IDataModel model, params object[] parameters)
+        /// <summary>
+        /// Executes the command and returns the first value in the first row, if one exists.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the value to return.</typeparam>
+        /// <param name="command">The command to execute.</param>
+        /// <returns>The first value in the first row returned by the query.</returns>
+        public TValue? ExecuteScalar<TValue>(QueryCommand command) where TValue : struct
+        {
+            return Convert<TValue>(this.ExecuteScalar(command.CommandText, command.GetParameters()));
+        }
+
+        /// <summary>
+        /// Executes the command and returns the first value in the first row as a string, if one exists.
+        /// </summary>
+        /// <param name="command">The command to execute.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        public string ExecuteScalar(QueryCommand command)
+        {
+            return Convert(this.ExecuteScalar(command.CommandText, command.GetParameters()));
+        }
+
+        /// <summary>
+        /// Executes the command asynchronously and returns the first value in the first row, if one exists.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the value to return.</typeparam>
+        /// <param name="command">The command to execute.</param>
+        /// <returns>The first value in the first row returned by the query.</returns>
+        public async Task<TValue?> ExecuteScalarAsync<TValue>(QueryCommand command) where TValue : struct
+        {
+            return Convert<TValue>(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
+        }
+
+        /// <summary>
+        /// Executes the command asynchronously and returns the first value in the first row as a string, if one exists.
+        /// </summary>
+        /// <param name="command">The command to execute.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        public async Task<string> ExecuteScalarAsync(QueryCommand command)
+        {
+            return Convert(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
+        }
+
+        private static bool ResultIsNull(object result)
+        {
+            // TODO: Test a null result with SQL Server (leaky abs):
+            if (result == null || ReferenceEquals(DBNull.Value, result))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static string Convert(object result)
+        {
+            if (ResultIsNull(result))
+            {
+                return string.Empty;
+            }
+
+            return result.ToString();
+        }
+
+        private static TValue? Convert<TValue>(object result) where TValue: struct
+        {
+            if (ResultIsNull(result))
+            {
+                return new TValue?();
+            }
+
+            var expected = typeof(TValue);
+            var converter = DataReaderExtensions.GetConverter(result.GetType().TypeHandle, expected.TypeHandle, expected);
+            return (TValue)converter(result);
+        }
+
+        private object ExecuteScalar(string commandText, IDbDataParameter[] parameters)
+        {
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                return connection
+                    .BuildTextCommand(commandText, parameters)
+                    .Open()
+                    .ExecuteScalar();
+            }
+        }
+
+        private async Task<object> ExecuteScalarAsync(string commandText, IDbDataParameter[] parameters)
+        {
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                return await connection
+                    .BuildTextCommand(commandText, parameters)
+                    .Open()
+                    .ExecuteScalarAsync();
+            }
+        }
+
+        private List<TEntity> Query<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, IDataModel model, params IDbDataParameter[] parameters)
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
-                return connection.ReadEntities(commandText, parameters, commandKind, readerHandler, model, 64, NullPolicyKind.IncludeAsDefaultValue);
+                return connection
+                        .BuildTextCommand(commandText, parameters)
+                        .ReadEntities(readerHandler, model, NullPolicyKind.IncludeAsDefaultValue, 64);
             }
         }
 
-        private async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, CommandType commandKind, IDataHandler<TEntity> readerHandler, IDataModel model, params object[] parameters)
+        private async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, IDataModel model, params IDbDataParameter[] parameters)
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 
             return await this.ConnectionBuilder.Create(this.ConnectionString)
-                .EnumerateEntitiesAsync(commandText, parameters, commandKind, readerHandler, model, NullPolicyKind.IncludeAsDefaultValue);
+                .BuildTextCommand(commandText, parameters)
+                .EnumerateEntitiesAsync(readerHandler, model, NullPolicyKind.IncludeAsDefaultValue);
         }
     }
 }

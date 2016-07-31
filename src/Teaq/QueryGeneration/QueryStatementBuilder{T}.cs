@@ -133,7 +133,7 @@ namespace Teaq.QueryGeneration
 
                 var parameter = property
                         .GetValue(target)
-                        .MakeParameter(targetColumn, columnDataType, "@" + targetColumn, batchIndex, null, null);
+                        .MakeQualifiedParameter(targetColumn, columnDataType, "@" + targetColumn, batchIndex, null, null);
 
                 items.Add(parameter);
             }

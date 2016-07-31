@@ -136,7 +136,7 @@ namespace Teaq
                 [new TypePair(T<SqlXml>(), T<XmlDocument>())] = ConvertSqlXmlToXml,
             };
 
-        internal static Func<object, object> GetConverter(RuntimeTypeHandle source, RuntimeTypeHandle target, Type expected)
+        internal static Func<object, object> GetConverter(this RuntimeTypeHandle source, RuntimeTypeHandle target, Type expected)
         {
             Func<object, object> converter;
             if (Converters.TryGetValue(new TypePair(source, target), out converter))

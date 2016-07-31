@@ -280,7 +280,7 @@ namespace Teaq
                 }
             }
 
-            this.currentCommand = this.currentConnection.PrepareCommand(query.CommandText, query.GetParameters(), CommandType.Text);
+            this.currentCommand = this.currentConnection.BuildTextCommand(query.CommandText, query.GetParameters());
             return true;
         }
 

@@ -33,7 +33,7 @@ namespace Teaq
             while (this.QueryBatch.HasBatch)
             {
                 var queryCommand = this.QueryBatch.NextBatch();
-                context.ExecuteNonQuery(queryCommand.CommandText, queryCommand.GetParameters());
+                context.ExecuteNonQuery(queryCommand);
             }
         }
 
@@ -48,7 +48,7 @@ namespace Teaq
             while (this.QueryBatch.HasBatch)
             {
                 var queryCommand = this.QueryBatch.NextBatch();
-                waitHandles.Add(context.ExecuteNonQueryAsync(queryCommand.CommandText, queryCommand.GetParameters()));
+                waitHandles.Add(context.ExecuteNonQueryAsync(queryCommand));
             }
 
             await Task.WhenAll(waitHandles);

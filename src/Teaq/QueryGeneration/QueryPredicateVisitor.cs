@@ -151,7 +151,7 @@ namespace Teaq.QueryGeneration
             {
                 for (var i = 0; i < listTarget.Count; i++)
                 {
-                    var parameter = listTarget[i].MakeParameter(
+                    var parameter = listTarget[i].MakeQualifiedParameter(
                         sourceColumn,
                         columnDataType,
                         this.baseParameterName,
@@ -169,7 +169,7 @@ namespace Teaq.QueryGeneration
                 int i = 0;
                 foreach (var item in enumerable)
                 {
-                    var parameter = item.MakeParameter(
+                    var parameter = item.MakeQualifiedParameter(
                         sourceColumn,
                         columnDataType,
                         this.baseParameterName,
@@ -256,7 +256,7 @@ namespace Teaq.QueryGeneration
                 if (value != null)
                 {
                     var columnDataType = this.GetColumnDataType(tableType, sourceColumn);
-                    var parameter = value.MakeParameter(
+                    var parameter = value.MakeQualifiedParameter(
                         sourceColumn,
                         columnDataType,
                         this.baseParameterName,

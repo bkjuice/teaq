@@ -24,7 +24,7 @@ namespace Teaq.Tests
         public void MakeParameterCreatesDbNullWhenNull()
         {
             string value = null;
-            var parameter = value.MakeParameter("value", null, "", -1, -1, -1);
+            var parameter = value.MakeQualifiedParameter("value", null, "", -1, -1, -1);
             parameter.Value.Should().Be(DBNull.Value);
         }
 
@@ -32,7 +32,7 @@ namespace Teaq.Tests
         public void MakeParameterCreatesVarCharByDefault()
         {
             string value = "test";
-            var parameter = value.MakeParameter("value", null, "", -1, -1, -1);
+            var parameter = value.MakeQualifiedParameter("value", null, "", -1, -1, -1);
             parameter.Value.Should().Be("test");
             parameter.SqlDbType.Should().Be(SqlDbType.VarChar);
         }
@@ -41,7 +41,7 @@ namespace Teaq.Tests
         public void MakeParameterUsesBatchQualifier()
         {
             string value = "test";
-            var parameter = value.MakeParameter("test", null, "@test", 1, -1, -1);
+            var parameter = value.MakeQualifiedParameter("test", null, "@test", 1, -1, -1);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1");
         }
@@ -50,7 +50,7 @@ namespace Teaq.Tests
         public void MakeParameterUsesBatchAndParameterQualifiers()
         {
             string value = "test";
-            var parameter = value.MakeParameter("test", null, "@test", 1, 2, -1);
+            var parameter = value.MakeQualifiedParameter("test", null, "@test", 1, 2, -1);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1x2");
         }
@@ -60,7 +60,7 @@ namespace Teaq.Tests
         {
             string value = "test";
             var columnDataType = new ColumnDataType { SqlDataType = SqlDbType.Char, Size = 20 };
-            var parameter = value.MakeParameter("test", columnDataType, "@test", 1, 2, -1);
+            var parameter = value.MakeQualifiedParameter("test", columnDataType, "@test", 1, 2, -1);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1x2");
             parameter.SqlDbType.Should().Be(SqlDbType.Char);
@@ -72,7 +72,7 @@ namespace Teaq.Tests
         {
             string value = "test";
             var columnDataType = new ColumnDataType { SqlDataType = SqlDbType.Decimal, Precision = 8, Scale = 2 };
-            var parameter = value.MakeParameter("test", columnDataType, "@test", 1, 2, -1);
+            var parameter = value.MakeQualifiedParameter("test", columnDataType, "@test", 1, 2, -1);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1x2");
             parameter.SqlDbType.Should().Be(SqlDbType.Decimal);
@@ -84,7 +84,7 @@ namespace Teaq.Tests
         public void MakeParameterUsesBatchAndParameterAndIndexQualifiers()
         {
             string value = "test";
-            var parameter = value.MakeParameter("test", null, "@test", batchQualifier: 1, parameterQualifier: 2, indexer: 5);
+            var parameter = value.MakeQualifiedParameter("test", null, "@test", batchQualifier: 1, parameterQualifier: 2, indexer: 5);
             parameter.Value.Should().Be("test");
             parameter.ParameterName.Should().Be("@test1x2n5");
         }
@@ -93,7 +93,7 @@ namespace Teaq.Tests
         public void MakeParameterCreatesNVarCharWhenUnicodeIsSpecified()
         {
             string value = "test";
-            var parameter = value.MakeParameter("test", new ColumnDataType { SqlDataType = SqlDbType.NVarChar, Size = 50 }, "", -1, -1, -1);
+            var parameter = value.MakeQualifiedParameter("test", new ColumnDataType { SqlDataType = SqlDbType.NVarChar, Size = 50 }, "", -1, -1, -1);
             parameter.SqlDbType.Should().Be(SqlDbType.NVarChar);
             parameter.Size.Should().Be(50);
             parameter.Value.Should().Be("test");
