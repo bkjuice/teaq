@@ -55,20 +55,6 @@ namespace Teaq.Tests
             command.Object.EnumerateEntities<int>().Count().Should().Be(2);
         }
 
-        ////[TestMethod]
-        ////public void ExecuteNonQueryOpensCommandAsExpected()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-
-        ////    connection.Setup(c => c.Open()).Verifiable();
-        ////    connection.SetupGet(c => c.State).Returns(ConnectionState.Closed);
-        ////    command.SetupGet(c => c.Connection).Returns(connection.Object);
-
-        ////    command.Object.ExecuteNonQuery();
-        ////    connection.Verify(c => c.Open(), Times.Once());
-        ////}
-
         [TestMethod]
         public void BuildCommandSetsCommandTextAsExpected()
         {
@@ -154,118 +140,6 @@ namespace Teaq.Tests
             command.Object.Open();
             connection.Verify(c => c.Open(), Times.Never());
         }
-
-        ////[TestMethod]
-        ////public void ExecuteNonQueryInvokesCommand()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    command.Setup<int>(c => c.ExecuteNonQuery()).Verifiable();
-
-        ////    connection.Object.ExecuteNonQuery("some query", null);
-        ////    command.Verify(c => c.ExecuteNonQuery(), Times.Once());
-        ////}
-
-        ////[TestMethod]
-        ////public void ReadEntityOfTCreatesCommandAsExpected()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    connection.Object.ReadEntities<object>("some query", null);
-        ////    connection.Verify<IDbCommand>(c => c.CreateCommand(), Times.Once());
-        ////}
-
-        ////[TestMethod]
-        ////public void ReadEntityOfTSetsCommandTextAsExpected()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    command.SetupProperty<string>(c => c.CommandText);
-
-        ////    connection.Object.ReadEntities<object>("some query", null);
-        ////    command.Object.CommandText.Should().Be("some query");
-        ////}
-
-        ////[TestMethod]
-        ////public void ReadEntityOfTIgnoresNullParametersAsExpected()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-        ////    var parameters = new Mock<IDataParameterCollection>();
-        ////    var actualParameters = new List<object>();
-
-        ////    parameters.Setup(p => p.Add(It.IsAny<object>())).Callback<object>(o => actualParameters.Add(o));
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    command.SetupGet<IDataParameterCollection>(c => c.Parameters).Returns(parameters.Object);
-
-        ////    connection.Object.ReadEntities<object>("some query", null);
-        ////    actualParameters.Count.Should().Be(0);
-        ////}
-
-        ////[TestMethod]
-        ////public void ReadEntityOfTAddsParametersAsExpected()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-        ////    var parameters = new Mock<IDataParameterCollection>();
-        ////    var actualParameters = new List<object>();
-
-        ////    parameters.Setup(p => p.Add(It.IsAny<object>())).Callback<object>(o => actualParameters.Add(o));
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    command.SetupGet<IDataParameterCollection>(c => c.Parameters).Returns(parameters.Object);
-
-        ////    connection.Object.ReadEntities<object>("some query", new object[] { 1, "two" });
-        ////    actualParameters.Count.Should().Be(2);
-        ////}
-
-        ////[TestMethod]
-        ////public void ReadEntityOfTChecksConnectionState()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    connection.SetupGet<ConnectionState>(c => c.State).Returns(ConnectionState.Open).Verifiable();
-        ////    connection.Object.ReadEntities<object>("some query", null);
-
-        ////    connection.VerifyGet<ConnectionState>(c => c.State, Times.Once());
-        ////}
-
-        ////[TestMethod]
-        ////public void ReadEntityOfTOpensConnectionIfNotOpen()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    connection.SetupGet<ConnectionState>(c => c.State).Returns(ConnectionState.Closed);
-        ////    connection.Setup(c => c.Open()).Verifiable();
-
-        ////    connection.Object.ReadEntities<object>("some query", null);
-
-        ////    connection.Verify(c => c.Open(), Times.Once());
-        ////}
-
-        ////[TestMethod]
-        ////public void ReadEntityOfTDoesNotOpenConnectionIfOpen()
-        ////{
-        ////    var connection = new Mock<IDbConnection>();
-        ////    var command = new Mock<IDbCommand>();
-
-        ////    connection.Setup<IDbCommand>(c => c.CreateCommand()).Returns(command.Object).Verifiable();
-        ////    connection.SetupGet<ConnectionState>(c => c.State).Returns(ConnectionState.Open);
-        ////    connection.Setup(c => c.Open()).Verifiable();
-
-        ////    connection.Object.ReadEntities<object>("some query", null);
-
-        ////    connection.Verify(c => c.Open(), Times.Never());
-        ////}
 
         [TestMethod]
         public void ReadEntityOfTInvokesExecuteReader()

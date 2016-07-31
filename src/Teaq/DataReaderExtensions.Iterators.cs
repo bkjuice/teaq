@@ -80,6 +80,182 @@ namespace Teaq
             }
         }
 
+        private abstract class PrimitiveIterator<T, TReader> : IEnumerator<T>, IEnumerable<T>
+            where TReader : IDataReader
+        {
+            protected static readonly Type TargetType = typeof(T);
+
+            protected static RuntimeTypeHandle TargetHandle = TargetType.TypeHandle;
+
+            protected readonly TReader reader;
+
+            protected readonly Action onCompleteCallback;
+
+            private bool isValid;
+
+            public PrimitiveIterator(TReader reader, Action onCompleteCallback)
+            {
+                this.reader = reader;
+                this.onCompleteCallback = onCompleteCallback;
+                this.isValid = reader.FieldCount > 0;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this;
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    return this.Current;
+                }
+            }
+
+            public T Current
+            {
+                get
+                {
+                    if (this.isValid)
+                    {
+                        return this.ConvertValue(this.reader);
+                    }
+
+                    return default(T);
+                }
+            }
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                return this;
+            }
+
+            public void Dispose()
+            {
+                this.onCompleteCallback?.Invoke();
+            }
+
+            public bool MoveNext()
+            {
+                return this.isValid && reader.Read();
+            }
+
+            public void Reset()
+            {
+                throw new NotSupportedException();
+            }
+
+            protected abstract T ConvertValue(TReader reader);
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.reader != null);
+            }
+        }
+
+        ////private sealed class SqlValueTypeIterator<T> : ValueIteratorBase<T, SqlDataReader> where T : struct
+        ////{
+        ////    private Func<SqlDataReader, T?> converter;
+
+        ////    public SqlValueTypeIterator(SqlDataReader reader, Func<IDataReader, T?> handler, Action onCompleteCallback)
+        ////        : base(reader, onCompleteCallback)
+        ////    {
+        ////        Contract.Requires(reader != null);
+
+        ////        if (handler != null)
+        ////        {
+        ////            this.converter = handler;
+        ////        }
+        ////        else
+        ////        {
+        ////            this.converter = r => r.GetFieldValue<T?>(0);
+        ////        }
+        ////    }
+
+        ////    protected override T? ConvertValue(SqlDataReader reader)
+        ////    {
+        ////        return this.converter(reader);
+        ////    }
+        ////}
+
+        private sealed class StringIterator : PrimitiveIterator<string, IDataReader>
+        {
+            private Func<IDataReader, string> converter;
+
+            public StringIterator(IDataReader reader, Func<IDataReader, string> handler, Action onCompleteCallback)
+                : base(reader, onCompleteCallback)
+            {
+                Contract.Requires(reader != null);
+
+                if (reader.FieldCount > 0)
+                {
+                    if (handler != null)
+                    {
+                        this.converter = handler;
+                    }
+                    else
+                    {
+                        this.converter = r => r[0].ToString();
+                    }
+                }
+            }
+
+            protected override string ConvertValue(IDataReader reader)
+            {
+                return this.converter(reader);
+            }
+        }
+
+        private sealed class ValueIterator<T> : PrimitiveIterator<T?, IDataReader> where T: struct
+        {
+            private Func<IDataReader, T?> converter;
+
+            public ValueIterator(IDataReader reader, Func<IDataReader, T?> handler, Action onCompleteCallback)
+                : base(reader, onCompleteCallback)
+            {
+                Contract.Requires(reader != null);
+
+                if (reader.FieldCount > 0)
+                {
+                    if (handler != null)
+                    {
+                        this.converter = handler;
+                    }
+                    else
+                    {
+                        var t = reader.GetFieldType(0).TypeHandle;
+                        if (t.Equals(TargetHandle))
+                        {
+                            this.converter = r => (T)r[0];
+                        }
+                        else
+                        {
+                            var boxConverter = GetConverter(t, TargetHandle, TargetType);
+                            this.converter = r => UnboxConvert(r, boxConverter);
+                        }
+                    }
+                }
+            }
+
+            protected override T? ConvertValue(IDataReader reader)
+            {
+                return this.converter(reader);
+            }
+
+            private static T? UnboxConvert(IDataReader reader, Func<object, object> boxConverter)
+            {
+                var value = reader[0];
+                if (value.IsNullOrDbNull())
+                {
+                    return null;
+                }
+
+                return (T)boxConverter(value);
+            }
+        }
+
         private sealed class SimpleTypeIterator<T> : IEnumerator<T>, IEnumerable<T>
         {
             private static readonly Type targetType = typeof(T);
