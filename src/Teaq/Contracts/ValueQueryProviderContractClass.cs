@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Teaq.QueryGeneration;
 
-namespace Teaq
+namespace Teaq.Contracts
 {
-    public sealed partial class DataContext : IValueQueryProvider
+    /// <summary>
+    /// Contract class.
+    /// </summary>
+    /// <seealso cref="Teaq.IValueQueryProvider" />
+    [ContractClassFor(typeof(IValueQueryProvider))]
+    public abstract class ValueQueryProviderContractClass : IValueQueryProvider
     {
         /// <summary>
         /// Queries the repository for a collection of primitive, nullable values.
@@ -17,10 +23,11 @@ namespace Teaq
         /// <returns>
         /// The collection of values with null values included.
         /// </returns>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
         /// <exception cref="NotImplementedException"></exception>
         public List<T?> QueryNullableValues<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
         {
-            return this.QueryNullableValues(command.CommandText, command.GetParameters(), handler).ToList(64);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -32,10 +39,10 @@ namespace Teaq
         /// <returns>
         /// The collection of values with null values included.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<IEnumerable<T?>> QueryNullableValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public Task<IEnumerable<T?>> QueryNullableValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
         {
-            return await this.QueryNullableValuesAsync(command.CommandText, command.GetParameters(), handler);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -46,10 +53,10 @@ namespace Teaq
         /// <returns>
         /// The collection of string values.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
         public List<string> QueryStringValues(QueryCommand command, Func<IDataReader, string> handler = null)
         {
-            return this.QueryStringValues(command.CommandText, command.GetParameters(), handler);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -60,10 +67,10 @@ namespace Teaq
         /// <returns>
         /// The collection of string values.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<IEnumerable<string>> QueryStringValuesAsync(QueryCommand command, Func<IDataReader, string> handler = null)
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public Task<IEnumerable<string>> QueryStringValuesAsync(QueryCommand command, Func<IDataReader, string> handler = null)
         {
-            return await this.QueryStringValuesAsync(command.CommandText, command.GetParameters(), handler);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -75,10 +82,10 @@ namespace Teaq
         /// <returns>
         /// The collection of values with null values ommitted.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
         public List<T> QueryValues<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
         {
-            return this.QueryValues(command.CommandText, command.GetParameters(), handler).ToList(64);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -90,10 +97,10 @@ namespace Teaq
         /// <returns>
         /// The collection of values with null values ommitted.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public async Task<IEnumerable<T>> QueryValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public Task<IEnumerable<T>> QueryValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
         {
-            return await this.QueryValuesAsync(command.CommandText, command.GetParameters(), handler);
+            throw new NotImplementedException();
         }
     }
 }

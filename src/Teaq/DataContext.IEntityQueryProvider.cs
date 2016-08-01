@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Teaq.QueryGeneration;
 
 namespace Teaq
 {
     /// <summary>
-    /// Concrete implementation of a ADO.NET persistence context.
+    /// Implementation to interact with the underlying repository.
     /// </summary>
     public sealed partial class DataContext
     {
@@ -23,9 +22,7 @@ namespace Teaq
         /// </returns>
         public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
-            return this.Query(command.CommandText, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
+            return this.Query(command.CommandText, command.GetParameters(), default(IDataHandler<TEntity>), model ?? command.Model);
         }
 
         /// <summary>
@@ -39,9 +36,7 @@ namespace Teaq
         /// </returns>
         public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
-            return this.Query(command.CommandText, readerHandler, null, command.GetParameters());
+            return this.Query(command.CommandText, command.GetParameters(), readerHandler, null);
         }
 
         /// <summary>
@@ -55,9 +50,7 @@ namespace Teaq
         /// </returns>
         public List<TEntity> Query<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
-            return this.Query(command.CommandText, new DelegatingReaderHandler<TEntity>(handler), null, command.GetParameters());
+            return this.Query(command.CommandText, command.GetParameters(), new DelegatingReaderHandler<TEntity>(handler), null);
         }
 
         /// <summary>
@@ -71,9 +64,7 @@ namespace Teaq
         /// </returns>
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
-            return await this.QueryAsync(command.CommandText, default(IDataHandler<TEntity>), model ?? command.Model, command.GetParameters());
+            return await this.QueryAsync(command.CommandText, command.GetParameters(), default(IDataHandler<TEntity>), model ?? command.Model);
         }
 
         /// <summary>
@@ -87,9 +78,7 @@ namespace Teaq
         /// </returns>
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
-            return await this.QueryAsync(command.CommandText, readerHandler, null, command.GetParameters());
+            return await this.QueryAsync(command.CommandText, command.GetParameters(), readerHandler, null);
         }
 
         /// <summary>
@@ -103,9 +92,7 @@ namespace Teaq
         /// </returns>
         public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
-            return await this.QueryAsync(command.CommandText, new DelegatingReaderHandler<TEntity>(handler), null, command.GetParameters());
+            return await this.QueryAsync(command.CommandText, command.GetParameters(), new DelegatingReaderHandler<TEntity>(handler), null);
         }
     }
 }

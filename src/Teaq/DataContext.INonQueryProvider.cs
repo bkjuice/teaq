@@ -1,13 +1,8 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Teaq.QueryGeneration;
 
 namespace Teaq
 {
-    /// <summary>
-    /// Concrete implementation of a ADO.NET persistence context.
-    /// </summary>
     public sealed partial class DataContext
     {
         /// <summary>
@@ -19,8 +14,6 @@ namespace Teaq
         /// </returns>
         public int ExecuteNonQuery(QueryCommand command)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
@@ -38,8 +31,6 @@ namespace Teaq
         /// </returns>
         public async Task<int> ExecuteNonQueryAsync(QueryCommand command)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
@@ -56,8 +47,6 @@ namespace Teaq
         /// <returns>The first value in the first row returned by the query.</returns>
         public TValue? ExecuteScalar<TValue>(QueryCommand command) where TValue : struct
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
             return Convert<TValue>(this.ExecuteScalar(command.CommandText, command.GetParameters()));
         }
 
@@ -70,8 +59,6 @@ namespace Teaq
         /// </returns>
         public string ExecuteScalar(QueryCommand command)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
             return Convert(this.ExecuteScalar(command.CommandText, command.GetParameters()));
         }
 
@@ -83,8 +70,6 @@ namespace Teaq
         /// <returns>The first value in the first row returned by the query.</returns>
         public async Task<TValue?> ExecuteScalarAsync<TValue>(QueryCommand command) where TValue : struct
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
             return Convert<TValue>(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
         }
 
@@ -97,8 +82,6 @@ namespace Teaq
         /// </returns>
         public async Task<string> ExecuteScalarAsync(QueryCommand command)
         {
-            Contract.Requires<ArgumentNullException>(command != null);
-
             return Convert(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
         }
     }

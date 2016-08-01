@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Teaq.QueryGeneration;
 
@@ -10,6 +11,7 @@ namespace Teaq
     /// Implementations of this interface provide the ability to synchronously query the target repository
     /// for a collection of results.
     /// </summary>
+    [ContractClass(typeof(Contracts.ValueQueryProviderContractClass))]
     public interface IValueQueryProvider
     {
         /// <summary>

@@ -154,7 +154,7 @@ namespace Teaq
                 .EnumerateValuesInternal(handler, command.CleanupCallback());
         }
 
-        private List<TEntity> Query<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, IDataModel model, params IDbDataParameter[] parameters)
+        private List<TEntity> Query<TEntity>(string commandText, IDbDataParameter[] parameters, IDataHandler<TEntity> readerHandler, IDataModel model)
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 
@@ -169,7 +169,7 @@ namespace Teaq
             }
         }
 
-        private async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, IDataHandler<TEntity> readerHandler, IDataModel model, params IDbDataParameter[] parameters)
+        private async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(string commandText, IDbDataParameter[] parameters, IDataHandler<TEntity> readerHandler, IDataModel model)
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 

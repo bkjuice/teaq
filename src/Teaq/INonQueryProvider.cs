@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 using Teaq.QueryGeneration;
 
 namespace Teaq
@@ -7,6 +8,7 @@ namespace Teaq
     /// Implementations of this interface provide the ability to synchronously execute a SQL statement 
     /// against the target repository and get the number of rows affected.
     /// </summary>
+    [ContractClass(typeof(Contracts.NonQueryProviderContractClass))]
     public interface INonQueryProvider
     {
         /// <summary>

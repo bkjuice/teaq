@@ -192,6 +192,9 @@
     <Compile Include="Configuration\DataModel.cs" />
     <Compile Include="Configuration\EntityConfiguration.cs" />
     <Compile Include="Configuration\EntityModelBuilder.cs" />
+    <Compile Include="Contracts\EntityQueryProviderContractClass.cs" />
+    <Compile Include="Contracts\NonQueryProviderContractClass.cs" />
+    <Compile Include="Contracts\ValueQueryProviderContractClass.cs" />
     <Compile Include="DataContext.IValueQueryProvider.cs" />
     <Compile Include="DataContext.INonQueryProvider.cs" />
     <Compile Include="DataContext.IEntityQueryProvider.cs" />
