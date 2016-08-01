@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Teaq.QueryGeneration;
@@ -9,6 +10,7 @@ namespace Teaq.Contracts
     /// Contract class.
     /// </summary>
     /// <seealso cref="Teaq.INonQueryProvider" />
+    [ExcludeFromCodeCoverage]
     [ContractClassFor(typeof(INonQueryProvider))]
     public abstract class NonQueryProviderContractClass : INonQueryProvider
     {

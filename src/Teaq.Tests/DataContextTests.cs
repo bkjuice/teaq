@@ -14,26 +14,6 @@ namespace Teaq.Tests
     public class DataContextTests
     {
         [TestMethod]
-        public void NullCommandThrowsArgumentNullExceptionForQuery()
-        {
-            using (var context = Repository.BuildContext("test"))
-            {
-                Action test = () => context.Query<Customer>(null);
-                test.ShouldThrow<ArgumentNullException>();
-            }
-        }
-
-        [TestMethod]
-        public void NullCommandThrowsArgumentNullExceptionForExecuteScalar()
-        {
-            using (var context = Repository.BuildContext("test"))
-            {
-                Action test = () => context.ExecuteScalar<int>(null);
-                test.ShouldThrow<ArgumentNullException>();
-            }
-        }
-
-        [TestMethod]
         public void QueryUsesQueryCommandModelForExplicitMappingImplicitly()
         {
             var model = BuildTestModel();

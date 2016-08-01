@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 
 namespace Teaq
 {
     /// <summary>
     /// Interface that composes all repository query capabilities offered by Teaq.
     /// </summary>
-    ////[ContractClass(typeof(Contracts.DataContextContractClass))]
     public interface IDataContext : 
         INonQueryProvider, 
         IEntityQueryProvider, 
+        IValueQueryProvider,
         IDisposable
     {
         /// <summary>

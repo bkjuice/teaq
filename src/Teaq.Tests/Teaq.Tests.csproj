@@ -80,6 +80,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Contracts\EntityQueryProviderContractClassTests.cs" />
+    <Compile Include="Contracts\NonQueryProviderContractClassTests.cs" />
+    <Compile Include="Contracts\ValueQueryProviderContractClassTests.cs" />
     <Compile Include="DataReaderExtensionTests.cs" />
     <Compile Include="DataConnectionExtensionTests.cs" />
     <Compile Include="ExpressionParserTests.cs" />

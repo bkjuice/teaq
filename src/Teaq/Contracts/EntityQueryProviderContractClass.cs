@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Teaq.QueryGeneration;
@@ -11,6 +12,7 @@ namespace Teaq.Contracts
     /// Contract class for the <see cref="IEntityQueryProvider"/> interface.
     /// </summary>
     /// <seealso cref="Teaq.IEntityQueryProvider" />
+    [ExcludeFromCodeCoverage]
     [ContractClassFor(typeof(IEntityQueryProvider))]
     public abstract class EntityQueryProviderContractClass : IEntityQueryProvider
     {
@@ -27,6 +29,8 @@ namespace Teaq.Contracts
         public List<TEntity> Query<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
             Contract.Requires<ArgumentNullException>(command != null);
+            Contract.Requires<ArgumentNullException>(handler != null);
+
             throw new NotImplementedException();
         }
 
@@ -43,6 +47,8 @@ namespace Teaq.Contracts
         public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
         {
             Contract.Requires<ArgumentNullException>(command != null);
+            Contract.Requires<ArgumentNullException>(readerHandler != null);
+
             throw new NotImplementedException();
         }
 
@@ -75,6 +81,8 @@ namespace Teaq.Contracts
         public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
             Contract.Requires<ArgumentNullException>(command != null);
+            Contract.Requires<ArgumentNullException>(handler != null);
+
             throw new NotImplementedException();
         }
 
@@ -91,6 +99,8 @@ namespace Teaq.Contracts
         public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
         {
             Contract.Requires<ArgumentNullException>(command != null);
+            Contract.Requires<ArgumentNullException>(readerHandler != null);
+
             throw new NotImplementedException();
         }
 
