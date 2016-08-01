@@ -398,7 +398,7 @@ namespace Teaq
         {
             throw new InvalidOperationException($"The data type for field { fieldName} cannot be assigned to property '{ typeName }.{ propertyName }'. Verify the target property is nullable if null is allowed, and ensure the data type in the database matches the corresponding CLR type for the property.", e);
         }
-
+        
         private static IEnumerable<T> EnumerateEmpty<T>(Action onCompletedCallback)
         {
             onCompletedCallback?.Invoke();
