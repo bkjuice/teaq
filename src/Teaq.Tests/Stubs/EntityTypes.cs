@@ -60,6 +60,8 @@ namespace Teaq.Tests.Stubs
         public int CustomerId { get; set; }
 
         public byte Change { get; set; }
+
+        public string AddressLine1 { get; set; }
     }
 
     public class Customer

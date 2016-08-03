@@ -88,7 +88,8 @@ GO
 CREATE TABLE [dbo].[Address](
 	[AddressId] [int] IDENTITY(1,1) NOT NULL,
 	[CustomerId] [int] NOT NULL,
-	[Change] [tinyint] NOT NULL
+	[Change] [tinyint] NOT NULL,
+	[AddressLine1] varchar(512)
 ) ON [PRIMARY]
 
 GO

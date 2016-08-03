@@ -61,9 +61,9 @@ namespace Teaq.Tests
             var map = handler.GetMap();
             map.AddJoinSplit<Address>((c, a) => c.Address = a);
 
-            var tableHelper = new TableHelper("CustomerId", "CustomerKey", "Change", "AddressId", "AddressCustomerId", "AddressChange");
-            tableHelper.AddRow(1, "test1", (byte)2, 5, 1, (byte)3);
-            tableHelper.AddRow(2, "test2", (byte)2, 6, 2, (byte)3);
+            var tableHelper = new TableHelper("CustomerId", "CustomerKey", "Change", "AddressId", "AddressCustomerId", "AddressChange", "AddressLine1");
+            tableHelper.AddRow(1, "test1", (byte)2, 5, 1, (byte)3, "123 main street");
+            tableHelper.AddRow(2, "test2", (byte)2, 6, 2, (byte)3, "456 park pl");
 
             var results = new List<CustomerWithAddress>();
             

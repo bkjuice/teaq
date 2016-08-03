@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Teaq.Tests;
 using Teaq.Tests.Stubs;
 
 namespace Teaq.IntegrationTests
@@ -13,6 +12,32 @@ namespace Teaq.IntegrationTests
     [TestClass]
     public class DataContextTests
     {
+        [TestMethod]
+        public void SelectStringIsNullOrEmptyDoesNotThrow()
+        {
+            var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
+            var command = Repository.Default.ForEntity<Address>()
+                .BuildSelect()
+                .Where(a => string.IsNullOrEmpty(a.AddressLine1))
+                .ToCommand();
+
+            Action test = () => context.Query(command);
+            test.ShouldNotThrow();
+        }
+
+        [TestMethod]
+        public void SelectStringNotIsNullOrEmptyDoesNotThrow()
+        {
+            var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
+            var command = Repository.Default.ForEntity<Address>()
+                .BuildSelect()
+                .Where(a => !string.IsNullOrEmpty(a.AddressLine1))
+                .ToCommand();
+
+            Action test = () => context.Query(command);
+            test.ShouldNotThrow();
+        }
+
         [TestMethod]
         public void ExecuteInsertSelectsIdentity()
         {
