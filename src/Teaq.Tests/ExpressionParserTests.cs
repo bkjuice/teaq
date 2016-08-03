@@ -14,6 +14,20 @@ namespace Teaq.Tests
     public class ExpressionParserTests
     {
         [TestMethod]
+        public void ParameterizeCanProduceNotStringIsNullOrEmptyPredicate()
+        {
+            var customer = new CustomerWithNullable();
+            Expression<Func<CustomerWithNullable, bool>> expr = c => !string.IsNullOrEmpty(c.CustomerKey);
+
+            string queryClause;
+            var parameters = expr.Parameterize("@p", null, out queryClause);
+
+            queryClause.Should().NotBeNullOrEmpty();
+            queryClause.Should().Be("NOT ([CustomerWithNullable].[CustomerKey] IS NULL OR LEN([CustomerWithNullable].[CustomerKey]) = 0)");
+            parameters.GetLength(0).Should().Be(0);
+        }
+
+        [TestMethod]
         public void ParseJoinExpressionThrowsNotSupportedExceptionWhenLeftNotPropertyExpression()
         {
             var stub = new InvalidJoinExpressionStub();
@@ -94,7 +108,7 @@ namespace Teaq.Tests
         {
             Expression<Func<IEnumerable<Customer>, IOrderedEnumerable<Customer>>> orderByExpression = items => items.OrderBy(c => c.CustomerId);
             var clause = orderByExpression.ParseOrderByClause();
-            clause.Should().Be("order by [Customer].[CustomerId]");
+            clause.Should().Be("ORDER BY [Customer].[CustomerId]");
         }
 
         [TestMethod]
@@ -102,7 +116,7 @@ namespace Teaq.Tests
         {
             Expression<Func<IEnumerable<Customer>, IOrderedEnumerable<Customer>>> orderByExpression = items => items.OrderByDescending(c => c.CustomerId);
             var clause = orderByExpression.ParseOrderByClause();
-            clause.Should().Be("order by [Customer].[CustomerId] desc");
+            clause.Should().Be("ORDER BY [Customer].[CustomerId] DESC");
         }
 
         [TestMethod]
@@ -140,91 +154,91 @@ namespace Teaq.Tests
             var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("[CustomerWithNullableId].[RelatedCustomerId] in (@p, @pn1, @pn2)");
+            queryClause.Should().Be("[CustomerWithNullableId].[RelatedCustomerId] IN (@p, @pn1, @pn2)");
             parameters.GetLength(0).Should().Be(3);
         }
 
         [TestMethod]
         public void NullableHasValueProducesExpectedResult()
         {
-            var client = new CustomerWithNullable();
+            var customer = new CustomerWithNullable();
             Expression<Func<CustomerWithNullable, bool>> expr = c => c.Deleted.HasValue;
 
             string queryClause;
             var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("[CustomerWithNullable].[Deleted] Is Not NULL");
+            queryClause.Should().Be("[CustomerWithNullable].[Deleted] IS NOT NULL");
             parameters.GetLength(0).Should().Be(0);
         }
 
         [TestMethod]
         public void NullableNotHasValueProducesExpectedResult()
         {
-            var client = new CustomerWithNullable();
+            var customer = new CustomerWithNullable();
             Expression<Func<CustomerWithNullable, bool>> expr = c => !c.Deleted.HasValue;
 
             string queryClause;
             var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not ([CustomerWithNullable].[Deleted] Is Not NULL)");
+            queryClause.Should().Be("NOT ([CustomerWithNullable].[Deleted] IS NOT NULL)");
             parameters.GetLength(0).Should().Be(0);
         }
 
         [TestMethod]
         public void NullableNotHasValueProducesExpectedResultWithCompoundGrouping()
         {
-            var client = new CustomerWithNullable();
+            var customer = new CustomerWithNullable();
             Expression<Func<CustomerWithNullable, bool>> expr = c => !(c.CustomerId == 5 && c.Deleted.HasValue);
 
             string queryClause;
             var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and [CustomerWithNullable].[Deleted] Is Not NULL)");
+            queryClause.Should().Be("NOT ([CustomerWithNullable].[CustomerId] = @p AND [CustomerWithNullable].[Deleted] IS NOT NULL)");
             parameters.GetLength(0).Should().Be(1);
         }
 
         [TestMethod]
         public void NullableNotHasValueProducesExpectedResultWithNestedCompoundGrouping()
         {
-            var client = new CustomerWithNullable();
+            var customer = new CustomerWithNullable();
             Expression<Func<CustomerWithNullable, bool>> expr = c => !(c.CustomerId == 5 && !(c.Deleted.HasValue || c.CustomerKey == null));
 
             string queryClause;
             var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and not ([CustomerWithNullable].[Deleted] Is Not NULL or [CustomerWithNullable].[CustomerKey] Is NULL))");
+            queryClause.Should().Be("NOT ([CustomerWithNullable].[CustomerId] = @p AND NOT ([CustomerWithNullable].[Deleted] IS NOT NULL OR [CustomerWithNullable].[CustomerKey] IS NULL))");
             parameters.GetLength(0).Should().Be(1);
         }
 
         [TestMethod]
         public void NullableNotHasValueProducesExpectedResultWithNestedNegatedCompoundGrouping()
         {
-            var client = new CustomerWithNullable();
+            var customer = new CustomerWithNullable();
             Expression<Func<CustomerWithNullable, bool>> expr = c => !(c.CustomerId == 5 && !(!c.Deleted.HasValue || c.CustomerKey == null));
 
             string queryClause;
             var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not ([CustomerWithNullable].[CustomerId] = @p and not (not ([CustomerWithNullable].[Deleted] Is Not NULL) or [CustomerWithNullable].[CustomerKey] Is NULL))");
+            queryClause.Should().Be("NOT ([CustomerWithNullable].[CustomerId] = @p AND NOT (NOT ([CustomerWithNullable].[Deleted] IS NOT NULL) OR [CustomerWithNullable].[CustomerKey] IS NULL))");
             parameters.GetLength(0).Should().Be(1);
         }
 
         [TestMethod]
         public void NullableNotHasValueProducesExpectedResultWithMultipleNestedCompoundGrouping()
         {
-            var client = new CustomerWithNullable();
+            var customer = new CustomerWithNullable();
             Expression<Func<CustomerWithNullable, bool>> expr = c => !((c.CustomerId == 5 || c.CustomerId == 4) && !(c.Deleted.HasValue || c.CustomerKey == null));
 
             string queryClause;
             var parameters = expr.Parameterize("@p", null, out queryClause);
 
             queryClause.Should().NotBeNullOrEmpty();
-            queryClause.Should().Be("not (([CustomerWithNullable].[CustomerId] = @p or [CustomerWithNullable].[CustomerId] = @px1) and not ([CustomerWithNullable].[Deleted] Is Not NULL or [CustomerWithNullable].[CustomerKey] Is NULL))");
+            queryClause.Should().Be("NOT (([CustomerWithNullable].[CustomerId] = @p OR [CustomerWithNullable].[CustomerId] = @px1) AND NOT ([CustomerWithNullable].[Deleted] IS NOT NULL OR [CustomerWithNullable].[CustomerKey] IS NULL))");
             parameters.GetLength(0).Should().Be(2);
         }
 
@@ -262,7 +276,7 @@ namespace Teaq.Tests
         [TestMethod]
         public void ParameterizeUsingNestedComplexPropertyDoesNotThrow()
         {
-            var client = new CustomerWithNestedProperty();
+            var customer = new CustomerWithNestedProperty();
             Expression<Func<CustomerWithNestedProperty, bool>> expression = c => c.Keys.CustomerId == 5;
             string queryClause;
             Action test = () => expression.Parameterize("@p", null, out queryClause);
@@ -387,7 +401,7 @@ namespace Teaq.Tests
 
             string queryClause;
             var parameters = e.Parameterize("@p", null, out queryClause, locals: locals);
-            queryClause.Should().Be("([Customer].[CustomerId] = @clientId and [Customer].[CustomerKey] = @clientKey)");
+            queryClause.Should().Be("([Customer].[CustomerId] = @clientId AND [Customer].[CustomerKey] = @clientKey)");
             parameters.GetLength(0).Should().Be(0);
         }
 

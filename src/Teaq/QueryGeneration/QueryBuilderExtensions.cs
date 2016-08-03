@@ -9,6 +9,13 @@ namespace Teaq.QueryGeneration
 {
     internal static class QueryBuilderExtensions
     {
+        private static readonly string[] JoinStrings = new string[]
+        {
+            "INNER",
+            "LEFT",
+            "RIGHT",
+        };
+
         private static readonly Func<RuntimeTypeHandle, string, IEntityConfiguration, bool>[] ScopeFunctions =
            new Func<RuntimeTypeHandle, string, IEntityConfiguration, bool>[]
            {
@@ -18,6 +25,11 @@ namespace Teaq.QueryGeneration
                 (t, s, c) => t.IsPrimitiveOrStringOrNullable() && !(c?.IsExcluded(s) == true || c?.IsComputed(s) == true || c?.IsKeyColumn(s) == true),
                 (t, s, c) => true,
            };
+
+        public static string ToJoinString(this JoinType join)
+        {
+            return JoinStrings[(int)join];
+        }
 
         public static string ExtractSelectColumnList(
             this Type target,

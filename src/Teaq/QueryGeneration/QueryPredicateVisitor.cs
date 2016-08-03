@@ -23,14 +23,14 @@ namespace Teaq.QueryGeneration
             [ExpressionType.LessThan] = " < ",
             [ExpressionType.LessThanOrEqual] = " <= ",
             [ExpressionType.NotEqual] = " != ",
-            [ExpressionType.AndAlso] = " and ",
-            [ExpressionType.OrElse] = " or ",
+            [ExpressionType.AndAlso] = " AND ",
+            [ExpressionType.OrElse] = " OR ",
         };
 
         private static readonly Dictionary<ExpressionType, string> supportedDbNullSymbols = new Dictionary<ExpressionType, string>
         {
-            [ExpressionType.Equal] = " Is ",
-            [ExpressionType.NotEqual] = " Is Not ",
+            [ExpressionType.Equal] = " IS ",
+            [ExpressionType.NotEqual] = " IS NOT ",
         };
 
         private static readonly HashSet<ExpressionType> compoundExpressions = new HashSet<ExpressionType>
@@ -108,26 +108,17 @@ namespace Teaq.QueryGeneration
 
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            if (node.Object == null)
+            switch (node.Method.Name)
             {
-                throw new NotSupportedException(
-                    "Static or extension methods are not supported. For example, if using 'Contains', " +
-                        "be sure the expression refers to a concrete collection type that is enumerable, such as List<T>.");
-            }
+                case "Contains":
+                    return this.VisitContainsMethod(node);
 
-            var methodName = node.Method.Name;
-            // NOTE: Move this to a dictionary lookup if supporting several methods.
-            if (methodName.Equals("Contains", StringComparison.OrdinalIgnoreCase))
-            {
-                return this.VisitContainsMethod(node);
-            }
+                case "IsNullOrEmpty":
+                    return this.VisitStringIsNullOrEmptyMethod(node);
 
-            if (methodName.Equals("StringIsNullOrEmpty"))
-            {
-                return this.VisitStringIsNullOrEmptyMethod(node);
+                default:
+                    throw new NotSupportedException("Only .Contains or string.IsNullOrEmpty methods are supported.");
             }
-
-            throw new NotSupportedException("Only Contains or StringIsNullOrEmpty methods are supported.");
         }
 
         protected override Expression VisitMember(MemberExpression node)
@@ -137,7 +128,7 @@ namespace Teaq.QueryGeneration
             if (this.expressionIsNullableHasValue)
             {
                 this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
-                this.QueryClause.AppendSqlIdentifier(name).Append(" Is Not NULL");
+                this.QueryClause.AppendSqlIdentifier(name).Append(" IS NOT NULL");
                 this.expressionIsNullableHasValue = false;
                 this.CloseIfGrouped();
             }
@@ -156,12 +147,12 @@ namespace Teaq.QueryGeneration
                 var binaryExpr = node.Operand as BinaryExpression;
                 if (binaryExpr == null)
                 {
-                    this.QueryClause.Append("not (");
+                    this.QueryClause.Append("NOT (");
                     this.openNestedGroupings++;
                 }
                 else
                 {
-                    this.QueryClause.Append("not ");
+                    this.QueryClause.Append("NOT ");
                 }
             }
 
@@ -332,22 +323,38 @@ namespace Teaq.QueryGeneration
 
         private Expression VisitStringIsNullOrEmptyMethod(MethodCallExpression node)
         {
-            /////*
-            //// * [x].[column] is not null and len([x].[column]) > 0
-            //// */ 
-            throw new NotImplementedException();
+            var arg = (MemberExpression)node.Arguments[0];
+
+            string sourceColumn;
+            var tableType = GetTableTypeAndSourceColumn(arg, out sourceColumn);
+            sourceColumn = sourceColumn.EnsureBracketedIdentifier();
+            var qualifier = this.GetColumnQualifier(tableType) + ".";
+
+            this.QueryClause
+                .Append(qualifier + sourceColumn)
+                .Append(" IS NULL OR LEN(")
+                .Append(qualifier + sourceColumn)
+                .Append(") = 0");
+
+            return node;
         }
 
         private Expression VisitContainsMethod(MethodCallExpression node)
         {
-            // TODO: Support IsNullOrEmpty / Whitespace as special cases...
+            if (node.Object == null)
+            {
+                throw new NotSupportedException(
+                    "Static or extension methods are not supported for '.Contains'. " +
+                        "Be sure the expression refers to a concrete collection type that is enumerable, such as List<T>.");
+            }
+
             var arg = (MemberExpression)node.Arguments[0];
 
             string sourceColumn;
             var tableType = GetTableTypeAndSourceColumn(arg, out sourceColumn);
 
             this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
-            this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(" in ");
+            this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(" IN ");
             this.QueryClause.Append("(");
 
             var target = Evaluate(node.Object);

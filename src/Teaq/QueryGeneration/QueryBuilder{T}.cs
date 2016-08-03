@@ -151,14 +151,14 @@ namespace Teaq.QueryGeneration
         }
 
         /// <summary>
-        /// Adds a (nolock) hint to the working query.
+        /// Adds a (NOLOCK) hint to the working query.
         /// </summary>
         /// <returns>
         /// The fluent interface to continue building the query.
         /// </returns>
         public IQuerySelectFilterSpecification<T> WithNoLock()
         {
-            this.selectBuilder.HintClause = ("(nolock)");
+            this.selectBuilder.HintClause = ("(NOLOCK)");
             return this;
         }
 
@@ -177,7 +177,7 @@ namespace Teaq.QueryGeneration
             Expression<Func<T, TJoined, bool>> onExpression, 
             params string[] joinColumnList)
         {
-            this.selectBuilder.SetJoin<TJoined>(joinType, onExpression, joinColumnList);
+            this.selectBuilder.SetJoin(joinType, onExpression, joinColumnList);
             return this;
         }
 

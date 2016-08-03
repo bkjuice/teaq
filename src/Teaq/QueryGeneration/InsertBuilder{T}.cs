@@ -52,9 +52,9 @@ namespace Teaq.QueryGeneration
                 tableValues.Append(insertParameters[i].ParameterName).Append(", ");
             }
 
-            return "\r\ninsert " + this.GetTableName() + "\r\n(\r\n"
+            return "\r\nINSERT " + this.GetTableName() + "\r\n(\r\n"
                  + columnList.ToString(0, columnList.Length - 2) + ")\r\n"
-                 + "values(\r\n" + tableValues.ToString(0, tableValues.Length - 2) + ")\r\n"
+                 + "VALUES(\r\n" + tableValues.ToString(0, tableValues.Length - 2) + ")\r\n"
                  + this.GetScopeIdentity();
         }
 
@@ -66,7 +66,7 @@ namespace Teaq.QueryGeneration
         {
             if (this.Config?.HasIdentity == true)
             {
-                return  "\r\nselect SCOPE_IDENTITY()\r\n";
+                return  "\r\nSELECT SCOPE_IDENTITY()\r\n";
             }
 
             return string.Empty;

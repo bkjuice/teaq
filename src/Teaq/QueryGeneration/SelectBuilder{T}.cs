@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Teaq.Configuration;
 
 namespace Teaq.QueryGeneration
 {
@@ -97,12 +96,12 @@ namespace Teaq.QueryGeneration
                 + (string.IsNullOrEmpty(this.Alias) ? string.Empty : " "
                 + this.Alias) + this.joinExpression;
 
-            return "\r\nselect "
+            return "\r\nSELECT "
                + this.GetTopClause()
                + columnClause
-               + "\r\n from " + tableClause + this.GetHintClause()
+               + "\r\n FROM " + tableClause + this.GetHintClause()
                + (string.IsNullOrEmpty(groupingClause) ? string.Empty : " " + groupingClause + "\r\n")
-               + (string.IsNullOrEmpty(filterClause) ? string.Empty : " where " + filterClause + "\r\n")
+               + (string.IsNullOrEmpty(filterClause) ? string.Empty : " WHERE " + filterClause + "\r\n")
                + (string.IsNullOrEmpty(orderByClause) ? string.Empty : " " + orderByClause + "\r\n");
         }
 
@@ -125,9 +124,9 @@ namespace Teaq.QueryGeneration
 
             this.joinedType = this.DataModel.EnsureConcreteType<TJoined>();
             this.joinColumnList = joinColumnList;
-            this.joinExpression = "\r\n" + joinType.ToString()
-                + " Join " + this.joinedType.AsQualifiedTable(this.DataModel?.GetEntityConfig(typeof(TJoined)))
-                + " on " + onExpression.ParseJoinExpression(this.DataModel);
+            this.joinExpression = "\r\n" + joinType.ToJoinString()
+                + " JOIN " + this.joinedType.AsQualifiedTable(this.DataModel?.GetEntityConfig(typeof(TJoined)))
+                + " ON " + onExpression.ParseJoinExpression(this.DataModel);
         }
 
         /// <summary>
@@ -204,7 +203,7 @@ namespace Teaq.QueryGeneration
                         buffer.Append(expr + ", ");
                     }
 
-                    return "group by " + buffer.ToString(0, buffer.Length - 2);
+                    return "GROUP BY " + buffer.ToString(0, buffer.Length - 2);
                 }
             }
 

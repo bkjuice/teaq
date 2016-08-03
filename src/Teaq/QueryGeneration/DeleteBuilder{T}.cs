@@ -41,8 +41,8 @@ namespace Teaq.QueryGeneration
             string filterClause;
             parameters = this.GetFilterParametersAndClause(this.filter, batch, out filterClause, null);
 
-            return "\r\ndelete from " + this.GetTableName() + "\r\n"
-                + (string.IsNullOrEmpty(filterClause) ? string.Empty : "where " + filterClause + "\r\n");
+            return "\r\nDELETE FROM " + this.GetTableName() + "\r\n"
+                + (string.IsNullOrEmpty(filterClause) ? string.Empty : "WHERE " + filterClause + "\r\n");
         }
     }
 }

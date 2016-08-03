@@ -13,8 +13,8 @@ namespace Teaq.QueryGeneration
     {
         private static readonly Dictionary<string, Func<string, string>> orderByBuilders = new Dictionary<string, Func<string, string>>
             {
-                [ "OrderBy"] =  s => "order by " + s,
-                [ "OrderByDescending"] = s=> $"order by {s} desc" 
+                [ "OrderBy"] =  s => "ORDER BY " + s,
+                [ "OrderByDescending"] = s=> $"ORDER BY {s} DESC" 
             };
 
         public static SqlParameter[] Parameterize<T>(

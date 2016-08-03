@@ -12,7 +12,7 @@ namespace Teaq.QueryGeneration
     public interface IQuerySelectSpecification<T> : IQueryCompletion<T>
     {
         /// <summary>
-        /// Adds a (nolock) hint to the working query.
+        /// Adds a (NOLOCK) hint to the working query.
         /// </summary>
         /// <returns>The fluent interface to build the remaining query specification.</returns>
         IQuerySelectFilterSpecification<T> WithNoLock();

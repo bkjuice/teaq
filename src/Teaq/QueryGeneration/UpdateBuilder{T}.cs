@@ -3,7 +3,6 @@ using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Text;
-using Teaq.Configuration;
 
 namespace Teaq.QueryGeneration
 {
@@ -70,9 +69,9 @@ namespace Teaq.QueryGeneration
             var filterParameters = this.GetFilterParametersAndClause(this.filter, batch, out filterClause, null);
             parameters = parameters.Combine(filterParameters);
 
-            return "\r\nupdate " + this.GetTableName() + "\r\nset\r\n"
+            return "\r\nUPDATE " + this.GetTableName() + "\r\nSET\r\n"
                 + setStatement.ToString(0, setStatement.Length - 2) + "\r\n"
-                + (string.IsNullOrEmpty(filterClause) ? string.Empty : "where " + filterClause + "\r\n");
+                + (string.IsNullOrEmpty(filterClause) ? string.Empty : "WHERE " + filterClause + "\r\n");
         }
     }
 }
