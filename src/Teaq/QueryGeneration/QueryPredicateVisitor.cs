@@ -16,28 +16,28 @@ namespace Teaq.QueryGeneration
         #region Expression Lookups
 
         private static readonly Dictionary<ExpressionType, string> supportedSymbols = new Dictionary<ExpressionType, string>
-            {
-                { ExpressionType.Equal, " = " },
-                { ExpressionType.GreaterThan, " > " },
-                { ExpressionType.GreaterThanOrEqual, " >= " },
-                { ExpressionType.LessThan, " < " },
-                { ExpressionType.LessThanOrEqual, " <= " },
-                { ExpressionType.NotEqual, " != " },
-                { ExpressionType.AndAlso, " and " },
-                { ExpressionType.OrElse, " or " },
-            };
+        {
+            [ExpressionType.Equal] = " = ",
+            [ExpressionType.GreaterThan] = " > ",
+            [ExpressionType.GreaterThanOrEqual] = " >= ",
+            [ExpressionType.LessThan] = " < ",
+            [ExpressionType.LessThanOrEqual] = " <= ",
+            [ExpressionType.NotEqual] = " != ",
+            [ExpressionType.AndAlso] = " and ",
+            [ExpressionType.OrElse] = " or ",
+        };
 
         private static readonly Dictionary<ExpressionType, string> supportedDbNullSymbols = new Dictionary<ExpressionType, string>
-            {
-                { ExpressionType.Equal, " Is " },
-                { ExpressionType.NotEqual, " Is Not " },
-            };
+        {
+            [ExpressionType.Equal] = " Is ",
+            [ExpressionType.NotEqual] = " Is Not ",
+        };
 
         private static readonly HashSet<ExpressionType> compoundExpressions = new HashSet<ExpressionType>
-            {
-                ExpressionType.AndAlso,
-                ExpressionType.OrElse,
-            };
+        {
+            ExpressionType.AndAlso,
+            ExpressionType.OrElse,
+        };
 
         #endregion
 
@@ -115,79 +115,19 @@ namespace Teaq.QueryGeneration
                         "be sure the expression refers to a concrete collection type that is enumerable, such as List<T>.");
             }
 
+            var methodName = node.Method.Name;
             // NOTE: Move this to a dictionary lookup if supporting several methods.
-            if (node.Method.Name != "Contains")
+            if (methodName.Equals("Contains", StringComparison.OrdinalIgnoreCase))
             {
-                throw new NotSupportedException("Only 'Contains' is currently supported.");
+                return this.VisitContainsMethod(node);
             }
 
-            // TODO: Support IsNullOrEmpty / Whitespace as special cases...
-            var arg = (MemberExpression)node.Arguments[0];
-
-            Type tableType = null;
-            string sourceColumn;
-            var memberAccess = arg.Expression as MemberExpression;
-            if (memberAccess != null)
+            if (methodName.Equals("StringIsNullOrEmpty"))
             {
-                sourceColumn = memberAccess.Member.Name;
-                tableType = memberAccess.Member.DeclaringType;
-            }
-            else
-            {
-                sourceColumn = arg.Member.Name;
-                tableType = arg.Member.DeclaringType;
+                return this.VisitStringIsNullOrEmptyMethod(node);
             }
 
-            this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
-            this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(" in ");
-            this.QueryClause.Append("(");
-
-            // IList to avoid yet another enumerator, if possible:
-            object target = Evaluate(node.Object);
-            var listTarget = target as IList;
-
-            var columnDataType = this.GetColumnDataType(tableType, sourceColumn);
-            if (listTarget != null)
-            {
-                for (var i = 0; i < listTarget.Count; i++)
-                {
-                    var parameter = listTarget[i].MakeQualifiedParameter(
-                        sourceColumn,
-                        columnDataType,
-                        this.baseParameterName,
-                        this.currentBatchIndex,
-                        this.parameterQualifier,
-                        i);
-
-                    this.Parameters.Add(parameter);
-                    this.QueryClause.Append(parameter.ParameterName).Append(", ");
-                }
-            }
-            else
-            {
-                var enumerable = target as IEnumerable;
-                int i = 0;
-                foreach (var item in enumerable)
-                {
-                    var parameter = item.MakeQualifiedParameter(
-                        sourceColumn,
-                        columnDataType,
-                        this.baseParameterName,
-                        this.currentBatchIndex,
-                        this.parameterQualifier,
-                        i);
-
-                    this.Parameters.Add(parameter);
-                    this.QueryClause.Append(parameter.ParameterName).Append(", ");
-                    i++;
-                }
-            }
-
-            this.QueryClause.Length = this.QueryClause.Length - 2;
-            this.QueryClause.Append(")");
-
-            this.CloseIfGrouped();
-            return node;
+            throw new NotSupportedException("Only Contains or StringIsNullOrEmpty methods are supported.");
         }
 
         protected override Expression VisitMember(MemberExpression node)
@@ -373,6 +313,68 @@ namespace Teaq.QueryGeneration
         private static bool MatchName(string sourceName, string globalName)
         {
             return string.Equals(sourceName, globalName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static Type GetTableTypeAndSourceColumn(MemberExpression arg, out string sourceColumn)
+        {
+            var memberAccess = arg.Expression as MemberExpression;
+            if (memberAccess != null)
+            {
+                sourceColumn = memberAccess.Member.Name;
+                return memberAccess.Member.DeclaringType;
+            }
+            else
+            {
+                sourceColumn = arg.Member.Name;
+                return arg.Member.DeclaringType;
+            }
+        }
+
+        private Expression VisitStringIsNullOrEmptyMethod(MethodCallExpression node)
+        {
+            /////*
+            //// * [x].[column] is not null and len([x].[column]) > 0
+            //// */ 
+            throw new NotImplementedException();
+        }
+
+        private Expression VisitContainsMethod(MethodCallExpression node)
+        {
+            // TODO: Support IsNullOrEmpty / Whitespace as special cases...
+            var arg = (MemberExpression)node.Arguments[0];
+
+            string sourceColumn;
+            var tableType = GetTableTypeAndSourceColumn(arg, out sourceColumn);
+
+            this.QueryClause.Append(this.GetColumnQualifier(tableType) + ".");
+            this.QueryClause.AppendSqlIdentifier(sourceColumn).Append(" in ");
+            this.QueryClause.Append("(");
+
+            var target = Evaluate(node.Object);
+            var columnDataType = this.GetColumnDataType(tableType, sourceColumn);
+
+            var enumerable = target as IEnumerable;
+            int i = 0;
+            foreach (var item in enumerable)
+            {
+                var parameter = item.MakeQualifiedParameter(
+                    sourceColumn,
+                    columnDataType,
+                    this.baseParameterName,
+                    this.currentBatchIndex,
+                    this.parameterQualifier,
+                    i);
+
+                this.Parameters.Add(parameter);
+                this.QueryClause.Append(parameter.ParameterName).Append(", ");
+                i++;
+            }
+
+            this.QueryClause.Length = this.QueryClause.Length - 2;
+            this.QueryClause.Append(")");
+
+            this.CloseIfGrouped();
+            return node;
         }
 
         private ColumnDataType GetColumnDataType(Type entityType, string sourceColumn)
