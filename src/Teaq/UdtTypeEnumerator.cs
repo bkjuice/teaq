@@ -228,6 +228,7 @@ namespace Teaq
                             .ToFormat(prop.MemberName, typeof(T).FullName));
                     }
 
+                    // NOTE: Modified to use a builder as the static defaults can be modified at runtime.
                     columnType = builder();
                 }
 
