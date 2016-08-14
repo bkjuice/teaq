@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Diagnostics.Contracts;
 using Teaq.Configuration;
 
@@ -14,10 +15,9 @@ namespace Teaq
         /// </summary>
         public readonly static IDataModel Default = BuildModel(a => { });
 
-        /// <summary>
-        /// The default string type.
-        /// </summary>
         internal static SqlStringType DefaultStringType = SqlStringType.Varchar;
+
+        internal static int DefaultStringSize = -1;
 
         /// <summary>
         /// Sets the default data type to use when handling strings not explicitly defined using a model.
@@ -26,6 +26,15 @@ namespace Teaq
         public static void SetDefaultStringType(SqlStringType defaultType)
         {
             DefaultStringType = defaultType;
+        }
+
+        /// <summary>
+        /// Sets the default size to use when handling strings not explicitly defined using a model. The initial default is -1 (max).
+        /// </summary>
+        /// <param name="size">The default size to use.</param>
+        public static void SetDefaultStringSize(int size)
+        {
+            DefaultStringSize = size;
         }
 
         /// <summary>
@@ -168,6 +177,15 @@ namespace Teaq
             var builder = new DataModel();
             configurationCallback(builder);
             return builder;
+        }
+
+        internal static ColumnDataType GetDefaultStringType()
+        {
+            return new ColumnDataType
+            {
+                SqlDataType = DefaultStringType == SqlStringType.NVarchar ? SqlDbType.NVarChar : SqlDbType.VarBinary,
+                Size = DefaultStringSize,
+            };
         }
     }
 }

@@ -20,32 +20,32 @@ namespace Teaq
         /// <summary>
         /// The supported types used for data table column types.
         /// </summary>
-        private static readonly Dictionary<Type, ColumnDataType> typeMappings = new Dictionary<Type, ColumnDataType>
+        private static readonly Dictionary<Type, Func<ColumnDataType>> typeMappings = new Dictionary<Type, Func<ColumnDataType>>
         {
-            { typeof(byte?), new ColumnDataType { SqlDataType = SqlDbType.TinyInt } },
-            { typeof(bool?), new ColumnDataType { SqlDataType = SqlDbType.Bit } },
-            { typeof(char?), new ColumnDataType { SqlDataType = SqlDbType.Char } },
-            { typeof(short?), new ColumnDataType { SqlDataType = SqlDbType.SmallInt } },
-            { typeof(int?), new ColumnDataType { SqlDataType = SqlDbType.Int } },
-            { typeof(long?), new ColumnDataType { SqlDataType = SqlDbType.BigInt } },
-            { typeof(float?), new ColumnDataType { SqlDataType = SqlDbType.Float } },
-            { typeof(decimal?), new ColumnDataType { SqlDataType = SqlDbType.Decimal } },
-            { typeof(Guid?), new ColumnDataType { SqlDataType = SqlDbType.UniqueIdentifier } },
-            { typeof(DateTime?), new ColumnDataType { SqlDataType = SqlDbType.DateTime } },
-            { typeof(DateTimeOffset?), new ColumnDataType { SqlDataType = SqlDbType.DateTimeOffset} },
-            { typeof(byte), new ColumnDataType { SqlDataType = SqlDbType.TinyInt } },
-            { typeof(bool), new ColumnDataType { SqlDataType = SqlDbType.Bit } },
-            { typeof(char), new ColumnDataType { SqlDataType = SqlDbType.Char } },
-            { typeof(short), new ColumnDataType { SqlDataType = SqlDbType.SmallInt } },
-            { typeof(int), new ColumnDataType { SqlDataType = SqlDbType.Int } },
-            { typeof(long), new ColumnDataType { SqlDataType = SqlDbType.BigInt } },
-            { typeof(float), new ColumnDataType { SqlDataType = SqlDbType.Float } },
-            { typeof(decimal), new ColumnDataType { SqlDataType = SqlDbType.Decimal } },
-            { typeof(Guid), new ColumnDataType { SqlDataType = SqlDbType.UniqueIdentifier } },
-            { typeof(DateTime), new ColumnDataType { SqlDataType = SqlDbType.DateTime } },
-            { typeof(DateTimeOffset), new ColumnDataType { SqlDataType = SqlDbType.DateTimeOffset} },
-            { typeof(string), new ColumnDataType { SqlDataType = SqlDbType.VarChar } },
-            { typeof(byte[]), new ColumnDataType { SqlDataType = SqlDbType.VarBinary } },
+            { typeof(byte?), () => new ColumnDataType { SqlDataType = SqlDbType.TinyInt } },
+            { typeof(bool?), () => new ColumnDataType { SqlDataType = SqlDbType.Bit } },
+            { typeof(char?), () => new ColumnDataType { SqlDataType = SqlDbType.Char } },
+            { typeof(short?), () => new ColumnDataType { SqlDataType = SqlDbType.SmallInt } },
+            { typeof(int?), () => new ColumnDataType { SqlDataType = SqlDbType.Int } },
+            { typeof(long?), () => new ColumnDataType { SqlDataType = SqlDbType.BigInt } },
+            { typeof(float?), () => new ColumnDataType { SqlDataType = SqlDbType.Float } },
+            { typeof(decimal?), () => new ColumnDataType { SqlDataType = SqlDbType.Decimal } },
+            { typeof(Guid?), () => new ColumnDataType { SqlDataType = SqlDbType.UniqueIdentifier } },
+            { typeof(DateTime?), () => new ColumnDataType { SqlDataType = SqlDbType.DateTime } },
+            { typeof(DateTimeOffset?), () => new ColumnDataType { SqlDataType = SqlDbType.DateTimeOffset} },
+            { typeof(byte), () => new ColumnDataType { SqlDataType = SqlDbType.TinyInt } },
+            { typeof(bool), () => new ColumnDataType { SqlDataType = SqlDbType.Bit } },
+            { typeof(char), () => new ColumnDataType { SqlDataType = SqlDbType.Char } },
+            { typeof(short), () => new ColumnDataType { SqlDataType = SqlDbType.SmallInt } },
+            { typeof(int), () => new ColumnDataType { SqlDataType = SqlDbType.Int } },
+            { typeof(long), () => new ColumnDataType { SqlDataType = SqlDbType.BigInt } },
+            { typeof(float),() =>  new ColumnDataType { SqlDataType = SqlDbType.Float } },
+            { typeof(decimal), () => new ColumnDataType { SqlDataType = SqlDbType.Decimal } },
+            { typeof(Guid), () => new ColumnDataType { SqlDataType = SqlDbType.UniqueIdentifier } },
+            { typeof(DateTime), () => new ColumnDataType { SqlDataType = SqlDbType.DateTime } },
+            { typeof(DateTimeOffset), () => new ColumnDataType { SqlDataType = SqlDbType.DateTimeOffset} },
+            { typeof(string), () => Repository.GetDefaultStringType()},
+            { typeof(byte[]), () => new ColumnDataType { SqlDataType = SqlDbType.VarBinary } },
         };
 
         /// <summary>
@@ -220,12 +220,15 @@ namespace Teaq
 
                 if (columnType == null)
                 {
-                    if (!typeMappings.TryGetValue(prop.PropertyType, out columnType))
+                    Func<ColumnDataType> builder;
+                    if (!typeMappings.TryGetValue(prop.PropertyType, out builder))
                     {
                         throw new NotSupportedException(
                             "The property type {0} is not supported by default. Mark this property excluded on type {1}, or define a data model column for this property."
                             .ToFormat(prop.MemberName, typeof(T).FullName));
                     }
+
+                    columnType = builder();
                 }
 
                 items.Add(CreateMetadata(columnName, columnType));
@@ -238,21 +241,21 @@ namespace Teaq
         /// Creates the metadata.
         /// </summary>
         /// <param name="columnName">Name of the column.</param>
-        /// <param name="columnType">Type of the column.</param>
+        /// <param name="columnSpec">Type of the column.</param>
         /// <returns>The <see cref="SqlMetaData"/> instance for the column type.</returns>
-        private static SqlMetaData CreateMetadata(string columnName, ColumnDataType columnType)
+        private static SqlMetaData CreateMetadata(string columnName, ColumnDataType columnSpec)
         {
-            if (columnType.Precision.HasValue && columnType.Scale.HasValue)
+            if (columnSpec.Precision.HasValue && columnSpec.Scale.HasValue)
             {
-                return new SqlMetaData(columnName, columnType.SqlDataType, columnType.Precision.Value, columnType.Scale.Value);
+                return new SqlMetaData(columnName, columnSpec.SqlDataType, columnSpec.Precision.Value, columnSpec.Scale.Value);
             }
-            else if (columnType.Size.HasValue)
+            else if (columnSpec.Size.HasValue)
             {
-                return new SqlMetaData(columnName, columnType.SqlDataType, (long)columnType.Size.Value);
+                return new SqlMetaData(columnName, columnSpec.SqlDataType, columnSpec.Size.Value);
             }
             else
             {
-                return new SqlMetaData(columnName, columnType.SqlDataType);
+                return new SqlMetaData(columnName, columnSpec.SqlDataType);
             }
         }
     }

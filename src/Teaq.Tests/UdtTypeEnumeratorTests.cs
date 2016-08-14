@@ -1,13 +1,42 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Data;
 
 namespace Teaq.Tests
 {
     [TestClass]
     public class UdtTypeEnumeratorTests
     {
+        [TestMethod]
+        public void UdtTypeEnumeratorRespectsGlobalStringTypeAndSizeAndDoesNotThrow()
+        {
+            var listOfDtos = new List<SimpleCustomerDto>
+            {
+                new SimpleCustomerDto
+                {
+                    Change = 1,
+                    CustomerId = 2,
+                    CustomerKey = "123",
+                    Inception = DateTime.Now,
+                    Modified = DateTimeOffset.Now
+                },
+            };
+
+            var lastSetting = Repository.DefaultStringType;
+            Repository.DefaultStringType = SqlStringType.NVarchar;
+            Action test = () =>
+            {
+                var udt = new UdtTypeEnumerator<SimpleCustomerDto>(listOfDtos);
+                var record = udt.First();
+                record.Should().NotBeNull();
+            };
+
+            test.ShouldNotThrow();
+        }
+
         [TestMethod]
         public void UdtTypeEnumeratorEnumeratesListOfSimpleCustomerDTOsAsExpected()
         {
