@@ -13,6 +13,26 @@ namespace Teaq.Tests
     public class QueryBuilderTests
     {
         [TestMethod]
+        public void GenerateQueryWorksWhenRightHandTypeIsNotReflected()
+        {
+            Action test = () =>
+            {
+                var otherType = new NotReflectedExceptForOneTest { Id = 123 };
+                Repository.Default.ForEntity<Customer>()
+                    .BuildSelect(1)
+                    .Where(e => e.CustomerId == otherType.Id)
+                    .ToCommand();
+            };
+
+            test.ShouldNotThrow();
+        }
+
+        private class NotReflectedExceptForOneTest
+        {
+            public int Id { get; set; }
+        }
+
+        [TestMethod]
         public void SelectQueryParameterWithColumnMappingDoesNotAddBracketsToParameterName()
         {
             var model = Repository.BuildModel(

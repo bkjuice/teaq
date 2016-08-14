@@ -562,16 +562,16 @@ namespace Teaq.FastReflection
         /// </returns>
         public PropertyDescription GetProperty(string propertyName)
         {
-            Contract.Requires(propertyName != null);
+            Contract.Requires(string.IsNullOrEmpty(propertyName) == false);
 
-            try
+            var props = this.propertiesByName;
+            if (props != null)
             {
-                return this.propertiesByName[propertyName] as PropertyDescription;
+                return props[propertyName] as PropertyDescription;
             }
-            catch (NullReferenceException e)
-            {
-                throw new InvalidOperationException("The properties must first be reflected before accessing a property by name.", e);
-            }
+
+            this.ReflectProperties();
+            return this.propertiesByName[propertyName] as PropertyDescription;
         }
 
         /// <summary>
@@ -600,16 +600,16 @@ namespace Teaq.FastReflection
         /// </returns>
         public FieldDescription GetField(string fieldName)
         {
-            Contract.Requires(fieldName != null);
+            Contract.Requires(string.IsNullOrEmpty(fieldName) == false);
 
-            try
+            var fields = this.fieldsByName;
+            if (fields != null)
             {
-                return this.fieldsByName[fieldName] as FieldDescription;
+                return fields[fieldName] as FieldDescription;
             }
-            catch (NullReferenceException e)
-            {
-                throw new InvalidOperationException("The fields must first be reflected before accessing a field by name.", e);
-            }
+
+            this.ReflectFields();
+            return this.fieldsByName[fieldName] as FieldDescription;
         }
 
         /// <summary>

@@ -208,21 +208,21 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescriptionGetPropertyThrowsIfPropertiesAreNotReflected()
+        public void TypeDescriptionGetPropertyDoesNotThrowIfPropertiesAreNotReflected()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Constructor);
             Action test = () => t.GetProperty("SomeProperty");
-            test.ShouldThrow<InvalidOperationException>();
+            test.ShouldNotThrow();
         }
 
         [TestMethod]
-        public void TypeDescriptionGetFieldThrowsIfFieldsAreNotReflected()
+        public void TypeDescriptionGetFieldDoesNotThrowIfFieldsAreNotReflected()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Constructor);
             Action test = () => t.GetField("SomeField");
-            test.ShouldThrow<InvalidOperationException>();
+            test.ShouldNotThrow();
         }
 
         [TestMethod]
@@ -433,7 +433,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_can_load_multiple_indexed_properties()
+        public void TypeDescriptionCanLoadMultipleIndexedProperties()
         {
             TypeCache.Clear();
             var t = typeof(IndexedPropertyExample).GetTypeDescription(MemberTypes.Property);
@@ -441,7 +441,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_fields_are_reflected_on_demand()
+        public void TypeDescriptionFieldsAreReflectedOnDemand()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Property);
@@ -457,7 +457,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_properties_are_reflected_on_demand()
+        public void TypeDescriptionPropertiesAreReflectedOnDemand()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Field);
@@ -465,7 +465,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_properties_are_not_null_if_reflected()
+        public void TypeDescriptionPropertiesAreNotNullIfReflected()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Property);
@@ -473,7 +473,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_methods_are_reflected_on_demand()
+        public void TypeDescriptionMethodsAreReflectedOnDemand()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Property);
@@ -481,7 +481,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_methods_are_not_null_if_reflected()
+        public void TypeDescriptionMethodsAreNotNullIfReflected()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Method);
@@ -489,7 +489,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_fields_are_not_replaced_when_bindings_match()
+        public void TypeDescriptionFieldsAreNotReplacedWhenBindingsMatch()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Field, BindingFlags.Public | BindingFlags.Instance);
@@ -502,7 +502,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_fields_are_replaced_when_bindings_are_not_default()
+        public void TypeDescriptionFieldsAreReplacedWhenBindingsAreNotDefault()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Field, BindingFlags.Public | BindingFlags.Instance);
@@ -514,7 +514,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_properties_are_not_replaced_when_bindings_match()
+        public void TypeDescriptionPropertiesAreNotReplacedWhenBindingsMatch()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance);
@@ -527,7 +527,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_properties_are_replaced_when_bindings_are_not_default()
+        public void TypeDescriptionPropertiesAreReplacedWhenBindingsAreNotDefault()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance);
@@ -539,7 +539,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_methods_are_not_replaced_when_bindings_match()
+        public void TypeDescriptionMethodsAreNotReplacedWhenBindingsMatch()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance);
@@ -552,7 +552,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_methods_are_replaced_when_bindings_are_not_default()
+        public void TypeDescriptionMethodsAreReplacedWhenBindingsAreNotDefault()
         {
             TypeCache.Clear();
             var t = typeof(DescribedType).GetTypeDescription(MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance);
@@ -564,7 +564,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_create_instance_throws_InvalidOperation_if_no_default_constructor()
+        public void TypeDescriptionCreateInstanceThrowsInvalidOperationIfNoDefaultConstructor()
         {
             TypeCache.Clear();
             var t = typeof(TypeWithoutDefaultCtor).GetTypeDescription(MemberTypes.Property);
@@ -574,7 +574,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_can_create_create_instance_with_known_ctor()
+        public void TypeDescriptionCanCreateCreateInstanceWithKnownCtor()
         {
             TypeCache.Clear();
             var t = typeof(TypeWithoutDefaultCtor).GetTypeDescription(MemberTypes.Property);
@@ -589,7 +589,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_get_field_value_is_as_expected()
+        public void TypeDescriptionGetFieldValueIsAsExpected()
         {
             // Set up using .NET reflection:
             var includeNonPublic = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
@@ -604,7 +604,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_set_field_value_is_as_expected()
+        public void TypeDescriptionSetFieldValueIsAsExpected()
         {
             var includeNonPublic = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
             var instance = new DescribedType();
@@ -619,7 +619,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_get_indexed_property_value_is_as_expected()
+        public void TypeDescriptionGetIndexedPropertyValueIsAsExpected()
         {
             var instance = new IndexedPropertyExample();
 
@@ -638,7 +638,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_set_indexed_property_value_is_as_expected()
+        public void TypeDescriptionSetIndexedPropertyValueIsAsExpected()
         {
             var instance = new IndexedPropertyExample();
 
@@ -657,7 +657,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_set_indexed_property_throws_InvalidOperationException_with_no_index()
+        public void TypeDescriptionSetIndexedPropertyThrowsInvalidOperationExceptionWithNoIndex()
         {
             var instance = new IndexedPropertyExample();
 
@@ -670,7 +670,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_get_indexed_property_throws_with_no_index()
+        public void TypeDescriptionGetIndexedPropertyThrowsWithNoIndex()
         {
             var instance = new IndexedPropertyExample();
 
@@ -685,7 +685,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_get_property_value_throws_with_index()
+        public void TypeDescriptionGetPropertyValueThrowsWithIndex()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
 
@@ -700,7 +700,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_get_property_value_is_as_expected()
+        public void TypeDescriptionGetPropertyValueIsAsExpected()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
 
@@ -715,7 +715,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_get_property_index_types_is_as_expected()
+        public void TypeDescriptionGetPropertyIndexTypesIsAsExpected()
         {
             var instance = new IndexedPropertyExample();
 
@@ -734,7 +734,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_read_only_property_is_read_only()
+        public void TypeDescriptionReadOnlyPropertyIsReadOnly()
         {
             var instance = new IndexedPropertyExample();
 
@@ -745,7 +745,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_property_type_is_as_expected()
+        public void TypeDescriptionPropertyTypeIsAsExpected()
         {
             var instance = new IndexedPropertyExample();
 
@@ -756,7 +756,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_set_property_value_is_as_expected()
+        public void TypeDescriptionSetPropertyValueIsAsExpected()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
             var instance = new DescribedType();
@@ -769,7 +769,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_set_property_value_throws_with_index()
+        public void TypeDescriptionSetPropertyValueThrowsWithIndex()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
             var instance = new DescribedType();
@@ -781,7 +781,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_get_index_types_throws_when_property_not_indexed()
+        public void TypeDescriptionGetIndexTypesThrowsWhenPropertyNotIndexed()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
             var instance = new DescribedType();
@@ -793,7 +793,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_invoke_action_sets_value_as_expected()
+        public void TypeDescriptionInvokeActionSetsValueAsExpected()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
             var instance = new DescribedType();
@@ -810,7 +810,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_invoke_func_returns_value_as_expected()
+        public void TypeDescriptionInvokeFuncReturnsValueAsExpected()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
             var instance = new DescribedType();
@@ -827,7 +827,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_invoke_func_throws_InvalidOperationException_when_void()
+        public void TypeDescriptionInvokeFuncThrowsInvalidOperationExceptionWhenVoid()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
             var instance = new DescribedType();
@@ -843,7 +843,7 @@ namespace Teaq.Tests.FastReflectionTests
         }
 
         [TestMethod]
-        public void TypeDescription_invoke_action_throws_InvalidOperationException_when_not_void()
+        public void TypeDescriptionInvokeActionThrowsInvalidOperationExceptionWhenNotVoid()
         {
             var includePublic = BindingFlags.Public | BindingFlags.Instance;
             var instance = new DescribedType();

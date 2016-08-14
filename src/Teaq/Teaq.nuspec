@@ -3,7 +3,7 @@
   <metadata>
     <id>Teaq</id>
     <!--<version>$version$</version>-->
-    <version>2.0.1-alpha</version>
+    <version>2.0.2-alpha</version>
     <title>Teaq Mini-ORM</title>
     <authors>Bruce Krakower</authors>
     <owners>Bruce Krakower</owners>
@@ -11,8 +11,8 @@
     <summary>Teaq is a mini-ORM that offers query generation, object materialization, relational mapping and query batching services.</summary>
     <description>Teaq is a mini-ORM that offers object materialization, relational mapping and query batching services. Teaq offers a simple API to do common database interactions with SQL Server. Performance is most important, as is low startup cost. In addition, queries can be arbitrarily batched to minimize server round trips for any scenario.</description>
     <copyright>Copyright ©  2015</copyright>
-    <licenseUrl>https://teaq.codeplex.com/license</licenseUrl>
-    <projectUrl>https://teaq.codeplex.com/</projectUrl>
+    <licenseUrl>https://github.com/bkjuice/teaq/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/bkjuice/teaq</projectUrl>
     <tags>ORM "SQL Server" Entity SQL JSON</tags>
   </metadata>
 </package>

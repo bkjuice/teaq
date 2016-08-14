@@ -15,6 +15,7 @@ namespace Teaq.Tests.csUsage
                 var connectionString = "my db connection...";
 
                 List<Customer> results;
+
                 // Build a simple query using the fluent interface then execute it:
                 using (var context = Repository.BuildContext(connectionString))
                 {
