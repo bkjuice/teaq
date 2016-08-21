@@ -16,6 +16,66 @@ namespace Teaq.Tests
     public class DataReaderExtensionTests
     {
         [TestMethod]
+        public void DataReaderCanReadDecimalAsNullableBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<decimal>(1M)
+               .ReadEntities<EntityWithProperty<bool?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(true);
+        }
+
+        [TestMethod]
+        public void DataReaderCanReadDecimalAsBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<decimal>(1M)
+               .ReadEntities<EntityWithProperty<bool>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(true);
+        }
+
+        [TestMethod]
+        public void DataReaderCanReadDoubleAsNullableBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<double>(1)
+               .ReadEntities<EntityWithProperty<bool?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(true);
+        }
+
+        [TestMethod]
+        public void DataReaderCanReadDoubleAsBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<double>(1)
+               .ReadEntities<EntityWithProperty<bool>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(true);
+        }
+
+        [TestMethod]
+        public void DataReaderCanReadIntegerAsNullableBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<int>(1)
+               .ReadEntities<EntityWithProperty<bool?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(true);
+        }
+
+        [TestMethod]
+        public void DataReaderCanReadIntegerAsBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<int>(1)
+               .ReadEntities<EntityWithProperty<bool>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(true);
+        }
+
+        [TestMethod]
         public void DataReaderReadEntitiesAsyncCanReadSqlXml()
         {
             var items =  this.CreateReaderFromTableWithValue<SqlXml>(

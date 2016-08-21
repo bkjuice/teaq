@@ -17,7 +17,7 @@ namespace Teaq
         private static readonly Dictionary<TypePair, Func<object, object>> Converters =
             new Dictionary<TypePair, Func<object, object>>(256, new TypePairComparer())
             {
-                [new TypePair(T<bool>(), T<bool?>())] = o => new bool?((bool)o),
+                [new TypePair(T<bool>(), T<bool?>())] = o => new bool?((bool)o), // add all  integer conversions
                 [new TypePair(T<byte>(), T<byte?>())] = o => new byte?((byte)o), // Add all integer conversions
                 [new TypePair(T<char>(), T<char?>())] = o => new char?((char)o),
                 [new TypePair(T<DateTime>(), T<DateTime?>())] = o => (DateTime?)(DateTime)o,
@@ -26,6 +26,8 @@ namespace Teaq
                 [new TypePair(T<DateTimeOffset>(), T<DateTimeOffset?>())] = o => new DateTimeOffset?((DateTimeOffset)o),
                 [new TypePair(T<DateTimeOffset>(), T<DateTime>())] = o => ((DateTimeOffset)o).DateTime,
                 [new TypePair(T<DateTimeOffset>(), T<DateTime?>())] = o => new DateTime?(((DateTimeOffset)o).DateTime),
+                [new TypePair(T<decimal>(), T<bool>())] = o => ((decimal)o) != 0,
+                [new TypePair(T<decimal>(), T<bool?>())] = o => new bool?(((decimal)o) != 0),
                 [new TypePair(T<decimal>(), T<decimal?>())] = o => new decimal?((decimal)o),
                 [new TypePair(T<decimal>(), T<long>())] = o => unchecked((long)(decimal)o),
                 [new TypePair(T<decimal>(), T<long?>())] = o => new long?(unchecked((long)(decimal)o)),
@@ -35,9 +37,13 @@ namespace Teaq
                 [new TypePair(T<decimal>(), T<short?>())] = o => new short?(unchecked((short)(decimal)o)),
                 [new TypePair(T<decimal>(), T<byte>())] = o => unchecked((byte)(decimal)o),
                 [new TypePair(T<decimal>(), T<byte?>())] = o => new byte?(unchecked((byte)(decimal)o)),
+                [new TypePair(T<double>(), T<bool>())] = o => ((double)o) != 0,
+                [new TypePair(T<double>(), T<bool?>())] = o => new bool?(((double)o) != 0),
                 [new TypePair(T<double>(), T<double?>())] = o => new double?((double)o),
                 [new TypePair(T<float>(), T<float?>())] = o => new float?((float)o),
                 [new TypePair(T<Guid>(), T<Guid?>())] = o => new Guid?((Guid)o),
+                [new TypePair(T<int>(), T<bool>())] = o => ((int)o) > 0,
+                [new TypePair(T<int>(), T<bool?>())] = o => new bool?(((int)o) > 0),
                 [new TypePair(T<int>(), T<decimal>())] = o => (decimal)(int)o,
                 [new TypePair(T<int>(), T<decimal?>())] = o => new decimal?((int)o),
                 [new TypePair(T<int>(), T<long>())] = o => (long)(int)o,
@@ -181,27 +187,27 @@ namespace Teaq
         {
             public bool Equals(TypePair x, TypePair y)
             {
-                return x.Source.Equals(y.Source) && x.Target.Equals(y.Target);
+                return x.DataType.Equals(y.DataType) && x.PropType.Equals(y.PropType);
             }
 
             public int GetHashCode(TypePair obj)
             {
-                return obj.Source.GetHashCode() ^ obj.Target.GetHashCode();
+                return obj.DataType.GetHashCode() ^ obj.PropType.GetHashCode();
             }
         }
 
         private struct TypePair
         {
-            public TypePair(RuntimeTypeHandle source, RuntimeTypeHandle target)
+            public TypePair(RuntimeTypeHandle dataType, RuntimeTypeHandle propType)
                 : this()
             {
-                this.Source = source;
-                this.Target = target;
+                this.DataType = dataType;
+                this.PropType = propType;
             }
 
-            public RuntimeTypeHandle Source;
+            public RuntimeTypeHandle DataType;
 
-            public RuntimeTypeHandle Target;
+            public RuntimeTypeHandle PropType;
         }
     }
 }
