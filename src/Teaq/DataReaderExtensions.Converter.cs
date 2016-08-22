@@ -41,6 +41,8 @@ namespace Teaq
                 [new TypePair(T<decimal>(), T<byte?>())] = o => new byte?(unchecked((byte)(decimal)o)),
                 [new TypePair(T<double>(), T<bool>())] = o => ((double)o) != 0,
                 [new TypePair(T<double>(), T<bool?>())] = o => new bool?(((double)o) != 0),
+                [new TypePair(T<double>(), T<float?>())] = o => new float?(Convert.ToSingle((double)o)),
+                [new TypePair(T<double>(), T<decimal?>())] = o => new decimal?(Convert.ToDecimal((double)o)),
                 [new TypePair(T<double>(), T<double?>())] = o => new double?((double)o),
                 [new TypePair(T<float>(), T<float?>())] = o => new float?((float)o),
                 [new TypePair(T<Guid>(), T<Guid?>())] = o => new Guid?((Guid)o),

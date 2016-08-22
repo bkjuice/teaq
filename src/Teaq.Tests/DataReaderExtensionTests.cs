@@ -16,6 +16,36 @@ namespace Teaq.Tests
     public class DataReaderExtensionTests
     {
         [TestMethod]
+        public void DataReaderCanReadDoubleAsNullableDecimal()
+        {
+            var items = this.CreateReaderFromTableWithValue<double>(1.77)
+               .ReadEntities<EntityWithProperty<decimal?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(1.77M);
+        }
+
+        [TestMethod]
+        public void DataReaderCanReadDoubleAsNullableFloat()
+        {
+            var items = this.CreateReaderFromTableWithValue<double>(1.77)
+               .ReadEntities<EntityWithProperty<float?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(1.77F);
+        }
+
+        [TestMethod]
+        public void DataReaderCanReadDoubleAsFloat()
+        {
+            var items = this.CreateReaderFromTableWithValue<double>(1.66)
+               .ReadEntities<EntityWithProperty<float>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(1.66F);
+        }
+
+        [TestMethod]
         public void DataReaderCanReadDecimalAsNullableBool()
         {
             var items = this.CreateReaderFromTableWithValue<decimal>(1M)
