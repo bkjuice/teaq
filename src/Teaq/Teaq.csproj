@@ -298,7 +298,9 @@
     <Compile Include="UdtColumnOrderAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Teaq.nuspec" />
+    <None Include="Teaq.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

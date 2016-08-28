@@ -155,31 +155,6 @@ namespace Teaq
             }
         }
 
-        ////private sealed class SqlValueTypeIterator<T> : ValueIteratorBase<T, SqlDataReader> where T : struct
-        ////{
-        ////    private Func<SqlDataReader, T?> converter;
-
-        ////    public SqlValueTypeIterator(SqlDataReader reader, Func<IDataReader, T?> handler, Action onCompleteCallback)
-        ////        : base(reader, onCompleteCallback)
-        ////    {
-        ////        Contract.Requires(reader != null);
-
-        ////        if (handler != null)
-        ////        {
-        ////            this.converter = handler;
-        ////        }
-        ////        else
-        ////        {
-        ////            this.converter = r => r.GetFieldValue<T?>(0);
-        ////        }
-        ////    }
-
-        ////    protected override T? ConvertValue(SqlDataReader reader)
-        ////    {
-        ////        return this.converter(reader);
-        ////    }
-        ////}
-
         private sealed class StringIterator : PrimitiveIterator<string, IDataReader>
         {
             private Func<IDataReader, string> converter;
@@ -474,23 +449,26 @@ namespace Teaq
                 for (int i = 0; i < index.Length; ++i)
                 {
                     var name = r.GetName(i);
-                    if (config != null)
+                    if (!string.IsNullOrEmpty(name))
                     {
-                        name = config.PropertyMapping(name);
-                    }
-                    var property = d.GetProperty(name);
-                    if (property != null)
-                    {
-                        var actualHandle = r.GetFieldType(i).TypeHandle;
-                        var expectedHandle = property.PropertyTypeHandle;
-                        if (actualHandle.Equals(expectedHandle))
+                        if (config != null)
                         {
-                            index[i] = new DataFieldSetter(property);
+                            name = config.PropertyMapping(name);
                         }
-                        else
+                        var property = d.GetProperty(name);
+                        if (property != null)
                         {
-                            var converter = GetConverter(actualHandle, expectedHandle, property.PropertyType);
-                            index[i] = new DataFieldSetter(property, converter);
+                            var actualHandle = r.GetFieldType(i).TypeHandle;
+                            var expectedHandle = property.PropertyTypeHandle;
+                            if (actualHandle.Equals(expectedHandle))
+                            {
+                                index[i] = new DataFieldSetter(property);
+                            }
+                            else
+                            {
+                                var converter = GetConverter(actualHandle, expectedHandle, property.PropertyType);
+                                index[i] = new DataFieldSetter(property, converter);
+                            }
                         }
                     }
                 }

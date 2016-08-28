@@ -16,7 +16,37 @@ namespace Teaq.Tests
     public class DataReaderExtensionTests
     {
         [TestMethod]
-        public void DataReaderCanReadDoubleAsNullableDecimal()
+        public void ReadEntitiesIgnoresEmptyColumName()
+        {
+            var stub = new DataReaderStub();
+            stub.FieldCountGetter = () => 1;
+            stub.GetFieldTypeFunc = i => typeof(int);
+            stub.GetNameFunc = i => string.Empty;
+
+            Action test = () => stub
+             .ReadEntities<EntityWithProperty<int>>()
+             .ToList();
+
+            test.ShouldNotThrow();
+        }
+
+        [TestMethod]
+        public void ReadEntitiesIgnoresNullColumName()
+        {
+            var stub = new DataReaderStub();
+            stub.FieldCountGetter = () => 1;
+            stub.GetFieldTypeFunc = i => typeof(int);
+            stub.GetNameFunc = i => null;
+
+            Action test = () => stub
+             .ReadEntities<EntityWithProperty<int>>()
+             .ToList();
+
+            test.ShouldNotThrow();
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadDoubleAsNullableDecimal()
         {
             var items = this.CreateReaderFromTableWithValue<double>(1.77)
                .ReadEntities<EntityWithProperty<decimal?>>();
@@ -26,7 +56,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadDoubleAsNullableFloat()
+        public void ReadEntitiesCanReadDoubleAsNullableFloat()
         {
             var items = this.CreateReaderFromTableWithValue<double>(1.77)
                .ReadEntities<EntityWithProperty<float?>>();
@@ -36,7 +66,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadDoubleAsFloat()
+        public void ReadEntitiesCanReadDoubleAsFloat()
         {
             var items = this.CreateReaderFromTableWithValue<double>(1.66)
                .ReadEntities<EntityWithProperty<float>>();
@@ -46,7 +76,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadDecimalAsNullableBool()
+        public void ReadEntitiesCanReadDecimalAsNullableBool()
         {
             var items = this.CreateReaderFromTableWithValue<decimal>(1M)
                .ReadEntities<EntityWithProperty<bool?>>();
@@ -56,7 +86,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadDecimalAsBool()
+        public void ReadEntitiesCanReadDecimalAsBool()
         {
             var items = this.CreateReaderFromTableWithValue<decimal>(1M)
                .ReadEntities<EntityWithProperty<bool>>();
@@ -66,7 +96,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadDoubleAsNullableBool()
+        public void ReadEntitiesCanReadDoubleAsNullableBool()
         {
             var items = this.CreateReaderFromTableWithValue<double>(1)
                .ReadEntities<EntityWithProperty<bool?>>();
@@ -76,7 +106,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadDoubleAsBool()
+        public void ReadEntitiesCanReadDoubleAsBool()
         {
             var items = this.CreateReaderFromTableWithValue<double>(1)
                .ReadEntities<EntityWithProperty<bool>>();
@@ -86,7 +116,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadIntegerAsNullableBool()
+        public void ReadEntitiesCanReadIntegerAsNullableBool()
         {
             var items = this.CreateReaderFromTableWithValue<int>(1)
                .ReadEntities<EntityWithProperty<bool?>>();
@@ -96,7 +126,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderCanReadIntegerAsBool()
+        public void ReadEntitiesCanReadIntegerAsBool()
         {
             var items = this.CreateReaderFromTableWithValue<int>(1)
                .ReadEntities<EntityWithProperty<bool>>();
@@ -106,7 +136,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderReadEntitiesAsyncCanReadSqlXml()
+        public void ReadEntitiesReadEntitiesAsyncCanReadSqlXml()
         {
             var items =  this.CreateReaderFromTableWithValue<SqlXml>(
                 new SqlXml(new XmlTextReader("<test />", XmlNodeType.Document, null)))
@@ -228,7 +258,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlXml()
+        public void ReadEntitiesCanReadSqlXml()
         {
             var items = this.CreateReaderFromTableWithValue<SqlXml>(
                 new SqlXml(new XmlTextReader("<test />", XmlNodeType.Document, null)))
@@ -239,7 +269,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlXmlAsNull()
+        public void ReadEntitiesCanReadSqlXmlAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlXml>().ReadEntities<EntityWithProperty<string>>();
             items.Count.Should().Be(1);
@@ -247,7 +277,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlString()
+        public void ReadEntitiesCanReadSqlString()
         {
             var items = this.CreateReaderFromTableWithValue<SqlString>("test").ReadEntities<EntityWithProperty<string>>();
             items.Count.Should().Be(1);
@@ -255,7 +285,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlStringAsNull()
+        public void ReadEntitiesCanReadSqlStringAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlString>().ReadEntities<EntityWithProperty<string>>();
             items.Count.Should().Be(1);
@@ -263,7 +293,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlSingle()
+        public void ReadEntitiesCanReadSqlSingle()
         {
             var items = this.CreateReaderFromTableWithValue<SqlSingle>(10f).ReadEntities<EntityWithProperty<float>>();
             items.Count.Should().Be(1);
@@ -271,7 +301,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlSingleAsNull()
+        public void ReadEntitiesCanReadSqlSingleAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlSingle>().ReadEntities<EntityWithProperty<float?>>();
             items.Count.Should().Be(1);
@@ -279,7 +309,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlMoney()
+        public void ReadEntitiesCanReadSqlMoney()
         {
             var items = this.CreateReaderFromTableWithValue<SqlMoney>(1m).ReadEntities<EntityWithProperty<decimal>>();
             items.Count.Should().Be(1);
@@ -287,7 +317,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlMoneyAsNull()
+        public void ReadEntitiesCanReadSqlMoneyAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlMoney>().ReadEntities<EntityWithProperty<decimal?>>();
             items.Count.Should().Be(1);
@@ -295,7 +325,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlInt64()
+        public void ReadEntitiesCanReadSqlInt64()
         {
             var items = this.CreateReaderFromTableWithValue<SqlInt64>(1L).ReadEntities<EntityWithProperty<long>>();
             items.Count.Should().Be(1);
@@ -303,7 +333,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlInt64AsNull()
+        public void ReadEntitiesCanReadSqlInt64AsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlInt64>().ReadEntities<EntityWithProperty<long?>>();
             items.Count.Should().Be(1);
@@ -311,7 +341,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlInt32()
+        public void ReadEntitiesCanReadSqlInt32()
         {
             var items = this.CreateReaderFromTableWithValue<SqlInt32>(1).ReadEntities<EntityWithProperty<int>>();
             items.Count.Should().Be(1);
@@ -319,7 +349,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlInt32AsNull()
+        public void ReadEntitiesCanReadSqlInt32AsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlInt32>().ReadEntities<EntityWithProperty<int?>>();
             items.Count.Should().Be(1);
@@ -327,7 +357,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlInt16()
+        public void ReadEntitiesCanReadSqlInt16()
         {
             var items = this.CreateReaderFromTableWithValue<SqlInt16>((short)1).ReadEntities<EntityWithProperty<short>>();
             items.Count.Should().Be(1);
@@ -335,7 +365,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlInt16AsNull()
+        public void ReadEntitiesCanReadSqlInt16AsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlInt16>().ReadEntities<EntityWithProperty<short?>>();
             items.Count.Should().Be(1);
@@ -343,7 +373,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlGuid()
+        public void ReadEntitiesCanReadSqlGuid()
         {
             var items = this.CreateReaderFromTableWithValue<SqlGuid>(Guid.Empty).ReadEntities<EntityWithProperty<Guid>>();
             items.Count.Should().Be(1);
@@ -351,7 +381,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlGuidAsNull()
+        public void ReadEntitiesCanReadSqlGuidAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlGuid>().ReadEntities<EntityWithProperty<Guid?>>();
             items.Count.Should().Be(1);
@@ -359,7 +389,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlDouble()
+        public void ReadEntitiesCanReadSqlDouble()
         {
             var items = this.CreateReaderFromTableWithValue<SqlDouble>(10d).ReadEntities<EntityWithProperty<double>>();
             items.Count.Should().Be(1);
@@ -367,7 +397,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlDoubleAsNull()
+        public void ReadEntitiesCanReadSqlDoubleAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlDouble>().ReadEntities<EntityWithProperty<double?>>();
             items.Count.Should().Be(1);
@@ -375,7 +405,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlDecimal()
+        public void ReadEntitiesCanReadSqlDecimal()
         {
             var items = this.CreateReaderFromTableWithValue<SqlDecimal>(10m).ReadEntities<EntityWithProperty<decimal>>();
             items.Count.Should().Be(1);
@@ -383,7 +413,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlDecimalAsNull()
+        public void ReadEntitiesCanReadSqlDecimalAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlDecimal>().ReadEntities<EntityWithProperty<decimal?>>();
             items.Count.Should().Be(1);
@@ -391,7 +421,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlChars()
+        public void ReadEntitiesCanReadSqlChars()
         {
             var items = this.CreateReaderFromTableWithValue<SqlChars>(new SqlChars(new char[] { '1', '2' })).ReadEntities<EntityWithProperty<char[]>>();
             items.Count.Should().Be(1);
@@ -399,7 +429,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlCharsAsNull()
+        public void ReadEntitiesCanReadSqlCharsAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlChars>().ReadEntities<EntityWithProperty<char[]>>();
             items.Count.Should().Be(1);
@@ -407,7 +437,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlByte()
+        public void ReadEntitiesCanReadSqlByte()
         {
             var items = this.CreateReaderFromTableWithValue<SqlByte>(new SqlByte(1)).ReadEntities<EntityWithProperty<byte>>();
             items.Count.Should().Be(1);
@@ -415,7 +445,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlByteAsNull()
+        public void ReadEntitiesCanReadSqlByteAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlByte>().ReadEntities<EntityWithProperty<byte?>>();
             items.Count.Should().Be(1);
@@ -423,7 +453,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlBoolean()
+        public void ReadEntitiesCanReadSqlBoolean()
         {
             var items = this.CreateReaderFromTableWithValue<SqlBoolean>(true).ReadEntities<EntityWithProperty<bool>>();
             items.Count.Should().Be(1);
@@ -431,7 +461,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlBooleanAsNull()
+        public void ReadEntitiesCanReadSqlBooleanAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlBoolean>().ReadEntities<EntityWithProperty<bool?>>();
             items.Count.Should().Be(1);
@@ -439,7 +469,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlBinary()
+        public void ReadEntitiesCanReadSqlBinary()
         {
             var items = this.CreateReaderFromTableWithValue<SqlBinary>(new byte[] { 1, 2 }).ReadEntities<EntityWithProperty<byte[]>>();
             items.Count.Should().Be(1);
@@ -447,7 +477,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadSqlBinaryAsNull()
+        public void ReadEntitiesCanReadSqlBinaryAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlBinary>().ReadEntities<EntityWithProperty<byte[]>>();
             items.Count.Should().Be(1);
@@ -455,7 +485,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadNullableDateTime()
+        public void ReadEntitiesCanReadNullableDateTime()
         {
             var items = this.CreateReaderFromTableWithValue<SqlDateTime>(DateTime.UtcNow.Date).ReadEntities<EntityWithNullableProperty<DateTime>>();
             items.Count.Should().Be(1);
@@ -463,7 +493,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadNullableDateTimeAsNull()
+        public void ReadEntitiesCanReadNullableDateTimeAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<SqlDateTime>().ReadEntities<EntityWithNullableProperty<DateTime>>();
             items.Count.Should().Be(1);
@@ -471,7 +501,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsThrowsInvalidOperationExceptionWhenDataTypeCannotBeConverted()
+        public void ReadEntitiesThrowsInvalidOperationExceptionWhenDataTypeCannotBeConverted()
         {
             var reader = this.CreateReaderFromTableWithValue<DateTimeOffset>(DateTimeOffset.UtcNow);
             Action test = () => reader.ReadEntities<EntityWithNullableProperty<uint>>();
@@ -479,7 +509,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadNullableDateTimeOffset()
+        public void ReadEntitiesCanReadNullableDateTimeOffset()
         {
             var items = this.CreateReaderFromTableWithValue<DateTimeOffset>(DateTimeOffset.UtcNow).ReadEntities<EntityWithNullableProperty<DateTimeOffset>>();
             items.Count.Should().Be(1);
@@ -487,33 +517,15 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderExtensionsCanReadNullableDateTimeOffsetAsNull()
+        public void ReadEntitiesCanReadNullableDateTimeOffsetAsNull()
         {
             var items = this.CreateReaderFromTableWithNullValue<DateTimeOffset>().ReadEntities<EntityWithNullableProperty<DateTimeOffset>>();
             items.Count.Should().Be(1);
             items[0].Target.HasValue.Should().BeFalse();
         }
 
-        public IDataReader CreateReaderFromTableWithValue<TValue>(object value)
-        {
-            var table = new DataTable();
-            table.Columns.Add(new DataColumn("Target", typeof(TValue)));
-            var row = table.NewRow()[0] = value;
-            table.Rows.Add(row);
-            return table.CreateDataReader();
-        }
-
-        public IDataReader CreateReaderFromTableWithNullValue<TValue>()
-        {
-            var table = new DataTable();
-            table.Columns.Add(new DataColumn("Target", typeof(TValue)));
-            var row = table.NewRow()[0] = DBNull.Value;
-            table.Rows.Add(row);
-            return table.CreateDataReader();
-        }
-
         [TestMethod]
-        public void DataReaderReadEntityReturnsAllRows()
+        public void ReadEntitiesReturnsAllRows()
         {
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
@@ -526,7 +538,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderReadEntityHandlesNullableIntIgnoresNullValues()
+        public void ReadEntitiesHandlesNullableIntIgnoresNullValues()
         {
             var tableHelper = new ValueTableHelper<object>();
             int value1 = 1;
@@ -542,7 +554,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderReadEntityHandlesIntAsDecimal()
+        public void ReadEntitiesHandlesIntAsDecimal()
         {
             var tableHelper = new ValueTableHelper<decimal>();
             decimal value1 = 1;
@@ -558,22 +570,22 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderReadEntityUsesMapping()
+        public void ReadEntitiesUsesMapping()
         {
             var config = new Mock<IEntityConfiguration>();
             config.Setup<string>(c => c.PropertyMapping(It.IsAny<string>())).Returns<string>(s => s);
 
             var model = new Mock<IDataModel>();
-            model.Setup<IEntityConfiguration>(h => h.GetEntityConfig(It.IsAny<Type>())).Returns(config.Object).Verifiable();
+            model.Setup(h => h.GetEntityConfig(It.IsAny<Type>())).Returns(config.Object).Verifiable();
 
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
             var items = tableHelper.GetReader().ReadEntities<Customer>(dataModel: model.Object);
-            model.Verify<IEntityConfiguration>(h => h.GetEntityConfig(It.IsAny<Type>()), Times.AtLeastOnce());
+            model.Verify(h => h.GetEntityConfig(It.IsAny<Type>()), Times.AtLeastOnce());
         }
 
         [TestMethod]
-        public void DataReaderReadEntityIgnoresUnmatchedColumns()
+        public void ReadEntitiesIgnoresUnmatchedColumns()
         {
             var config = new Mock<IEntityConfiguration>();
 
@@ -581,7 +593,7 @@ namespace Teaq.Tests
             config.Setup<string>(c => c.PropertyMapping(It.IsAny<string>())).Returns("unmatched");
 
             var model = new Mock<IDataModel>();
-            model.Setup<IEntityConfiguration>(h => h.GetEntityConfig(It.IsAny<Type>())).Returns(config.Object).Verifiable();
+            model.Setup(h => h.GetEntityConfig(It.IsAny<Type>())).Returns(config.Object).Verifiable();
 
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
@@ -593,7 +605,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderReadEntityThrowsInvalidCastExceptionWhenNullCannotBeMapped()
+        public void ReadEntitiesThrowsInvalidCastExceptionWhenNullCannotBeMapped()
         {
             var config = new Mock<IEntityConfiguration>();
 
@@ -609,7 +621,7 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void DataReaderInvokesHandler()
+        public void ReadEntitiesInvokesHandler()
         {
             var handler = new Mock<IDataHandler<Customer>>();
             handler.Setup(h => h.ReadEntity(It.IsAny<IDataReader>())).Verifiable();
@@ -620,6 +632,30 @@ namespace Teaq.Tests
 
             tableHelper.GetReader().ReadEntities(handler.Object);
             handler.Verify<Customer>(h => h.ReadEntity(It.IsAny<IDataReader>()), Times.Exactly(2));
+        }
+
+        public IDataReader CreateReaderFromTableWithValue<TValue>(object value)
+        {
+            return CreateReaderFromTableWithValue<TValue>(value, "Target");
+        }
+
+        public IDataReader CreateReaderFromTableWithNullValue<TValue>()
+        {
+            return CreateReaderFromTableWithValue<TValue>(DBNull.Value, "Target");
+        }
+
+        public IDataReader CreateReaderFromTableWithValue<TValue>(object value, string columnName)
+        {
+            var table = new DataTable();
+            var column = new DataColumn(columnName, typeof(TValue));
+
+            // DataColumn will default the name if null or empty, defeating some of the test scenarios:
+            column.ColumnName = columnName;
+
+            table.Columns.Add(new DataColumn(columnName, typeof(TValue)));
+            var row = table.NewRow()[0] = value;
+            table.Rows.Add(row);
+            return table.CreateDataReader();
         }
 
         public class EntityWithNullableProperty<TValue> where TValue : struct

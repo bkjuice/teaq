@@ -133,6 +133,7 @@
     <Compile Include="QueryBuilderExtensionsTests.cs" />
     <Compile Include="SqlConnectionBuilderTests.cs" />
     <Compile Include="SqlParameterExtensionTests.cs" />
+    <Compile Include="Stubs\DataReaderStub.cs" />
     <Compile Include="Stubs\DbConnectionStub.cs" />
     <Compile Include="Stubs\IDataHelper.cs" />
     <Compile Include="Stubs\EntityTableHelper{T}.cs" />
