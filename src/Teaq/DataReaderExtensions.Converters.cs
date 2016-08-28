@@ -84,6 +84,22 @@ namespace Teaq
                 [new TypePair(T<string>(), T<XDocument>())] = o => XDocument.Load(CreateReader(o)),
                 [new TypePair(T<string>(), T<XPathDocument>())] = o => new XPathDocument(CreateReader(o)),
                 [new TypePair(T<string>(), T<XmlDocument>())] = ConvertStringToXml,
+                [new TypePair(T<string>(), T<double>())] = o => ConvertOrDefault((string)o, TryConvertDouble),
+                [new TypePair(T<string>(), T<double?>())] = o => TryConvertDouble((string)o),
+                [new TypePair(T<string>(), T<decimal>())] = o => ConvertOrDefault((string)o, TryConvertDecimal),
+                [new TypePair(T<string>(), T<decimal?>())] = o => TryConvertDecimal((string)o),
+                [new TypePair(T<string>(), T<long>())] = o => ConvertOrDefault((string)o, TryConvertInt64),
+                [new TypePair(T<string>(), T<long?>())] = o => TryConvertInt64((string)o),
+                [new TypePair(T<string>(), T<float>())] = o => ConvertOrDefault((string)o, TryConvertFloat),
+                [new TypePair(T<string>(), T<float?>())] = o => TryConvertFloat((string)o),
+                [new TypePair(T<string>(), T<int>())] = o => ConvertOrDefault((string)o, TryConvertInt32),
+                [new TypePair(T<string>(), T<int?>())] = o => TryConvertInt32((string)o),
+                [new TypePair(T<string>(), T<short>())] = o => ConvertOrDefault((string)o, TryConvertInt16),
+                [new TypePair(T<string>(), T<short?>())] = o => TryConvertInt16((string)o),
+                [new TypePair(T<string>(), T<byte>())] = o => ConvertOrDefault((string)o, TryConvertByte),
+                [new TypePair(T<string>(), T<byte?>())] = o => TryConvertByte((string)o),
+                [new TypePair(T<string>(), T<bool>())] = o => ConvertOrDefault((string)o, TryConvertBool),
+                [new TypePair(T<string>(), T<bool?>())] = o => TryConvertBool((string)o),
                 [new TypePair(T<uint>(), T<bool>())] = o => ((uint)o) != 0,
                 [new TypePair(T<uint>(), T<bool?>())] = o => new bool?(((uint)o) != 0),
                 [new TypePair(T<uint>(), T<decimal>())] = o => (decimal)(uint)o,
@@ -199,6 +215,99 @@ namespace Teaq
             var v = new XmlDocument();
             v.Load(CreateReader(o));
             return v;
+        }
+
+        private static T ConvertOrDefault<T> (string s, Func<string, T?> trier) where T: struct
+        {
+            return trier(s) ?? default(T);
+        }
+
+        private static bool? TryConvertBool(string s)
+        {
+            bool value;
+            if (bool.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static byte? TryConvertByte(string s)
+        {
+            byte value;
+            if (byte.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static double? TryConvertDouble(string s)
+        {
+            double value;
+            if(double.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static decimal? TryConvertDecimal(string s)
+        {
+            decimal value;
+            if (decimal.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static float? TryConvertFloat(string s)
+        {
+            float value;
+            if (float.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static long? TryConvertInt64(string s)
+        {
+            long value;
+            if (long.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static int? TryConvertInt32(string s)
+        {
+            int value;
+            if (int.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        private static short? TryConvertInt16(string s)
+        {
+            short value;
+            if (short.TryParse(s, out value))
+            {
+                return value;
+            }
+
+            return null;
         }
 
         private static XmlReader CreateReader(object xml)

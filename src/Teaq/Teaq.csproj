@@ -199,7 +199,7 @@
     <Compile Include="DataContext.INonQueryProvider.cs" />
     <Compile Include="DataContext.IEntityQueryProvider.cs" />
     <Compile Include="DataReaderExtensions.Iterators.cs" />
-    <Compile Include="DataReaderExtensions.Converter.cs" />
+    <Compile Include="DataReaderExtensions.Converters.cs" />
     <Compile Include="DataFieldSetter.cs" />
     <Compile Include="DbCommandExtensions.cs" />
     <Compile Include="DelegatingReaderHandler{T}.cs" />

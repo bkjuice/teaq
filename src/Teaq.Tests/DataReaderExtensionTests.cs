@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.SqlTypes;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,6 +14,166 @@ namespace Teaq.Tests
     [TestClass]
     public class DataReaderExtensionTests
     {
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("true")
+              .ReadEntities<EntityWithProperty<bool?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(true);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToBool()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("false")
+              .ReadEntities<EntityWithProperty<bool>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(false);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableByte()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("210")
+              .ReadEntities<EntityWithProperty<byte?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(210);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToByte()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("111")
+              .ReadEntities<EntityWithProperty<byte>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(111);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableFloat()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<float?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToFloat()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<float>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableDecimal()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<decimal?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToDecimal()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<decimal>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableInt64()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<long?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToInt64()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<long>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableInt16()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<short?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToInt16()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<short>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableInt32()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<int?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToInt32()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("100")
+              .ReadEntities<EntityWithProperty<int>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(100);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToNullableDouble()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("1.77")
+              .ReadEntities<EntityWithProperty<double?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(1.77);
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadStringToDouble()
+        {
+            var items = this.CreateReaderFromTableWithValue<string>("1.77")
+              .ReadEntities<EntityWithProperty<double>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(1.77);
+        }
+
         [TestMethod]
         public void ReadEntitiesIgnoresEmptyColumName()
         {
