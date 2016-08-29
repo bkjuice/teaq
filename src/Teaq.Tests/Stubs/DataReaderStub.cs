@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Teaq.Tests.Stubs
 {
-    internal class DataReaderStub : IDataReader
+    public class DataReaderStub : IDataReader
     {
         public Func<string, object> ValueGetterByName;
 

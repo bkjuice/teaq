@@ -40,6 +40,20 @@ namespace Teaq
         }
 
         /// <summary>
+        /// Queries the repository for a collection of entities that may differ from the type used to build the query.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
+        /// <param name="command">The command to execute.</param>
+        /// <param name="model">The optional data model.</param>
+        /// <returns>
+        /// The collection of entities.
+        /// </returns>
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null)
+        {
+            return this.Query<TEntity>(command.CommandText, command.GetParameters(), null, model);
+        }
+
+        /// <summary>
         /// Queries the repository for a collection of entities.
         /// </summary>
         /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
@@ -48,7 +62,7 @@ namespace Teaq
         /// <returns>
         /// The collection of entities.
         /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
             return this.Query(command.CommandText, command.GetParameters(), new DelegatingReaderHandler<TEntity>(handler), null);
         }

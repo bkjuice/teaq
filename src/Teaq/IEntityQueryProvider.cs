@@ -37,7 +37,7 @@ namespace Teaq
         List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler);
 
         /// <summary>
-        /// Queries the repository for a collection of entities.
+        /// Queries the repository for a collection of entities that may differ from the type used to build the query.
         /// </summary>
         /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
         /// <param name="command">The command to execute.</param>
@@ -45,7 +45,18 @@ namespace Teaq
         /// <returns>
         /// The collection of entities.
         /// </returns>
-        List<TEntity> Query<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler);
+        List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler);
+
+        /// <summary>
+        /// Queries the repository for a collection of entities that may differ from the type used to build the query.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
+        /// <param name="command">The command to execute.</param>
+        /// <param name="model">The optional data model.</param>
+        /// <returns>
+        /// The collection of entities.
+        /// </returns>
+        List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null);
 
         /// <summary>
         /// Executes a query built using a fluent expression.

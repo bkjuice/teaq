@@ -26,10 +26,26 @@ namespace Teaq.Contracts
         /// The collection of entities.
         /// </returns>
         /// <exception cref="NotImplementedException">This is a contract only implementation.</exception>
-        public List<TEntity> Query<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
         {
             Contract.Requires<ArgumentNullException>(command != null);
             Contract.Requires<ArgumentNullException>(handler != null);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Queries the repository for a collection of entities that may differ from the type used to build the query.
+        /// </summary>
+        /// <typeparam name="TEntity">The entity type to be returned.</typeparam>
+        /// <param name="command">The command to execute.</param>
+        /// <param name="model">The optional data model.</param>
+        /// <returns>
+        /// The collection of entities.
+        /// </returns>
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null)
+        {
+            Contract.Requires<ArgumentNullException>(command != null);
 
             throw new NotImplementedException();
         }
