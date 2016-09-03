@@ -17,7 +17,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Action test = () => context.Query<Customer>(null);
+                Action test = () => context.Query(default(QueryCommand<Customer>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }
@@ -67,7 +67,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Func<Task> test = () => context.QueryAsync<Customer>(null);
+                Func<Task> test = () => context.QueryAsync(default(QueryCommand<Customer>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }

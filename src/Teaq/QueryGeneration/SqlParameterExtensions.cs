@@ -6,11 +6,31 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Teaq.Configuration;
+using Teaq.FastReflection;
 
 namespace Teaq.QueryGeneration
 {
     internal static class SqlParameterExtensions
     {
+        public static IDbDataParameter[] GetAnonymousParameters(this object instance)
+        {
+            if (instance == null)
+            {
+                return null;
+            }
+
+            var d = instance.GetType().GetTypeDescription();
+            var props = d.GetProperties();
+            var parameters = new IDbDataParameter[props.Length];
+            for(int i = 0; i< props.Length; ++i)
+            {
+                var p = props[i];
+                parameters[i] = p.AsDbParameter(p.MemberName);
+            }
+
+            return parameters;
+        }
+
         public static SqlParameter[] QualifyForBatch(this SqlParameterCollection parameters, QueryBatch batch)
         {
             Contract.Requires(parameters != null);

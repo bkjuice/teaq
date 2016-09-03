@@ -101,6 +101,40 @@ namespace Teaq.Contracts
         }
 
         /// <summary>
+        /// Executes an inline query that is optionally parameterized using an anonymous type.
+        /// </summary>
+        /// <typeparam name="T">The type of item that will be returned in the expected result set.</typeparam>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The optional parameter property container.</param>
+        /// <param name="handler">The optional handler to extract the value.</param>
+        /// <returns>
+        /// An enumerable collection of results of the specified type.
+        /// </returns>
+        public List<T> QueryValues<T>(string query, object parameterProps = null, Func<IDataReader, T?> handler = null) where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes an inline query that is optionally parameterized using an anonymous type.
+        /// </summary>
+        /// <typeparam name="T">The type of item that will be returned in the expected result set.</typeparam>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The optional parameter property container.</param>
+        /// <param name="handler">The optional handler to extract the value.</param>
+        /// <returns>
+        /// An enumerable collection of results of the specified type.
+        /// </returns>
+        public Task<IEnumerable<T>> QueryValuesAsync<T>(string query, object parameterProps = null, Func<IDataReader, T?> handler = null) where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Queries the repository for a collection of primitive values.
         /// </summary>
         /// <typeparam name="T">The value type to be returned.</typeparam>
@@ -113,6 +147,76 @@ namespace Teaq.Contracts
         public Task<IEnumerable<T>> QueryValuesAsync<T>(QueryCommand command, Func<IDataReader, T?> handler = null) where T : struct
         {
             Contract.Requires<ArgumentNullException>(command != null);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes an inline query that is optionally parameterized using an anonymous type.
+        /// </summary>
+        /// <typeparam name="T">The type of item that will be returned in the expected result set.</typeparam>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The optional parameter property container.</param>
+        /// <param name="handler">The optional handler to extract the value.</param>
+        /// <returns>
+        /// An enumerable collection of results of the specified type.
+        /// </returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public List<T?> QueryNullableValues<T>(string query, object parameterProps = null, Func<IDataReader, T?> handler = null) where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes an inline query that is optionally parameterized using an anonymous type.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The optional parameter property container.</param>
+        /// <param name="handler">The optional handler to extract the value.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public List<string> QueryStringValues(string query, object parameterProps = null, Func<IDataReader, string> handler = null)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes an inline query that is optionally parameterized using an anonymous type.
+        /// </summary>
+        /// <typeparam name="T">The type of item that will be returned in the expected result set.</typeparam>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The optional parameter property container.</param>
+        /// <param name="handler">The optional handler to extract the value.</param>
+        /// <returns>
+        /// An enumerable collection of results of the specified type.
+        /// </returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Task<IEnumerable<T?>> QueryNullableValuesAsync<T>(string query, object parameterProps = null, Func<IDataReader, T?> handler = null) where T : struct
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes an inline query that is optionally parameterized using an anonymous type.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The optional parameter property container.</param>
+        /// <param name="handler">The optional handler to extract the value.</param>
+        /// <returns>
+        /// The collection of string values.
+        /// </returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Task<IEnumerable<string>> QueryStringValuesAsync(string query, object parameterProps = null, Func<IDataReader, string> handler = null)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
 
             throw new NotImplementedException();
         }

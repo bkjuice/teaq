@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Teaq.QueryGeneration;
 
 namespace Teaq.Tests.Contracts
 {
@@ -13,7 +14,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Action test = () => context.QueryNullableValues<int>(null);
+                Action test = () => context.QueryNullableValues<int>(default(QueryCommand<int>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }
@@ -23,7 +24,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Action test = () => context.QueryStringValues(null);
+                Action test = () => context.QueryStringValues(default(QueryCommand<string>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }
@@ -33,7 +34,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Action test = () => context.QueryValues<int>(null);
+                Action test = () => context.QueryValues<int>(default(QueryCommand<int>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }
@@ -43,7 +44,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Func<Task> test = () => context.QueryNullableValuesAsync<int>(null);
+                Func<Task> test = () => context.QueryNullableValuesAsync<int>(default(QueryCommand<int>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }
@@ -53,7 +54,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Func<Task> test = () => context.QueryStringValuesAsync(null);
+                Func<Task> test = () => context.QueryStringValuesAsync(default(QueryCommand<string>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }
@@ -63,7 +64,7 @@ namespace Teaq.Tests.Contracts
         {
             using (var context = Repository.BuildContext("test"))
             {
-                Func<Task> test = () => context.QueryValuesAsync<int>(null);
+                Func<Task> test = () => context.QueryValuesAsync<int>(default(QueryCommand<int>));
                 test.ShouldThrow<ArgumentNullException>();
             }
         }
