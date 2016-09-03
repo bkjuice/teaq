@@ -13,6 +13,50 @@ namespace Teaq.IntegrationTests
     public class DataContextTests
     {
         [TestMethod]
+        public void ExecuteInsertThenSelectUsingInlineQuery()
+        {
+            var model = Repository.BuildModel(builder =>
+            {
+                builder.Entity<Customer>()
+                    .Column(c => c.CustomerId).IsIdentity()
+                    .Column(c => c.CustomerKey).IsKey();
+            });
+
+            var customerKey = MakeTestKey();
+            var customer = new Customer { CustomerKey = customerKey, Inception = DateTime.UtcNow, Change = 3, Modified = DateTimeOffset.UtcNow };
+            var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
+            var command = model.ForEntity<Customer>().BuildInsert(customer).ToCommand();
+            context.ExecuteNonQuery(command);
+
+            var customerFromDb = context.Query<Customer>("select * from Customer where CustomerKey=@key", new { Key = customerKey })
+                .FirstOrDefault();
+
+            customerFromDb.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public async Task ExecuteInsertThenSelectUsingInlineQueryAsync()
+        {
+            var model = Repository.BuildModel(builder =>
+            {
+                builder.Entity<Customer>()
+                    .Column(c => c.CustomerId).IsIdentity()
+                    .Column(c => c.CustomerKey).IsKey();
+            });
+
+            var customerKey = MakeTestKey();
+            var customer = new Customer { CustomerKey = customerKey, Inception = DateTime.UtcNow, Change = 3, Modified = DateTimeOffset.UtcNow };
+            var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);
+            var command = model.ForEntity<Customer>().BuildInsert(customer).ToCommand();
+            context.ExecuteNonQuery(command);
+
+            var customerFromDb = (await context.QueryAsync<Customer>("select * from Customer where CustomerKey=@key", new { Key = customerKey }))
+                .FirstOrDefault();
+
+            customerFromDb.Should().NotBeNull();
+        }
+
+        [TestMethod]
         public void SelectStringIsNullOrEmptyDoesNotThrow()
         {
             var context = Repository.BuildContext(ConfigurationManager.ConnectionStrings["TeaqTestDb"].ConnectionString);

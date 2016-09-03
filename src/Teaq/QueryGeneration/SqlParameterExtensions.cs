@@ -25,7 +25,7 @@ namespace Teaq.QueryGeneration
             for(int i = 0; i< props.Length; ++i)
             {
                 var p = props[i];
-                parameters[i] = p.AsDbParameter(p.MemberName);
+                parameters[i] = p.GetValue(instance).AsDbParameter("@" + p.MemberName);
             }
 
             return parameters;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -13,6 +14,56 @@ namespace Teaq.Tests
     [TestClass]
     public class DataContextTests
     {
+        [TestMethod]
+        public void QueryUsingInlineStringInvokesQueryWithExpectedParameters()
+        {
+            var model = BuildTestModel();
+            var tableHelper = BuildTestTable();
+
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                context.Query<Customer>("select * from customers where CustomerId = @Id", new { Id = 5 });
+            }
+
+            target.CommandText.Should().Be("select * from customers where CustomerId = @Id");
+            target.Parameters.Count.Should().Be(1);
+
+            var targetParam = target.Parameters[0] as IDbDataParameter;
+            targetParam.Should().NotBeNull();
+            targetParam.ParameterName.Should().Be("@Id");
+            targetParam.Value.Should().Be(5);
+        }
+
+        [TestMethod]
+        public async Task QueryAsyncUsingInlineStringInvokesQueryWithExpectedParameters()
+        {
+            var model = BuildTestModel();
+            var tableHelper = BuildTestTable();
+
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                await context.QueryAsync<Customer>("select * from customers where CustomerId = @CustomerId", new { CustomerId = 15 });
+            }
+
+            target.CommandText.Should().Be("select * from customers where CustomerId = @CustomerId");
+            target.Parameters.Count.Should().Be(1);
+
+            var targetParam = target.Parameters[0] as IDbDataParameter;
+            targetParam.Should().NotBeNull();
+            targetParam.ParameterName.Should().Be("@CustomerId");
+            targetParam.Value.Should().Be(15);
+        }
+
         [TestMethod]
         public void QueryUsesQueryCommandModelForExplicitMappingImplicitly()
         {
@@ -53,13 +104,14 @@ namespace Teaq.Tests
             }
         }
 
-        private static void SetupCommandMock(EntityTableHelper<Customer> tableHelper, DbConnectionStub connectionStub)
+        private static Mock<IDbCommand> SetupCommandMock(EntityTableHelper<Customer> tableHelper, DbConnectionStub connectionStub)
         {
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
             command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader()).Verifiable();
             command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader()).Verifiable();
             command.SetupGet(c => c.Connection).Returns(connectionStub);
+            return command;
         }
 
         private static Mock<IConnectionBuilder> BuildConnectionMock(out DbConnectionStub connectionStub)
