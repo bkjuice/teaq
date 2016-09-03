@@ -9,7 +9,7 @@ namespace Teaq
     /// <summary>
     /// Implementation to interact with the underlying repository.
     /// </summary>
-    public sealed partial class DataContext
+    public sealed partial class DataContext : IEntityQueryProvider
     {
         /// <summary>
         /// Executes a query built using a fluent expression.

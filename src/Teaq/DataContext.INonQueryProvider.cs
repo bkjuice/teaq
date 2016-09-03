@@ -3,7 +3,7 @@ using Teaq.QueryGeneration;
 
 namespace Teaq
 {
-    public sealed partial class DataContext
+    public sealed partial class DataContext : INonQueryProvider
     {
         /// <summary>
         /// Executes the given command and returns the number of rows affected.
