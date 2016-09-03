@@ -20,7 +20,7 @@ namespace Teaq
         /// <returns>
         /// An enumerable collection of results of the specified type.
         /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
+        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null) where TEntity : class
         {
             return this.Query(command.CommandText, command.GetParameters(), default(IDataHandler<TEntity>), model ?? command.Model);
         }
@@ -34,7 +34,7 @@ namespace Teaq
         /// <returns>
         /// An enumerable collection of results of the specified type.
         /// </returns>
-        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
+        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler) where TEntity : class
         {
             return this.Query(command.CommandText, command.GetParameters(), readerHandler, null);
         }
@@ -48,7 +48,7 @@ namespace Teaq
         /// <returns>
         /// The collection of entities.
         /// </returns>
-        public List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null)
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null) where TEntity : class
         {
             return this.Query<TEntity>(command.CommandText, command.GetParameters(), null, model);
         }
@@ -62,7 +62,7 @@ namespace Teaq
         /// <returns>
         /// The collection of entities.
         /// </returns>
-        public List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler) where TEntity : class
         {
             return this.Query(command.CommandText, command.GetParameters(), new DelegatingReaderHandler<TEntity>(handler), null);
         }
@@ -76,7 +76,7 @@ namespace Teaq
         /// <returns>
         /// An awaitable, enumerable collection of results of the specified type.
         /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
+        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null) where TEntity : class
         {
             return await this.QueryAsync(command.CommandText, command.GetParameters(), default(IDataHandler<TEntity>), model ?? command.Model);
         }
@@ -90,7 +90,7 @@ namespace Teaq
         /// <returns>
         /// An awaitable, enumerable collection of results of the specified type.
         /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
+        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler) where TEntity : class
         {
             return await this.QueryAsync(command.CommandText, command.GetParameters(), readerHandler, null);
         }
@@ -104,7 +104,7 @@ namespace Teaq
         /// <returns>
         /// The awaitable collection of entities.
         /// </returns>
-        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
+        public async Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler) where TEntity : class
         {
             return await this.QueryAsync(command.CommandText, command.GetParameters(), new DelegatingReaderHandler<TEntity>(handler), null);
         }

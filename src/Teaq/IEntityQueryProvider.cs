@@ -23,7 +23,7 @@ namespace Teaq
         /// <returns>
         /// An enumerable collection of results of the specified type.
         /// </returns>
-        List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null);
+        List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null) where TEntity: class;
 
         /// <summary>
         /// Executes a query built using a fluent expression.
@@ -34,7 +34,7 @@ namespace Teaq
         /// <returns>
         /// An enumerable collection of results of the specified type.
         /// </returns>
-        List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler);
+        List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler) where TEntity : class;
 
         /// <summary>
         /// Queries the repository for a collection of entities that may differ from the type used to build the query.
@@ -45,7 +45,7 @@ namespace Teaq
         /// <returns>
         /// The collection of entities.
         /// </returns>
-        List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler);
+        List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler) where TEntity : class;
 
         /// <summary>
         /// Queries the repository for a collection of entities that may differ from the type used to build the query.
@@ -56,7 +56,7 @@ namespace Teaq
         /// <returns>
         /// The collection of entities.
         /// </returns>
-        List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null);
+        List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null) where TEntity : class;
 
         /// <summary>
         /// Executes a query built using a fluent expression.
@@ -67,7 +67,7 @@ namespace Teaq
         /// <returns>
         /// An awaitable, enumerable collection of results of the specified type.
         /// </returns>
-        Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null);
+        Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null) where TEntity : class;
 
         /// <summary>
         /// Executes a query built using a fluent expression to be materialized by a custom handler.
@@ -78,7 +78,7 @@ namespace Teaq
         /// <returns>
         /// An awaitable, enumerable collection of results of the specified type.
         /// </returns>
-        Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler);
+        Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler) where TEntity : class;
 
         /// <summary>
         /// Queries the repository asynchronously for a collection of entities.
@@ -89,6 +89,6 @@ namespace Teaq
         /// <returns>
         /// The awaitable collection of entities.
         /// </returns>
-        Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler);
+        Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler) where TEntity : class;
     }
 }

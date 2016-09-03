@@ -26,7 +26,7 @@ namespace Teaq.Contracts
         /// The collection of entities.
         /// </returns>
         /// <exception cref="NotImplementedException">This is a contract only implementation.</exception>
-        public List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler) where TEntity : class
         {
             Contract.Requires<ArgumentNullException>(command != null);
             Contract.Requires<ArgumentNullException>(handler != null);
@@ -43,7 +43,7 @@ namespace Teaq.Contracts
         /// <returns>
         /// The collection of entities.
         /// </returns>
-        public List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null)
+        public List<TEntity> QueryAs<TEntity>(QueryCommand command, IDataModel model = null) where TEntity : class
         {
             Contract.Requires<ArgumentNullException>(command != null);
 
@@ -60,7 +60,7 @@ namespace Teaq.Contracts
         /// An enumerable collection of results of the specified type.
         /// </returns>
         /// <exception cref="NotImplementedException">This is a contract only implementation.</exception>
-        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
+        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler) where TEntity : class
         {
             Contract.Requires<ArgumentNullException>(command != null);
             Contract.Requires<ArgumentNullException>(readerHandler != null);
@@ -78,7 +78,7 @@ namespace Teaq.Contracts
         /// An enumerable collection of results of the specified type.
         /// </returns>
         /// <exception cref="NotImplementedException">This is a contract only implementation.</exception>
-        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
+        public List<TEntity> Query<TEntity>(QueryCommand<TEntity> command, IDataModel model = null) where TEntity : class
         {
             Contract.Requires<ArgumentNullException>(command != null);
             throw new NotImplementedException();
@@ -94,7 +94,7 @@ namespace Teaq.Contracts
         /// The awaitable collection of entities.
         /// </returns>
         /// <exception cref="NotImplementedException">This is a contract only implementation.</exception>
-        public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler)
+        public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand command, Func<IDataReader, TEntity> handler) where TEntity : class
         {
             Contract.Requires<ArgumentNullException>(command != null);
             Contract.Requires<ArgumentNullException>(handler != null);
@@ -112,7 +112,7 @@ namespace Teaq.Contracts
         /// An awaitable, enumerable collection of results of the specified type.
         /// </returns>
         /// <exception cref="NotImplementedException">This is a contract only implementation.</exception>
-        public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler)
+        public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataHandler<TEntity> readerHandler) where TEntity : class
         {
             Contract.Requires<ArgumentNullException>(command != null);
             Contract.Requires<ArgumentNullException>(readerHandler != null);
@@ -130,7 +130,7 @@ namespace Teaq.Contracts
         /// An awaitable, enumerable collection of results of the specified type.
         /// </returns>
         /// <exception cref="NotImplementedException">This is a contract only implementation.</exception>
-        public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null)
+        public Task<IEnumerable<TEntity>> QueryAsync<TEntity>(QueryCommand<TEntity> command, IDataModel model = null) where TEntity : class
         {
             Contract.Requires<ArgumentNullException>(command != null);
             throw new NotImplementedException();
