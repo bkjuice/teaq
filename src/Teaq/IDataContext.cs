@@ -6,7 +6,8 @@ namespace Teaq
     /// Interface that composes all repository query capabilities offered by Teaq.
     /// </summary>
     public interface IDataContext : 
-        INonQueryProvider, 
+        IScalarQueryProvider, 
+        INonQueryProvider,
         IEntityQueryProvider, 
         IValueQueryProvider,
         IDisposable

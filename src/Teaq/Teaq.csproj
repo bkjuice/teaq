@@ -193,8 +193,10 @@
     <Compile Include="Configuration\EntityConfiguration.cs" />
     <Compile Include="Configuration\EntityModelBuilder.cs" />
     <Compile Include="Contracts\EntityQueryProviderContractClass.cs" />
+    <Compile Include="Contracts\ScalarQueryProviderContractClass.cs" />
     <Compile Include="Contracts\NonQueryProviderContractClass.cs" />
     <Compile Include="Contracts\ValueQueryProviderContractClass.cs" />
+    <Compile Include="DataContext.IScalarQueryProvider.cs" />
     <Compile Include="DataContext.IValueQueryProvider.cs" />
     <Compile Include="DataContext.INonQueryProvider.cs" />
     <Compile Include="DataContext.IEntityQueryProvider.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="BatchContext.cs" />
     <Compile Include="BatchProcessor.cs" />
     <Compile Include="BatchWriter.cs" />
+    <Compile Include="IScalarQueryProvider.cs" />
     <Compile Include="IValueQueryProvider.cs" />
     <Compile Include="INonQueryProvider.cs" />
     <Compile Include="IEntityQueryProvider.cs" />
