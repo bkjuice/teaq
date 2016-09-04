@@ -240,7 +240,6 @@
     <Compile Include="QueryGeneration\StringBuilderCache.cs" />
     <Compile Include="QueryGeneration\UpdateBuilder{T}.cs" />
     <Compile Include="QueryGeneration\QueryStatementBuilder{T}.cs" />
-    <Compile Include="DbCommandAsyncExtensions.cs" />
     <Compile Include="SqlStringType.cs" />
     <Compile Include="UdtTypeEnumerator.cs" />
     <Compile Include="FastReflection\ArrayDescription.cs" />
