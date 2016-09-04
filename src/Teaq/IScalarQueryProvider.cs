@@ -14,10 +14,30 @@ namespace Teaq
         /// <summary>
         /// Executes the command and returns the first value in the first row, if one exists.
         /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        TValue? ExecuteScalar<TValue>(string query, object parameterProps = null) where TValue : struct;
+
+        /// <summary>
+        /// Executes the command and returns the first value in the first row, if one exists.
+        /// </summary>
         /// <typeparam name="TValue">The type of the value to return.</typeparam>
         /// <param name="command">The command to execute.</param>
         /// <returns>The first value in the first row returned by the query.</returns>
         TValue? ExecuteScalar<TValue>(QueryCommand command) where TValue : struct;
+
+        /// <summary>
+        /// Executes the command and returns the first value in the first row as a string, if one exists.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        string ExecuteScalar(string query, object parameterProps = null);
 
         /// <summary>
         /// Executes the command and returns the first value in the first row as a string, if one exists.
@@ -27,6 +47,16 @@ namespace Teaq
         /// The first value in the first row returned by the query.
         /// </returns>
         string ExecuteScalar(QueryCommand command);
+
+        /// <summary>
+        /// Executes the command asynchronously and returns the first value in the first row, if one exists.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        Task<TValue?> ExecuteScalarAsync<TValue>(string query, object parameterProps = null) where TValue : struct;
 
         /// <summary>
         /// Executes the command asynchronously and returns the first value in the first row, if one exists.
@@ -44,5 +74,15 @@ namespace Teaq
         /// The first value in the first row returned by the query.
         /// </returns>
         Task<string> ExecuteScalarAsync(QueryCommand command);
+
+        /// <summary>
+        /// Executes the command asynchronously and returns the first value in the first row as a string, if one exists.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        Task<string> ExecuteScalarAsync(string query, object parameterProps = null);
     }
 }

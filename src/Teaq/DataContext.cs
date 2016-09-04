@@ -178,5 +178,25 @@ namespace Teaq
                 (await command.Open().ExecuteReaderAsync())
                     .EnumerateEntitiesInternal(readerHandler, model, NullPolicyKind.IncludeAsDefaultValue, command.CleanupCallback());
         }
+
+        private int ExecuteNonQuery(string commandText, IDbDataParameter[] parameters)
+        {
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                var dbCommand = connection.BuildTextCommand(commandText, parameters);
+                dbCommand.Open();
+                return dbCommand.ExecuteNonQuery();
+            }
+        }
+
+        private async Task<int> ExecuteNonQueryAsync(string commandText, IDbDataParameter[] parameters)
+        {
+            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
+            {
+                var dbCommand = connection.BuildTextCommand(commandText, parameters);
+                dbCommand.Open();
+                return await dbCommand.ExecuteNonQueryAsync();
+            }
+        }
     }
 }

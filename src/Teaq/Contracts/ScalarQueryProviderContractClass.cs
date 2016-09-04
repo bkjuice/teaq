@@ -25,6 +25,23 @@ namespace Teaq.Contracts
         public string ExecuteScalar(QueryCommand command)
         {
             Contract.Requires<ArgumentNullException>(command != null);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes the command and returns the first value in the first row as a string, if one exists.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public string ExecuteScalar(string query, object parameterProps = null)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
             throw new NotImplementedException();
         }
 
@@ -40,6 +57,24 @@ namespace Teaq.Contracts
         public TValue? ExecuteScalar<TValue>(QueryCommand command) where TValue : struct
         {
             Contract.Requires<ArgumentNullException>(command != null);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes the command and returns the first value in the first row, if one exists.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public TValue? ExecuteScalar<TValue>(string query, object parameterProps = null) where TValue : struct
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
             throw new NotImplementedException();
         }
 
@@ -58,6 +93,22 @@ namespace Teaq.Contracts
         }
 
         /// <summary>
+        /// Executes the command asynchronously and returns the first value in the first row as a string, if one exists.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public Task<string> ExecuteScalarAsync(string query, object parameterProps = null)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Executes the command asynchronously and returns the first value in the first row, if one exists.
         /// </summary>
         /// <typeparam name="TValue">The type of the value to return.</typeparam>
@@ -69,6 +120,24 @@ namespace Teaq.Contracts
         public Task<TValue?> ExecuteScalarAsync<TValue>(QueryCommand command) where TValue : struct
         {
             Contract.Requires<ArgumentNullException>(command != null);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes the command asynchronously and returns the first value in the first row, if one exists.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameter properties to use as query parameters.</param>
+        /// <returns>
+        /// The first value in the first row returned by the query.
+        /// </returns>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public Task<TValue?> ExecuteScalarAsync<TValue>(string query, object parameterProps = null) where TValue : struct
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
             throw new NotImplementedException();
         }
     }

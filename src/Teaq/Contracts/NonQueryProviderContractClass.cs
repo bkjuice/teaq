@@ -21,10 +21,26 @@ namespace Teaq.Contracts
         /// <returns>
         /// The number of rows affected.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
         public int ExecuteNonQuery(QueryCommand command)
         {
             Contract.Requires<ArgumentNullException>(command != null);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes the given command and returns the number of rows affected.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameters to pass with the query.</param>
+        /// <returns>
+        /// The number of rows affected.
+        /// </returns>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public int ExecuteNonQuery(string query, object parameterProps = null)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
             throw new NotImplementedException();
         }
 
@@ -39,6 +55,22 @@ namespace Teaq.Contracts
         public Task<int> ExecuteNonQueryAsync(QueryCommand command)
         {
             Contract.Requires<ArgumentNullException>(command != null);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Executes the given command and returns the number of rows affected.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameters to pass with the query.</param>
+        /// <returns>
+        /// The number of rows affected.
+        /// </returns>
+        /// <exception cref="NotImplementedException">Contract implementation only.</exception>
+        public Task<int> ExecuteNonQueryAsync(string query, object parameterProps = null)
+        {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(query));
+
             throw new NotImplementedException();
         }
     }

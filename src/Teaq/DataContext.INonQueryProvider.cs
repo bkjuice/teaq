@@ -14,12 +14,20 @@ namespace Teaq
         /// </returns>
         public int ExecuteNonQuery(QueryCommand command)
         {
-            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
-            {
-                var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
-                dbCommand.Open();
-                return dbCommand.ExecuteNonQuery();
-            }
+            return this.ExecuteNonQuery(command.CommandText, command.GetParameters());
+        }
+
+        /// <summary>
+        /// Executes the given command and returns the number of rows affected.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameters to pass with the query.</param>
+        /// <returns>
+        /// The number of rows affected.
+        /// </returns>
+        public int ExecuteNonQuery(string query, object parameterProps = null)
+        {
+            return this.ExecuteNonQuery(query, parameterProps.GetAnonymousParameters());
         }
 
         /// <summary>
@@ -31,13 +39,20 @@ namespace Teaq
         /// </returns>
         public async Task<int> ExecuteNonQueryAsync(QueryCommand command)
         {
-            using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
-            {
-                var dbCommand = connection.BuildTextCommand(command.CommandText, command.GetParameters());
-                dbCommand.Open();
-                return await dbCommand.ExecuteNonQueryAsync();
-            }
+            return await this.ExecuteNonQueryAsync(command.CommandText, command.GetParameters());
         }
 
+        /// <summary>
+        /// Executes the given command and returns the number of rows affected.
+        /// </summary>
+        /// <param name="query">The inline query to execute.</param>
+        /// <param name="parameterProps">The parameters to pass with the query.</param>
+        /// <returns>
+        /// The number of rows affected.
+        /// </returns>
+        public async Task<int> ExecuteNonQueryAsync(string query, object parameterProps = null)
+        {
+            return await this.ExecuteNonQueryAsync(query, parameterProps.GetAnonymousParameters());
+        }
     }
 }
