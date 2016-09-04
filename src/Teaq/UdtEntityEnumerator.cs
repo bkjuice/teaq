@@ -15,39 +15,8 @@ namespace Teaq
     /// Enables a collection of user defined data transfer objects to be passed as a user defined table type to SQL Server.
     /// </summary>
     /// <typeparam name="T">The target type to be enumerated.</typeparam>
-    public class UdtTypeEnumerator<T> : IEnumerable<SqlDataRecord> where T : class
+    public class UdtEntityEnumerator<T> : IEnumerable<SqlDataRecord> where T : class
     {
-        /// <summary>
-        /// The supported types used for data table column types.
-        /// </summary>
-        private static readonly Dictionary<Type, Func<ColumnDataType>> typeMappings = new Dictionary<Type, Func<ColumnDataType>>
-        {
-            { typeof(byte?), () => new ColumnDataType { SqlDataType = SqlDbType.TinyInt } },
-            { typeof(bool?), () => new ColumnDataType { SqlDataType = SqlDbType.Bit } },
-            { typeof(char?), () => new ColumnDataType { SqlDataType = SqlDbType.Char } },
-            { typeof(short?), () => new ColumnDataType { SqlDataType = SqlDbType.SmallInt } },
-            { typeof(int?), () => new ColumnDataType { SqlDataType = SqlDbType.Int } },
-            { typeof(long?), () => new ColumnDataType { SqlDataType = SqlDbType.BigInt } },
-            { typeof(float?), () => new ColumnDataType { SqlDataType = SqlDbType.Float } },
-            { typeof(decimal?), () => new ColumnDataType { SqlDataType = SqlDbType.Decimal } },
-            { typeof(Guid?), () => new ColumnDataType { SqlDataType = SqlDbType.UniqueIdentifier } },
-            { typeof(DateTime?), () => new ColumnDataType { SqlDataType = SqlDbType.DateTime } },
-            { typeof(DateTimeOffset?), () => new ColumnDataType { SqlDataType = SqlDbType.DateTimeOffset} },
-            { typeof(byte), () => new ColumnDataType { SqlDataType = SqlDbType.TinyInt } },
-            { typeof(bool), () => new ColumnDataType { SqlDataType = SqlDbType.Bit } },
-            { typeof(char), () => new ColumnDataType { SqlDataType = SqlDbType.Char } },
-            { typeof(short), () => new ColumnDataType { SqlDataType = SqlDbType.SmallInt } },
-            { typeof(int), () => new ColumnDataType { SqlDataType = SqlDbType.Int } },
-            { typeof(long), () => new ColumnDataType { SqlDataType = SqlDbType.BigInt } },
-            { typeof(float),() =>  new ColumnDataType { SqlDataType = SqlDbType.Float } },
-            { typeof(decimal), () => new ColumnDataType { SqlDataType = SqlDbType.Decimal } },
-            { typeof(Guid), () => new ColumnDataType { SqlDataType = SqlDbType.UniqueIdentifier } },
-            { typeof(DateTime), () => new ColumnDataType { SqlDataType = SqlDbType.DateTime } },
-            { typeof(DateTimeOffset), () => new ColumnDataType { SqlDataType = SqlDbType.DateTimeOffset} },
-            { typeof(string), () => Repository.GetDefaultStringType()},
-            { typeof(byte[]), () => new ColumnDataType { SqlDataType = SqlDbType.VarBinary } },
-        };
-
         /// <summary>
         /// The properties in scope for the type T.
         /// </summary>
@@ -77,11 +46,11 @@ namespace Teaq
         private IEnumerable<T> items;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UdtTypeEnumerator{T}" /> class.
+        /// Initializes a new instance of the <see cref="UdtEntityEnumerator{T}" /> class.
         /// </summary>
         /// <param name="items">The items to enumarate as a SQL Server user defined table.</param>
         /// <param name="model">The model for any column mappings that must be supported.</param>
-        public UdtTypeEnumerator(IEnumerable<T> items, IDataModel model = null)
+        public UdtEntityEnumerator(IEnumerable<T> items, IDataModel model = null)
         {
             Contract.Requires(items != null);
 
@@ -218,21 +187,14 @@ namespace Teaq
                     columnName = config.ColumnMapping(columnName);
                 }
 
-                if (columnType == null)
+                if (columnType != null)
                 {
-                    Func<ColumnDataType> builder;
-                    if (!typeMappings.TryGetValue(prop.PropertyType, out builder))
-                    {
-                        throw new NotSupportedException(
-                            "The property type {0} is not supported by default. Mark this property excluded on type {1}, or define a data model column for this property."
-                            .ToFormat(prop.MemberName, typeof(T).FullName));
-                    }
-
-                    // NOTE: Modified to use a builder as the static defaults can be modified at runtime.
-                    columnType = builder();
+                    items.Add(CreateMetadata(columnName, columnType));
                 }
-
-                items.Add(CreateMetadata(columnName, columnType));
+                else
+                {
+                    items.Add(prop.PropertyType.GetUdtMetaData(columnName));
+                }
             }
 
             return items.ToArray();
@@ -254,10 +216,8 @@ namespace Teaq
             {
                 return new SqlMetaData(columnName, columnSpec.SqlDataType, columnSpec.Size.Value);
             }
-            else
-            {
-                return new SqlMetaData(columnName, columnSpec.SqlDataType);
-            }
+
+            return new SqlMetaData(columnName, columnSpec.SqlDataType);
         }
     }
 }

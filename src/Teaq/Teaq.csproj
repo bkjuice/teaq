@@ -241,7 +241,10 @@
     <Compile Include="QueryGeneration\UpdateBuilder{T}.cs" />
     <Compile Include="QueryGeneration\QueryStatementBuilder{T}.cs" />
     <Compile Include="SqlStringType.cs" />
-    <Compile Include="UdtTypeEnumerator.cs" />
+    <Compile Include="UdtMappings.cs" />
+    <Compile Include="UdtStringEnumerator.cs" />
+    <Compile Include="UdtValueEnumerator.cs" />
+    <Compile Include="UdtEntityEnumerator.cs" />
     <Compile Include="FastReflection\ArrayDescription.cs" />
     <Compile Include="FastReflection\CollectionDescription.cs" />
     <Compile Include="FastReflection\CommonBindings.cs" />

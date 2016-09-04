@@ -29,7 +29,7 @@ namespace Teaq.Tests
             Repository.DefaultStringType = SqlStringType.NVarchar;
             Action test = () =>
             {
-                var udt = new UdtTypeEnumerator<SimpleCustomerDto>(listOfDtos);
+                var udt = new UdtEntityEnumerator<SimpleCustomerDto>(listOfDtos);
                 var record = udt.First();
                 record.Should().NotBeNull();
             };
@@ -67,7 +67,7 @@ namespace Teaq.Tests
                 .IsVarChar(50);
             });
 
-            var udt = new UdtTypeEnumerator<SimpleCustomerDto>(listOfDtos, model);
+            var udt = new UdtEntityEnumerator<SimpleCustomerDto>(listOfDtos, model);
             var count = 0;
             foreach(var record in udt)
             {
