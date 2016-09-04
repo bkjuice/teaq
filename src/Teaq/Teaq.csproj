@@ -203,6 +203,7 @@
     <Compile Include="DataReaderExtensions.Iterators.cs" />
     <Compile Include="DataReaderExtensions.Converters.cs" />
     <Compile Include="DataFieldSetter.cs" />
+    <Compile Include="DbCommandExtensions.Compatibility.cs" />
     <Compile Include="DbCommandExtensions.cs" />
     <Compile Include="DelegatingReaderHandler{T}.cs" />
     <Compile Include="IDataModel.cs" />

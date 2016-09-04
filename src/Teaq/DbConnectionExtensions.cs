@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.Contracts;
-using Teaq.Configuration;
-using Teaq.QueryGeneration;
 
 namespace Teaq
 {
@@ -12,19 +10,6 @@ namespace Teaq
     /// </summary>
     public static class DbConnectionExtensions
     {
-        /// <summary>
-        /// Creates a command parameter using the specified 
-        /// name and optional data type information.
-        /// </summary>
-        /// <param name="value">The value for the parameter.</param>
-        /// <param name="name">The name of the parameter. This is the exact name to be used.</param>
-        /// <param name="type">Optional parameter type information.</param>
-        /// <returns></returns>
-        public static IDbDataParameter AsDbParameter(this object value, string name, ColumnDataType type = null)
-        {
-            return value.MakeParameter(name, type);
-        }
-
         /// <summary>
         /// Builds the command using the provided connection instance.
         /// </summary>

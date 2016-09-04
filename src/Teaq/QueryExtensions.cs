@@ -91,14 +91,15 @@ namespace Teaq
         /// Adds the specified batch.
         /// </summary>
         /// <param name="batch">The batch.</param>
-        /// <param name="literalQuery">The literal query statement that will not return results.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
-        public static void Add(this QueryBatch batch, string literalQuery, bool canSplitBatch = true)
+        /// <param name="query">The literal query statement that will not return results.</param>
+        /// <param name="canSplitBatch">If set to <c>true</c> the batch can be split after this command, if needed.</param>
+        /// <param name="parameters">The optional parameters anonymous object.</param>
+        public static void Add(this QueryBatch batch, string query, bool canSplitBatch = true, object parameters = null)
         {
             Contract.Requires(batch != null);
-            Contract.Requires(!string.IsNullOrEmpty(literalQuery));
+            Contract.Requires(!string.IsNullOrEmpty(query));
 
-            batch.Add(new QueryCommand(literalQuery, canSplitBatch));
+            batch.Add(new QueryCommand(query, parameters.GetAnonymousParameters(), canSplitBatch));
         }
 
         /// <summary>
@@ -106,18 +107,21 @@ namespace Teaq
         /// </summary>
         /// <typeparam name="T">The type of entity that will be read.</typeparam>
         /// <param name="batch">The batch.</param>
-        /// <param name="literalQuery">The literal query.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
+        /// <param name="query">The literal query.</param>
+        /// <param name="canSplitBatch">
+        /// If set to <c>true</c> the batch can be split after this command, if needed.
+        /// </param>
+        /// <param name="parameters">The optional parameters anonymous object.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
             "Microsoft.Design",
             "CA1004:GenericMethodsShouldProvideTypeParameter",
             Justification = "Fluent by design.")]
-        public static void Add<T>(this QueryBatch batch, string literalQuery, bool canSplitBatch = true)
+        public static void Add<T>(this QueryBatch batch, string query, bool canSplitBatch = true, object parameters = null)
         {
             Contract.Requires(batch != null);
-            Contract.Requires(!string.IsNullOrEmpty(literalQuery));
+            Contract.Requires(!string.IsNullOrEmpty(query));
 
-            batch.Add<T>(new QueryCommand(literalQuery, canSplitBatch));
+            batch.Add<T>(new QueryCommand(query, parameters.GetAnonymousParameters(), canSplitBatch));
         }
 
         /// <summary>
@@ -126,7 +130,9 @@ namespace Teaq
         /// <typeparam name="T">The type of resulting entity to be materialized.</typeparam>
         /// <param name="batch">The batch to which the stored procedure invocation will be added.</param>
         /// <param name="command">The command to convert to a batch query command.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
+        /// <param name="canSplitBatch">
+        /// If set to <c>true</c> the batch can be split after this command, if needed.
+        /// </param>
         public static void AddStoredProcedure<T>(this QueryBatch batch, SqlCommand command, bool canSplitBatch = true)
         {
             Contract.Requires(batch != null);
@@ -139,7 +145,9 @@ namespace Teaq
         /// </summary>
         /// <param name="batch">The batch to which the stored procedure invocation will be added.</param>
         /// <param name="command">The command to convert to a batch query command.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
+        /// <param name="canSplitBatch">
+        /// If set to <c>true</c> the batch can be split after this command, if needed.
+        /// </param>
         public static void AddStoredProcedure(this QueryBatch batch, SqlCommand command, bool canSplitBatch = true)
         {
             Contract.Requires(batch != null);
@@ -153,7 +161,9 @@ namespace Teaq
         /// <typeparam name="T">The type of resulting entity to be materialized.</typeparam>
         /// <param name="batch">The batch to which the stored procedure invocation will be added.</param>
         /// <param name="command">The command to convert to a batch query command.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
+        /// <param name="canSplitBatch">
+        /// If set to <c>true</c> the batch can be split after this command, if needed.
+        /// </param>
         public static void AddTextCommand<T>(this QueryBatch batch, SqlCommand command, bool canSplitBatch = true)
         {
             Contract.Requires(batch != null);
@@ -166,7 +176,9 @@ namespace Teaq
         /// </summary>
         /// <param name="batch">The batch to which the stored procedure invocation will be added.</param>
         /// <param name="command">The command to convert to a batch query command.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
+        /// <param name="canSplitBatch">
+        /// If set to <c>true</c> the batch can be split after this command, if needed.
+        /// </param>
         public static void AddTextCommand(this QueryBatch batch, SqlCommand command, bool canSplitBatch = true)
         {
             Contract.Requires(batch != null);
@@ -174,12 +186,6 @@ namespace Teaq
             batch.Add(batch.BuildTextQueryCommand(command, canSplitBatch));
         }
 
-        /// <summary>
-        /// Gets a query command for a stored procedure already configured via IDbCommand.
-        /// </summary>
-        /// <param name="batch">The batch to which the stored procedure invocation will be added.</param>
-        /// <param name="command">The command to convert to a batch query command.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
         internal static QueryCommand BuildSprocQueryCommand(this QueryBatch batch, SqlCommand command, bool canSplitBatch)
         {
             Contract.Requires(command != null);
@@ -207,13 +213,6 @@ namespace Teaq
             return new QueryCommand(builder.ToString(), sqlParams, canSplitBatch);
         }
 
-        /// <summary>
-        /// Gets a query command for a stored procedure already configured via IDbCommand.
-        /// </summary>
-        /// <param name="batch">The batch to which the stored procedure invocation will be added.</param>
-        /// <param name="command">The command to convert to a batch query command.</param>
-        /// <param name="canSplitBatch">if set to <c>true</c> [can split batch].</param>
-        /// <exception cref="InvalidOperationException">This method only supports text command conversions.</exception>
         internal static QueryCommand BuildTextQueryCommand(this QueryBatch batch, SqlCommand command, bool canSplitBatch)
         {
             Contract.Requires(command != null);

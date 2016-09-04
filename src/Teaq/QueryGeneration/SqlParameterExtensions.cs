@@ -12,7 +12,12 @@ namespace Teaq.QueryGeneration
 {
     internal static class SqlParameterExtensions
     {
-        public static IDbDataParameter[] GetAnonymousParameters(this object instance)
+        public static SqlParameter AsSqlParameter(this object value, string name, ColumnDataType type = null)
+        {
+            return value.MakeParameter(name, type);
+        }
+
+        public static SqlParameter[] GetAnonymousParameters(this object instance)
         {
             if (instance == null)
             {
@@ -21,11 +26,11 @@ namespace Teaq.QueryGeneration
 
             var d = instance.GetType().GetTypeDescription();
             var props = d.GetProperties();
-            var parameters = new IDbDataParameter[props.Length];
+            var parameters = new SqlParameter[props.Length];
             for(int i = 0; i< props.Length; ++i)
             {
                 var p = props[i];
-                parameters[i] = p.GetValue(instance).AsDbParameter("@" + p.MemberName);
+                parameters[i] = p.GetValue(instance).AsSqlParameter("@" + p.MemberName);
             }
 
             return parameters;
