@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.Contracts;
@@ -10,11 +9,9 @@ namespace Teaq
     /// <summary>
     /// Enables a collection of strings to be passed as a user defined table type to SQL Server.
     /// </summary>
-    public class UdtStringEnumerator : IEnumerable<SqlDataRecord>
+    public class UdtStringEnumerator : UdtEnumerator<string>
     {
         private SqlMetaData columnMetadata;
-
-        private IEnumerable<string> items;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UdtStringEnumerator" /> class.
@@ -34,11 +31,10 @@ namespace Teaq
         /// <param name="type">The type of string.</param>
         /// <param name="size">The max size of the string.</param>
         public UdtStringEnumerator(IEnumerable<string> items, string columnName, SqlStringType type, int size)
+            : base(items)
         {
-            Contract.Requires<ArgumentNullException>(items != null);
             Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(columnName));
 
-            this.items = items;
             this.columnMetadata =
                 new SqlMetaData(
                     columnName,
@@ -47,30 +43,17 @@ namespace Teaq
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the collection.
+        /// Transforms the specified value to a <see cref="SqlDataRecord" />.
         /// </summary>
+        /// <param name="value">The value to transform.</param>
         /// <returns>
-        /// An enumerator that can be used to iterate through the collection of values as a user defined table parameter.
+        /// The resulting <see cref="SqlDataRecord" /> instance.
         /// </returns>
-        public IEnumerator<SqlDataRecord> GetEnumerator()
+        protected override SqlDataRecord Transform(string value)
         {
-            foreach (var item in items)
-            {
-                var record = new SqlDataRecord(this.columnMetadata);
-                record.SetValue(0, item);
-                yield return record;
-            }
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
+            var record = new SqlDataRecord(this.columnMetadata);
+            record.SetValue(0, value);
+            return record;
         }
     }
 }

@@ -243,6 +243,7 @@
     <Compile Include="SqlStringType.cs" />
     <Compile Include="UdtMappings.cs" />
     <Compile Include="UdtStringEnumerator.cs" />
+    <Compile Include="UdtEnumerator.cs" />
     <Compile Include="UdtValueEnumerator.cs" />
     <Compile Include="UdtEntityEnumerator.cs" />
     <Compile Include="FastReflection\ArrayDescription.cs" />
