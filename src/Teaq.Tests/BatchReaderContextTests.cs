@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -16,13 +17,13 @@ namespace Teaq.Tests
         {
             var connectionStub = new DbConnectionStub();
             var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup<IDbConnection>(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
 
             IDataReader reader = null;
-            command.Setup<IDataReader>(c => c.ExecuteReader()).Returns(reader);
+            command.Setup(c => c.ExecuteReader()).Returns(reader);
 
             var model = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -40,7 +41,7 @@ namespace Teaq.Tests
         {
             var connectionStub = new DbConnectionStub();
             var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup<IDbConnection>(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
@@ -48,7 +49,7 @@ namespace Teaq.Tests
 
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
-            command.Setup<IDataReader>(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -63,11 +64,11 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
-        public void EnumerateEntitySetReturnsResultsWithBatch()
+        public async Task EnumerateEntitySetReturnsResultsWithBatchAsync()
         {
             var connectionStub = new DbConnectionStub();
             var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup<IDbConnection>(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
@@ -75,7 +76,35 @@ namespace Teaq.Tests
 
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
-            command.Setup<IDataReader>(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
+
+            var emptyModel = Repository.BuildModel(x => { });
+            var batch = new QueryBatch();
+            batch.Add<Customer>("test");
+
+            using (var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object))
+            {
+                var hasResults = await context.NextResultAsync();
+                hasResults.Should().BeTrue();
+                var result = context.EnumerateEntitySet<Customer>();
+                result.Count().Should().Be(2);
+            }
+        }
+
+        [TestMethod]
+        public void EnumerateEntitySetReturnsResultsWithBatch()
+        {
+            var connectionStub = new DbConnectionStub();
+            var connectionBuilder = new Mock<IConnectionBuilder>();
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+
+            var tableHelper = new EntityTableHelper<Customer>();
+            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
+            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
+
+            var command = new Mock<IDbCommand>();
+            connectionStub.MockCommand = command.Object;
+            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -135,7 +164,7 @@ namespace Teaq.Tests
         {
             var connectionStub = new DbConnectionStub();
             var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup<IDbConnection>(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -152,7 +181,7 @@ namespace Teaq.Tests
         {
             var connectionStub = new DbConnectionStub();
             var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup<IDbConnection>(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
@@ -160,7 +189,7 @@ namespace Teaq.Tests
 
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
-            command.Setup<IDataReader>(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -179,7 +208,7 @@ namespace Teaq.Tests
         {
             var connectionStub = new DbConnectionStub();
             var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup<IDbConnection>(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });

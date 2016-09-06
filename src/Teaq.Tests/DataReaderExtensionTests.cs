@@ -793,6 +793,32 @@ namespace Teaq.Tests
             handler.Verify<Customer>(h => h.ReadEntity(It.IsAny<IDataReader>()), Times.Exactly(2));
         }
 
+        [TestMethod]
+        public void ReadNullableValuesIncludesNullByDefault()
+        {
+            var reader = CreateReaderFromTableWithNullValue<int>();
+            var results = reader.ReadNullableValues<int>();
+            results.Count.Should().Be(1);
+            results[0].HasValue.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void ReadValuesExcludesNullByDefault()
+        {
+            var reader = CreateReaderFromTableWithNullValue<int>();
+            var results = reader.ReadValues<int>();
+            results.Count.Should().Be(0);
+        }
+
+        [TestMethod]
+        public void ReadValuesReadsExpectedValue()
+        {
+            var reader = CreateReaderFromTableWithValue<int>(1);
+            var results = reader.ReadValues<int>();
+            results.Count.Should().Be(1);
+            results[0].Should().Be(1);
+        }
+
         public IDataReader CreateReaderFromTableWithValue<TValue>(object value)
         {
             return CreateReaderFromTableWithValue<TValue>(value, "Target");
