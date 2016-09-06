@@ -131,6 +131,7 @@
     <Compile Include="QueryCommandTests.cs" />
     <Compile Include="QueryExtensionsTests.cs" />
     <Compile Include="QueryBuilderExtensionsTests.cs" />
+    <Compile Include="QueryGeneration\StringBuilderCacheTests.cs" />
     <Compile Include="SqlConnectionBuilderTests.cs" />
     <Compile Include="SqlParameterExtensionTests.cs" />
     <Compile Include="Stubs\DataReaderStub.cs" />

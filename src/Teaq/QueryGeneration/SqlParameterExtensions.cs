@@ -46,7 +46,7 @@ namespace Teaq.QueryGeneration
             for (int i = 0; i < sqlParams?.Length; ++i)
             {
                 var param = sqlParams[i];
-                param.SourceColumn = param.SourceColumn ?? param.ParameterName.RemoveLeadingSymbol();
+                param.SourceColumn = param.SourceColumn;
                 param.ParameterName = param.ParameterName.GetQualifiedParameterName(batchQualifier, -1, -1);
             }
 
@@ -146,21 +146,6 @@ namespace Teaq.QueryGeneration
             copy.TypeName = source.TypeName;
             copy.Precision = source.Precision;
             return copy;
-        }
-
-        private static string RemoveLeadingSymbol(this string parameterName)
-        {
-            if (string.IsNullOrEmpty(parameterName))
-            {
-                return string.Empty;
-            }
-
-            if (parameterName[0] == '@')
-            {
-                return parameterName.Substring(1);
-            }
-
-            return parameterName;
         }
 
         private static string GetQualifiedParameterName(this string parameterName, int? batchQualifier, int? parameterQualifier, int? indexer)
