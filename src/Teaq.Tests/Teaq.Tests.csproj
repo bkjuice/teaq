@@ -144,6 +144,7 @@
     <Compile Include="Stubs\QueryBuilderStub{T}.cs" />
     <Compile Include="Stubs\InvalidJoinExpressionStub.cs" />
     <Compile Include="Stubs\InvalidOrderByExpressionStub.cs" />
+    <Compile Include="Stubs\NullableValueTableHelper{T}.cs" />
     <Compile Include="Stubs\ValueTableHelper{T}.cs" />
     <Compile Include="Stubs\TableHelper.cs" />
     <Compile Include="Stubs\EntityTypes.cs" />

@@ -1,15 +1,16 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 
 namespace Teaq.Tests.Stubs
 {
-    public class ValueTableHelper<T> : IDataHelper
+    public class NullableValueTableHelper<T> : IDataHelper where T: struct
     {
         private DataTable table = CreateTable();
 
-        public void AddRow(T target)
+        public void AddRow(T? target)
         {
             var row = table.NewRow();
-            row.ItemArray = new object[] { target };
+            row.ItemArray = new object[] { target.HasValue ? (object)target.Value : DBNull.Value };
             table.Rows.Add(row);
         }
 

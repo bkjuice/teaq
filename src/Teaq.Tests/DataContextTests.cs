@@ -15,6 +15,29 @@ namespace Teaq.Tests
     public class DataContextTests
     {
         [TestMethod]
+        public void QueryNullableValuesReturnsExpectedValuesWithNulls()
+        {
+            var tableHelper = BuildNullableValueTable<int>(1, null, 3, null, 5);
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            target.ExecuteReaderCallback = () => tableHelper.GetReader();
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                var result = context.QueryNullableValues<int>("blah, blah blah", new { Id = 5 });
+                result.Count.Should().Be(5);
+                result[0] = 1;
+                result[1] = null;
+                result[2] = 3;
+                result[3] = null;
+                result[4] = 5;
+            }
+        }
+
+        [TestMethod]
         public void QueryValuesReturnsExpectedValues()
         {
             var tableHelper = BuildValueTable<int>(1, 2, 3, 4, 5);
@@ -183,6 +206,17 @@ namespace Teaq.Tests
         private static ValueTableHelper<T> BuildValueTable<T>(params T[] values)
         {
             var tableHelper = new ValueTableHelper<T>();
+            foreach (var t in values)
+            {
+                tableHelper.AddRow(t);
+            }
+
+            return tableHelper;
+        }
+
+        private static NullableValueTableHelper<T> BuildNullableValueTable<T>(params T?[] values) where T: struct
+        {
+            var tableHelper = new NullableValueTableHelper<T>();
             foreach (var t in values)
             {
                 tableHelper.AddRow(t);
