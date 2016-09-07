@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Teaq.Fakes;
 using Teaq.Tests.Stubs;
 
 namespace Teaq.Tests
@@ -14,6 +12,32 @@ namespace Teaq.Tests
     [TestClass]
     public class DataContextTests
     {
+        [TestMethod]
+        public async Task QueryNullableValuesAsyncReturnsExpectedValuesWithNulls()
+        {
+            var tableHelper = BuildNullableValueTable<int>(1, null, 3, null, 5);
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            target.ExecuteReaderWithBehaviorCallback = b => tableHelper.GetReader();
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                var results = await context.QueryNullableValuesAsync<int>("blah, blah blah", new { Id = 5 });
+                var i = 1;
+                foreach (var x in results)
+                {
+                    if (i % 2 == 0) x.Should().Be(null);
+                    else x.Should().Be(i);
+                    i++;
+                }
+
+                i.Should().BeGreaterThan(4);
+            }
+        }
+
         [TestMethod]
         public void QueryNullableValuesReturnsExpectedValuesWithNulls()
         {
