@@ -54,7 +54,38 @@ namespace Teaq.Tests
                 readerContext.NextResult().Should().BeFalse(); // <- the next result transitions the mock counter to 1
             }
         }
-        
+
+        [TestMethod]
+        public async Task BatchReaderNextResultHandlesMARSAsync()
+        {
+            var connectionStub = new DbConnectionStub();
+            var connectionBuilder = SetupConnectionMock(connectionStub);
+
+            var command = new Mock<IDbCommand>();
+            connectionStub.MockCommand = command.Object;
+
+            var readerStub = new DataReaderStub();
+            int resultCount = 0;
+            readerStub.NextResultFunc = () =>
+            {
+                resultCount++;
+                return resultCount < 2;
+            };
+
+            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(readerStub);
+            var batch = new QueryBatch(3);
+            batch.Add<Customer>("test");
+            batch.Add<Customer>("test");
+            batch.Add<Customer>("test");
+            batch.Add<Customer>("test");
+            using (var readerContext = Repository.BuildBatchReader("testconnection", batch, connectionBuilder.Object))
+            {
+                (await readerContext.NextResultAsync()).Should().BeTrue();
+                (await readerContext.NextResultAsync()).Should().BeTrue();
+                (await readerContext.NextResultAsync()).Should().BeTrue();
+                (await readerContext.NextResultAsync()).Should().BeFalse();
+            }
+        }
 
         [TestMethod]
         public void EnumerateEntitySetReturnsEmptyWhenReaderIsNull()
@@ -66,7 +97,7 @@ namespace Teaq.Tests
             connectionStub.MockCommand = command.Object;
 
             IDataReader reader = null;
-            command.Setup(c => c.ExecuteReader()).Returns(reader);
+            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(reader);
 
             var model = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
