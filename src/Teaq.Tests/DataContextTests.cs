@@ -15,6 +15,56 @@ namespace Teaq.Tests
     public class DataContextTests
     {
         [TestMethod]
+        public void QueryValuesReturnsExpectedValues()
+        {
+            var tableHelper = BuildValueTable<int>(1, 2, 3, 4, 5);
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            target.ExecuteReaderCallback = () => tableHelper.GetReader();
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                var result = context.QueryValues<int>("blah, blah blah", new { Id = 5 });
+                result.Count.Should().Be(5);
+                result[0] = 1;
+                result[1] = 2;
+                result[2] = 3;
+                result[3] = 4;
+                result[4] = 5;
+            }
+        }
+
+        [TestMethod]
+        public async Task QueryValuesAsyncReturnsExpectedValues()
+        {
+            var tableHelper = BuildValueTable<int>(1, 2, 3, 4, 5);
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            target.ExecuteReaderWithBehaviorCallback = b => tableHelper.GetReader();
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                var results = await context.QueryValuesAsync<int>("blah, blah blah", new { Id = 5 });
+
+                // Once the results are enumerated, the enumeration doesn't reset. Forward only:
+                var i = 1;
+                foreach(var x in results)
+                {
+                    x.Should().Be(i);
+                    i++;
+                }
+
+                i.Should().BeGreaterThan(4);
+            }
+        }
+
+        [TestMethod]
         public void QueryUsingInlineStringInvokesQueryWithExpectedParameters()
         {
             var model = BuildTestModel();
@@ -127,6 +177,17 @@ namespace Teaq.Tests
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
             tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
+            return tableHelper;
+        }
+
+        private static ValueTableHelper<T> BuildValueTable<T>(params T[] values)
+        {
+            var tableHelper = new ValueTableHelper<T>();
+            foreach (var t in values)
+            {
+                tableHelper.AddRow(t);
+            }
+
             return tableHelper;
         }
 
