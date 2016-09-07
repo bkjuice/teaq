@@ -10,7 +10,7 @@ using Teaq.Tests.Stubs;
 namespace Teaq.Tests
 {
     [TestClass]
-    public class BatchReaderContextTests
+    public class BatchReaderTests
     {
         [TestMethod]
         public void EnumerateEntitySetReturnsEmptyWhenReaderIsNull()
@@ -43,10 +43,7 @@ namespace Teaq.Tests
             var connectionBuilder = new Mock<IConnectionBuilder>();
             connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
-            var tableHelper = new EntityTableHelper<Customer>();
-            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-
+            var tableHelper = Build2CustomerTable();
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
             command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
@@ -70,10 +67,7 @@ namespace Teaq.Tests
             var connectionBuilder = new Mock<IConnectionBuilder>();
             connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
-            var tableHelper = new EntityTableHelper<Customer>();
-            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-
+            var tableHelper = Build2CustomerTable();
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
             command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
@@ -92,16 +86,79 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
+        public async Task EnumerateEntitySetDoesNotInvokeHandlerWhenItemsNotRead()
+        {
+            var connectionStub = new DbConnectionStub();
+            var connectionBuilder = new Mock<IConnectionBuilder>();
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+
+            var tableHelper = Build2CustomerTable();
+            var command = new Mock<IDbCommand>();
+            connectionStub.MockCommand = command.Object;
+            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
+
+            var emptyModel = Repository.BuildModel(x => { });
+            var batch = new QueryBatch();
+            batch.Add<Customer>("test");
+
+            var handlerInvoked = false;
+            var handler = new DelegatingReaderHandler<Customer>(r =>
+            {
+                handlerInvoked = true;
+                return new Customer(); // Don't care about actually reading anything here...
+            });
+
+            using (var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object))
+            {
+                var hasResults = await context.NextResultAsync();
+                hasResults.Should().BeTrue();
+                var result = context.EnumerateEntitySet(handler);
+                result.Count().Should().Be(2);
+                handlerInvoked.Should().BeFalse(); // <- Count() doesn't actually touch the items. If you step through the code in a debugger and check the current property of the iterator, you may trigger a false negative.
+            }
+        }
+
+        [TestMethod]
+        public async Task EnumerateEntitySetDoesInvokeHandlerWhenItemsRead()
+        {
+            var connectionStub = new DbConnectionStub();
+            var connectionBuilder = new Mock<IConnectionBuilder>();
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+
+            var tableHelper = Build2CustomerTable();
+            var command = new Mock<IDbCommand>();
+            connectionStub.MockCommand = command.Object;
+            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
+
+            var emptyModel = Repository.BuildModel(x => { });
+            var batch = new QueryBatch();
+            batch.Add<Customer>("test");
+
+            var handlerInvoked = false;
+            var handler = new DelegatingReaderHandler<Customer>(r =>
+            {
+                handlerInvoked = true;
+                return new Customer(); // Don't care about actually reading anything here...
+            });
+
+            using (var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object))
+            {
+                var hasResults = await context.NextResultAsync();
+                hasResults.Should().BeTrue();
+                var result = context.EnumerateEntitySet(handler).ToList(); // <- forces materialization
+                result.Count().Should().Be(2);
+                handlerInvoked.Should().BeTrue(); 
+            }
+        }
+
+        [TestMethod]
         public void EnumerateEntitySetReturnsResultsWithBatch()
         {
             var connectionStub = new DbConnectionStub();
             var connectionBuilder = new Mock<IConnectionBuilder>();
             connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
-            var tableHelper = new EntityTableHelper<Customer>();
-            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-
+            var tableHelper = Build2CustomerTable();
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
             command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
@@ -183,10 +240,7 @@ namespace Teaq.Tests
             var connectionBuilder = new Mock<IConnectionBuilder>();
             connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
-            var tableHelper = new EntityTableHelper<Customer>();
-            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-
+            var tableHelper = Build2CustomerTable();
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
             command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
@@ -210,10 +264,7 @@ namespace Teaq.Tests
             var connectionBuilder = new Mock<IConnectionBuilder>();
             connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
 
-            var tableHelper = new EntityTableHelper<Customer>();
-            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
-
+            var tableHelper = Build2CustomerTable();
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
             command.Setup(mockCommand => mockCommand.ExecuteReader()).Returns(tableHelper.GetReader());
@@ -252,6 +303,14 @@ namespace Teaq.Tests
             }
 
             connectionStub.CloseInvoked.Should().BeTrue();
+        }
+
+        private EntityTableHelper<Customer> Build2CustomerTable()
+        {
+            var tableHelper = new EntityTableHelper<Customer>();
+            tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
+            tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
+            return tableHelper;
         }
     }
 }

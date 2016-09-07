@@ -4,7 +4,6 @@ using System.Data;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Teaq.Configuration;
-using Teaq.QueryGeneration;
 
 namespace Teaq
 {

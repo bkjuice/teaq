@@ -819,6 +819,24 @@ namespace Teaq.Tests
             results[0].Should().Be(1);
         }
 
+        [TestMethod]
+        public void ReadStringValuesReadsExpectedValue()
+        {
+            var reader = CreateReaderFromTableWithValue<string>("test");
+            var results = reader.ReadStringValues();
+            results.Count.Should().Be(1);
+            results[0].Should().Be("test");
+        }
+
+        [TestMethod]
+        public void ReadStringValuesIncludesNullByDefault()
+        {
+            var reader = CreateReaderFromTableWithNullValue<string>();
+            var results = reader.ReadStringValues();
+            results.Count.Should().Be(1);
+            string.IsNullOrEmpty(results[0]).Should().BeTrue();
+        }
+
         public IDataReader CreateReaderFromTableWithValue<TValue>(object value)
         {
             return CreateReaderFromTableWithValue<TValue>(value, "Target");

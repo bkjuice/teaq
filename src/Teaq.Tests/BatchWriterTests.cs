@@ -7,7 +7,7 @@ using Teaq.Tests.Stubs;
 namespace Teaq.Tests
 {
     [TestClass]
-    public class BatchWriterContextTests
+    public class BatchWriterTests
     {
         [TestMethod]
         public void BatchWriterContextExecutesNonQuery()
