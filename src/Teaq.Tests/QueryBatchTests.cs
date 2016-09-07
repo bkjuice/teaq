@@ -11,6 +11,13 @@ namespace Teaq.Tests
     public class QueryBatchTests
     {
         [TestMethod]
+        public void EmptyBatchReturnsFalseForHasBatch()
+        {
+            var batch = new QueryBatch();
+            batch.HasBatch.Should().BeFalse();
+        }
+
+        [TestMethod]
         public void QueryBatchWithNoExpectedResultsReturns0()
         {
             var batch = new QueryBatch();

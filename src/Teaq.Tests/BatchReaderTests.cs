@@ -13,11 +13,54 @@ namespace Teaq.Tests
     public class BatchReaderTests
     {
         [TestMethod]
+        public void BatchReaderThrowsInvalidOperationExceptionWhenCommandBuilderReturnsNullCommand()
+        {
+            var connectionBuilder = SetupConnectionMock(null);
+            var batch = new QueryBatch(2);
+            batch.Add<Customer>("test");
+            using (var readerContext = Repository.BuildBatchReader("testconnection", batch, connectionBuilder.Object))
+            {
+                Action test = () => readerContext.NextResult();
+                test.ShouldThrow<InvalidOperationException>();
+            }
+        }
+
+        [TestMethod]
+        public void BatchReaderNextResultHandlesMARS()
+        {
+            var connectionStub = new DbConnectionStub();
+            var connectionBuilder = SetupConnectionMock(connectionStub);
+
+            var command = new Mock<IDbCommand>();
+            connectionStub.MockCommand = command.Object;
+
+            var readerStub = new DataReaderStub();
+            int resultCount = 0;
+            readerStub.NextResultFunc = () => 
+            {
+                resultCount++;
+                return resultCount < 1;
+            };
+
+            command.Setup(c => c.ExecuteReader()).Returns(readerStub);
+            var batch = new QueryBatch(2);
+            batch.Add<Customer>("test");
+            batch.Add<Customer>("test");
+            batch.Add<Customer>("test");
+            using (var readerContext = Repository.BuildBatchReader("testconnection", batch, connectionBuilder.Object))
+            {
+                readerContext.NextResult().Should().BeTrue(); // <- always a first result
+                readerContext.NextResult().Should().BeTrue(); // <- the next result transitions the mock counter to 0
+                readerContext.NextResult().Should().BeFalse(); // <- the next result transitions the mock counter to 1
+            }
+        }
+        
+
+        [TestMethod]
         public void EnumerateEntitySetReturnsEmptyWhenReaderIsNull()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var command = new Mock<IDbCommand>();
             connectionStub.MockCommand = command.Object;
@@ -40,13 +83,10 @@ namespace Teaq.Tests
         public void EnumerateEntitySetAndThenReadEntitiesWithoutEnumeratingThrowsInvalidOperationException()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = Build2CustomerTable();
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+            SetupCommandMock(connectionStub, tableHelper);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -64,13 +104,10 @@ namespace Teaq.Tests
         public async Task EnumerateEntitySetReturnsResultsWithBatchAsync()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = Build2CustomerTable();
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
+            SetupCommandMock(connectionStub, tableHelper);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -86,16 +123,43 @@ namespace Teaq.Tests
         }
 
         [TestMethod]
+        public void ReadEntitySetDoesInvokeHandlerWhenItemsRead()
+        {
+            var connectionStub = new DbConnectionStub();
+            var connectionBuilder = SetupConnectionMock(connectionStub);
+
+            var tableHelper = Build2CustomerTable();
+            SetupCommandMock(connectionStub, tableHelper);
+
+            var emptyModel = Repository.BuildModel(x => { });
+            var batch = new QueryBatch();
+            batch.Add<Customer>("test");
+
+            var handlerInvoked = false;
+            var handler = new DelegatingReaderHandler<Customer>(r =>
+            {
+                handlerInvoked = true;
+                return new Customer(); // Don't care about actually reading anything here...
+            });
+
+            using (var context = Repository.BuildBatchReader("test", batch, connectionBuilder.Object))
+            {
+                var hasResults = context.NextResult();
+                hasResults.Should().BeTrue();
+                var result = context.ReadEntitySet(handler).ToList(); // <- forces materialization
+                result.Count().Should().Be(2);
+                handlerInvoked.Should().BeTrue();
+            }
+        }
+
+        [TestMethod]
         public async Task EnumerateEntitySetDoesNotInvokeHandlerWhenItemsNotRead()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = Build2CustomerTable();
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
+            SetupCommandMock(connectionStub, tableHelper);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -122,13 +186,10 @@ namespace Teaq.Tests
         public async Task EnumerateEntitySetDoesInvokeHandlerWhenItemsRead()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = Build2CustomerTable();
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
+            SetupCommandMock(connectionStub, tableHelper);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -155,13 +216,10 @@ namespace Teaq.Tests
         public void EnumerateEntitySetReturnsResultsWithBatch()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = Build2CustomerTable();
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+            SetupCommandMock(connectionStub, tableHelper);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -237,13 +295,10 @@ namespace Teaq.Tests
         public void DataContextEntitySetReturnsResultsWithBatch()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = Build2CustomerTable();
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+            SetupCommandMock(connectionStub, tableHelper);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -261,17 +316,12 @@ namespace Teaq.Tests
         public void DataContextSqlQueryReturnsExpectedResults()
         {
             var connectionStub = new DbConnectionStub();
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = Build2CustomerTable();
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(mockCommand => mockCommand.ExecuteReader()).Returns(tableHelper.GetReader());
-            command.SetupGet(c => c.Connection).Returns(connectionStub);
+            SetupCommandMock(connectionStub, tableHelper);
 
             var context = Repository.BuildContext("test", connectionBuilder.Object);
-
             var query = Repository.Default.ForEntity<Customer>().BuildSelect().ToCommand();
             var result = context.Query(query);
             result.Count.Should().Be(2);
@@ -282,15 +332,10 @@ namespace Teaq.Tests
         {
             var connectionStub = new DbConnectionStub();
             connectionStub.State = ConnectionState.Open;
-            var connectionBuilder = new Mock<IConnectionBuilder>();
-            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            var connectionBuilder = SetupConnectionMock(connectionStub);
 
             var tableHelper = new EntityTableHelper<Customer>();
-
-            var command = new Mock<IDbCommand>();
-            connectionStub.MockCommand = command.Object;
-            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
-            command.SetupGet(c => c.Connection).Returns(connectionStub);
+            SetupCommandMock(connectionStub, tableHelper);
 
             var emptyModel = Repository.BuildModel(x => { });
             var batch = new QueryBatch();
@@ -305,12 +350,29 @@ namespace Teaq.Tests
             connectionStub.CloseInvoked.Should().BeTrue();
         }
 
-        private EntityTableHelper<Customer> Build2CustomerTable()
+        private static Mock<IDbCommand> SetupCommandMock(DbConnectionStub connectionStub, EntityTableHelper<Customer> tableHelper)
+        {
+            var command = new Mock<IDbCommand>();
+            connectionStub.MockCommand = command.Object;
+            command.Setup(c => c.ExecuteReader(It.IsAny<CommandBehavior>())).Returns(tableHelper.GetReader());
+            command.Setup(c => c.ExecuteReader()).Returns(tableHelper.GetReader());
+            command.SetupGet(c => c.Connection).Returns(connectionStub);
+            return command;
+        }
+
+        private static EntityTableHelper<Customer> Build2CustomerTable()
         {
             var tableHelper = new EntityTableHelper<Customer>();
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
             tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.UtcNow, Change = 2, Modified = DateTimeOffset.UtcNow });
             return tableHelper;
+        }
+
+        private static Mock<IConnectionBuilder> SetupConnectionMock(DbConnectionStub connectionStub)
+        {
+            var connectionBuilder = new Mock<IConnectionBuilder>();
+            connectionBuilder.Setup(b => b.Create(It.IsAny<string>())).Returns(connectionStub);
+            return connectionBuilder;
         }
     }
 }
