@@ -15,6 +15,27 @@ namespace Teaq.Tests
     public class DataReaderExtensionTests
     {
         [TestMethod]
+        public void ReadEntitiesCanReadTimespanAsNullableTimespan()
+        {
+            var items = this.CreateReaderFromTableWithValue<TimeSpan>(TimeSpan.FromHours(4))
+               .ReadEntities<EntityWithProperty<TimeSpan?>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.HasValue.Should().BeTrue();
+            items[0].Target.Should().Be(TimeSpan.FromHours(4));
+        }
+
+        [TestMethod]
+        public void ReadEntitiesCanReadTimespanAsTimespan()
+        {
+            var items = this.CreateReaderFromTableWithValue<TimeSpan>(TimeSpan.FromHours(4))
+               .ReadEntities<EntityWithProperty<TimeSpan>>();
+
+            items.Count.Should().Be(1);
+            items[0].Target.Should().Be(TimeSpan.FromHours(4));
+        }
+
+        [TestMethod]
         public void ReadEntitiesCanReadStringToNullableBool()
         {
             var items = this.CreateReaderFromTableWithValue<string>("true")

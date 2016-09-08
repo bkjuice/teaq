@@ -186,6 +186,7 @@ namespace Teaq
                 [new TypePair(T<SqlXml>(), T<XDocument>())] = o => XDocument.Load(((SqlXml)o).CreateReader()),
                 [new TypePair(T<SqlXml>(), T<XPathDocument>())] = o => new XPathDocument(((SqlXml)o).CreateReader()),
                 [new TypePair(T<SqlXml>(), T<XmlDocument>())] = ConvertSqlXmlToXml,
+                [new TypePair(T<TimeSpan>(), T<TimeSpan?>())] = o => new TimeSpan?((TimeSpan)o),
             };
 
         internal static Func<object, object> GetConverter(this RuntimeTypeHandle source, RuntimeTypeHandle target, Type expected)

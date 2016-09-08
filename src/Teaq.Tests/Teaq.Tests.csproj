@@ -150,7 +150,7 @@
     <Compile Include="Stubs\EntityTypes.cs" />
     <Compile Include="JsonBufferedOutputBuilderTests.cs" />
     <Compile Include="DataReaderJsonExtensionTests.cs" />
-    <Compile Include="UdtTypeEnumeratorTests.cs" />
+    <Compile Include="UdtEntityEnumeratorTests.cs" />
     <Compile Include="BatchProcessorTests.cs" />
     <Compile Include="DataHandlerTests.cs" />
     <Compile Include="DataContextBaseTests.cs" />

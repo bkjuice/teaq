@@ -21,6 +21,7 @@ namespace Teaq
             { typeof(Guid?), SqlDbType.UniqueIdentifier },
             { typeof(DateTime?), SqlDbType.DateTime },
             { typeof(DateTimeOffset?), SqlDbType.DateTimeOffset },
+            { typeof(double?), SqlDbType.Float },
             { typeof(byte), SqlDbType.TinyInt },
             { typeof(bool), SqlDbType.Bit },
             { typeof(char), SqlDbType.Char },
@@ -32,6 +33,7 @@ namespace Teaq
             { typeof(Guid), SqlDbType.UniqueIdentifier },
             { typeof(DateTime), SqlDbType.DateTime },
             { typeof(DateTimeOffset), SqlDbType.DateTimeOffset },
+            { typeof(double), SqlDbType.Float },
             { typeof(byte[]), SqlDbType.VarBinary },
         };
 
@@ -51,7 +53,7 @@ namespace Teaq
                 return new SqlMetaData(columnName, dbType);
             }
 
-            throw new InvalidOperationException($"Cannot map type: '{t.FullName}' to a known SQL primitive type. Ensure the target value type is in the following list of types:\r\n{supportedTypes}");
+            throw new InvalidOperationException($"Cannot map type: '{ t.FullName }' for column name: '{ columnName }' to a known SQL primitive type. Ensure the target value type is in the following list of types:\r\n{ supportedTypes }");
         }
 
         private static string GetSupportedTypeList()
@@ -60,7 +62,7 @@ namespace Teaq
             b.AppendLine($"System.String : { SqlDbType.VarChar.ToString() } | { SqlDbType.NVarChar.ToString()}");
             foreach (var pair in typeMappings)
             {
-                b.AppendLine($"{pair.Key.FullName} : { pair.Value.ToString()}");
+                b.AppendLine($"{ pair.Key.FullName } : { pair.Value.ToString() }");
             }
 
             return b.ToString();
