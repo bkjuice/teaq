@@ -250,12 +250,8 @@ namespace Teaq
             public SimpleTypeIterator(IDataReader reader, NullPolicyKind nullPolicy, Action onCompleteCallback)
             {
                 Contract.Requires(reader != null);
-
-                // TODO: require at least 1 field.
                 this.onCompleteCallback = onCompleteCallback;
                 this.nullPolicy = nullPolicy;
-                var t = reader.GetFieldType(0).TypeHandle;
-
                 this.reader = reader;
             }
 
