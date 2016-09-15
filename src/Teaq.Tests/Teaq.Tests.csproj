@@ -113,6 +113,7 @@
     <Compile Include="FastReflection\SupportingTypes\TypeWithoutDefaultCtor.cs" />
     <Compile Include="FastReflection\TypeCacheTests.cs" />
     <Compile Include="FastReflection\TypeDescriptionTests.cs" />
+    <Compile Include="FastReflection\ArrayDescriptionTests.cs" />
     <Compile Include="FluencyExtensionsTests.cs" />
     <Compile Include="JoinHandlerTests.cs" />
     <Compile Include="JoinMapTests.cs" />
