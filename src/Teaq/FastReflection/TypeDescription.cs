@@ -160,6 +160,7 @@ namespace Teaq.FastReflection
         {
             get
             {
+                // This property is the reason why System.Lazy is used:
                 return this.defaultCtorInfo.Value != null;
             }
         }
