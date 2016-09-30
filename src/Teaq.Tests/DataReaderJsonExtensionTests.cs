@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,36 +16,39 @@ namespace Teaq.Tests
         public async Task ReadToJsonAsyncHandlesPrimitiveNumberAsExpected()
         {
             IDataReader reader = this.CreateReaderFromTableWithValue<int>(43);
-            var builder = JsonOutputBuilder.GetBuilder();
+            var buffer = new StringBuilder();
+            var builder = JsonOutputBuilder.GetBuilder(buffer);
             builder.StartArray("j");
             await reader.ReadToJsonAsync(builder);
 
             builder.Close();
-            builder.ToString().Should().Be("{\"j\":[43]}");
+            buffer.ToString().Should().Be("{\"j\":[43]}");
         }
 
         [TestMethod]
         public void ReadToJsonInitializesValidJsonWhenReaderIsNull()
         {
             IDataReader reader = null;
-            var builder = JsonOutputBuilder.GetBuilder();
+            var buffer = new StringBuilder();
+            var builder = JsonOutputBuilder.GetBuilder(buffer);
             builder.StartArray("j");
             reader.ReadToJson(builder);
 
             builder.Close();
-            builder.ToString().Should().Be("{\"j\":[]}");
+            buffer.ToString().Should().Be("{\"j\":[]}");
         }
 
         [TestMethod]
         public void ReadToJsonHandlesPrimitiveNumberAsExpected()
         {
             IDataReader reader = this.CreateReaderFromTableWithValue<int>(43);
-            var builder = JsonOutputBuilder.GetBuilder();
+            var buffer = new StringBuilder();
+            var builder = JsonOutputBuilder.GetBuilder(buffer);
             builder.StartArray("j");
             reader.ReadToJson(builder);
 
             builder.Close();
-            builder.ToString().Should().Be("{\"j\":[43]}");
+            buffer.ToString().Should().Be("{\"j\":[43]}");
         }
 
         [TestMethod]
@@ -82,11 +86,12 @@ namespace Teaq.Tests
             tableHelper.AddRow(new Customer { CustomerId = 1, CustomerKey = "1", Inception = DateTime.Parse("10/10/15 1:27:29 AM"), Change = 2, Modified = DateTimeOffset.Parse("10/10/15 1:27:29 AM +00:00") });
             tableHelper.AddRow(new Customer { CustomerId = 2, CustomerKey = "2", Inception = DateTime.Parse("10/10/15 1:27:29 AM"), Change = 2, Modified = DateTimeOffset.Parse("10/10/15 1:27:29 AM +00:00") });
 
-            var builder = JsonOutputBuilder.GetBuilder();
+            var buffer = new StringBuilder();
+            var builder = JsonOutputBuilder.GetBuilder(buffer);
             builder.StartArray("customers");
             tableHelper.GetReader().ReadToJson(builder);
             builder.Close();
-            var result = builder.ToString();
+            var result = buffer.ToString();
 
             result.Should().NotBeNullOrEmpty();
             result.Should().Be(
@@ -103,10 +108,11 @@ namespace Teaq.Tests
             var mapping = new JsonMapping();
             mapping.AddFieldMapping("CustomerKey", "customerKey", JsonOutputValueKind.NumberValue);
             mapping.AddFieldMapping("CustomerId", "customerId", JsonOutputValueKind.NumberValue);
-            var builder = JsonOutputBuilder.GetBuilder("customers", true);
+            var buffer = new StringBuilder();
+            var builder = JsonOutputBuilder.GetBuilder(buffer, "customers", true);
             tableHelper.GetReader().ReadToJson(builder, mapping);
             builder.Close();
-            var result = builder.ToString();
+            var result = buffer.ToString();
 
             result.Should().NotBeNullOrEmpty();
             result.Should().Be(

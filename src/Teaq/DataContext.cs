@@ -8,7 +8,7 @@ using Teaq.Configuration;
 namespace Teaq
 {
     /// <summary>
-    /// Concrete implementation of a ADO.NET persistence context.
+    /// Persistence context to facilitate interaction with the database.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "The interface is all that is visible to the library user.")]
     public sealed partial class DataContext : DataContextBase, IDataContext
@@ -71,6 +71,8 @@ namespace Teaq
 
         private object ExecuteScalar(string commandText, IDbDataParameter[] parameters)
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 return connection
@@ -82,6 +84,8 @@ namespace Teaq
 
         private async Task<object> ExecuteScalarAsync(string commandText, IDbDataParameter[] parameters)
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 return await connection
@@ -93,6 +97,8 @@ namespace Teaq
 
         private List<string> QueryStringValues(string commandText, IDbDataParameter[] parameters, Func<IDataReader, string> handler)
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 return connection
@@ -106,6 +112,8 @@ namespace Teaq
 
         private async Task<IEnumerable<string>> QueryStringValuesAsync(string commandText, IDbDataParameter[] parameters, Func<IDataReader, string> handler)
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
             return 
                 (await command.Open().ExecuteReaderAsync())
@@ -114,6 +122,8 @@ namespace Teaq
 
         private List<T?> QueryNullableValues<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T: struct
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 return connection
@@ -127,6 +137,8 @@ namespace Teaq
 
         private async Task<IEnumerable<T?>> QueryNullableValuesAsync<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T : struct
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
             return 
                 (await command.Open().ExecuteReaderAsync())
@@ -135,6 +147,8 @@ namespace Teaq
 
         private List<T> QueryValues<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T : struct
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 return connection
@@ -148,6 +162,8 @@ namespace Teaq
 
         private async Task<IEnumerable<T>> QueryValuesAsync<T>(string commandText, IDbDataParameter[] parameters, Func<IDataReader, T?> handler) where T : struct
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             var command = this.ConnectionBuilder.Create(this.ConnectionString).BuildTextCommand(commandText, parameters);
             return
                 (await command.Open().ExecuteReaderAsync())
@@ -181,6 +197,8 @@ namespace Teaq
 
         private int ExecuteNonQuery(string commandText, IDbDataParameter[] parameters)
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 var dbCommand = connection.BuildTextCommand(commandText, parameters);
@@ -191,6 +209,8 @@ namespace Teaq
 
         private async Task<int> ExecuteNonQueryAsync(string commandText, IDbDataParameter[] parameters)
         {
+            Contract.Requires(string.IsNullOrEmpty(commandText) == false);
+
             using (var connection = this.ConnectionBuilder.Create(this.ConnectionString))
             {
                 var dbCommand = connection.BuildTextCommand(commandText, parameters);

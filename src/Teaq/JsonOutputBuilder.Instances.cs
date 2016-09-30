@@ -11,36 +11,40 @@ namespace Teaq
     public abstract partial class JsonOutputBuilder
     {
         /// <summary>
-        /// Gets the builder.
+        /// Gets a JSON output builder initialized as an empty object with the provided string builder as a buffer.
         /// </summary>
-        /// <param name="initialCapacity">The initial capacity.</param>
-        /// <returns>The buffering builder to use.</returns>
-        public static JsonOutputBuilder GetBuilder(int initialCapacity = 512)
-        {
-            Contract.Ensures(Contract.Result<JsonOutputBuilder>() != null);
-
-            return new BufferedJsonWriter(initialCapacity).OpenRoot();
-        }
-
-        /// <summary>
-        /// Gets the builder.
-        /// </summary>
-        /// <param name="rootName">Name of the root.</param>
-        /// <param name="isArray">if set to <c>true</c> [is array].</param>
-        /// <param name="initialCapacity">The initial capacity.</param>
+        /// <param name="buffer">The buffer to use when building the JSON output.</param>
         /// <returns>
         /// The buffering builder to use.
         /// </returns>
-        public static JsonOutputBuilder GetBuilder(string rootName, bool isArray, int initialCapacity = 512)
+        public static JsonOutputBuilder GetBuilder(StringBuilder buffer)
         {
-            Contract.Requires(!string.IsNullOrEmpty(rootName));
+            Contract.Requires<ArgumentNullException>(buffer != null);
             Contract.Ensures(Contract.Result<JsonOutputBuilder>() != null);
 
-            return InitInstance(GetBuilder(initialCapacity), rootName, isArray);
+            return new BufferedJsonWriter(buffer).OpenRoot();
         }
 
         /// <summary>
-        /// Gets the builder.
+        /// Gets a JSON output builder initialized as a named object or array with the provided string builder as a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to use when building the JSON output.</param>
+        /// <param name="rootName">Name of the root object.</param>
+        /// <param name="isArray">if set to <c>true</c> [is array].</param>
+        /// <returns>
+        /// The buffering builder to use.
+        /// </returns>
+        public static JsonOutputBuilder GetBuilder(StringBuilder buffer, string rootName, bool isArray)
+        {
+            Contract.Requires<ArgumentNullException>(buffer != null);
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(rootName));
+            Contract.Ensures(Contract.Result<JsonOutputBuilder>() != null);
+
+            return InitInstance(GetBuilder(buffer), rootName, isArray);
+        }
+
+        /// <summary>
+        /// Gets a JSON output builder initialized as an object with the provided text writer as an output stream.
         /// </summary>
         /// <param name="output">The output writer to use.</param>
         /// <returns>The JSON output writer that will write to the backing stream.</returns>
@@ -53,13 +57,15 @@ namespace Teaq
         }
 
         /// <summary>
-        /// Gets the builder.
+        /// Gets a JSON output builder initialized as a named object or array with the provided text writer as an output stream.
         /// </summary>
+        /// <param name="output">The output.</param>
         /// <param name="rootName">Name of the root.</param>
         /// <param name="isArray">if set to <c>true</c> [is array].</param>
-        /// <param name="output">The output.</param>
-        /// <returns>The JSON output writer that will write to the backing stream.</returns>
-        public static JsonOutputBuilder GetBuilder(string rootName, bool isArray, TextWriter output)
+        /// <returns>
+        /// The JSON output writer that will write to the backing stream.
+        /// </returns>
+        public static JsonOutputBuilder GetBuilder(TextWriter output, string rootName, bool isArray)
         {
             Contract.Requires(!string.IsNullOrEmpty(rootName));
             Contract.Ensures(Contract.Result<JsonOutputBuilder>() != null);
@@ -114,14 +120,9 @@ namespace Teaq
         {
             private readonly StringBuilder output;
 
-            public BufferedJsonWriter(int initialCapacity) : base()
+            public BufferedJsonWriter(StringBuilder buffer) : base()
             {
-                this.output = new StringBuilder(Math.Max(initialCapacity, 8));
-            }
-
-            public override string ToString()
-            {
-                return this.output.ToString();
+                this.output = buffer;
             }
 
             protected override void Flush(char[] buffer, int offset, int count)

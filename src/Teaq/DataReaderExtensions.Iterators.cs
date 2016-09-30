@@ -95,6 +95,8 @@ namespace Teaq
 
             public PrimitiveIterator(TReader reader, Action onCompleteCallback)
             {
+                Contract.Requires(reader != null);
+
                 this.reader = reader;
                 this.onCompleteCallback = onCompleteCallback;
                 this.isValid = reader.FieldCount > 0;
@@ -157,7 +159,7 @@ namespace Teaq
 
         private sealed class StringIterator : PrimitiveIterator<string, IDataReader>
         {
-            private Func<IDataReader, string> converter;
+            private readonly Func<IDataReader, string> converter;
 
             public StringIterator(IDataReader reader, Func<IDataReader, string> handler, Action onCompleteCallback)
                 : base(reader, onCompleteCallback)

@@ -308,6 +308,8 @@ namespace Teaq.QueryGeneration
 
         private static Type GetTableTypeAndSourceColumn(MemberExpression arg, out string sourceColumn)
         {
+            Contract.Ensures(Contract.Result<Type>() != null);
+
             var memberAccess = arg.Expression as MemberExpression;
             if (memberAccess != null)
             {
@@ -323,6 +325,8 @@ namespace Teaq.QueryGeneration
 
         private Expression VisitStringIsNullOrEmptyMethod(MethodCallExpression node)
         {
+            Contract.Ensures(Contract.Result<Expression>() != null);
+
             var arg = (MemberExpression)node.Arguments[0];
 
             string sourceColumn;
@@ -341,6 +345,8 @@ namespace Teaq.QueryGeneration
 
         private Expression VisitContainsMethod(MethodCallExpression node)
         {
+            Contract.Ensures(Contract.Result<Expression>() != null);
+
             if (node.Object == null)
             {
                 throw new NotSupportedException(
