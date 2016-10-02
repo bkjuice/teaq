@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Teaq</id>
-    <version>2.0.8056-beta</version>
+    <version>$version$</version>
     <title>Teaq Mini-ORM</title>
     <authors>Bruce Krakower</authors>
     <owners>Bruce Krakower</owners>

@@ -57,6 +57,7 @@ namespace Teaq
         {
             Contract.Ensures(Contract.Result<List<string>>() != null);
 
+            estimatedRowCount = Math.Max(estimatedRowCount, 8);
             return reader.EnumerateStringValuesInternal(null, null).ToList(estimatedRowCount);
         }
 
@@ -73,6 +74,7 @@ namespace Teaq
         {
             Contract.Ensures(Contract.Result<List<string>>() != null);
 
+            estimatedRowCount = Math.Max(estimatedRowCount, 8);
             return reader.EnumerateStringValuesInternal(handler, null).ToList(estimatedRowCount);
         }
 
@@ -121,6 +123,7 @@ namespace Teaq
         {
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
+            estimatedRowCount = Math.Max(estimatedRowCount, 8);
             return reader.EnumerateValuesInternal<T>(null, null).ToList(estimatedRowCount);
         }
 
@@ -138,6 +141,7 @@ namespace Teaq
         {
             Contract.Ensures(Contract.Result<List<T>>() != null);
 
+            estimatedRowCount = Math.Max(estimatedRowCount, 8);
             return reader.EnumerateValuesInternal(handler, null).ToList(estimatedRowCount);
         }
 
@@ -185,6 +189,7 @@ namespace Teaq
         {
             Contract.Ensures(Contract.Result<List<T?>>() != null);
 
+            estimatedRowCount = Math.Max(estimatedRowCount, 8);
             return reader.EnumerateNullableValuesInternal<T>(null, null).ToList(estimatedRowCount);
         }
 
@@ -202,6 +207,7 @@ namespace Teaq
         {
             Contract.Ensures(Contract.Result<List<T?>>() != null);
 
+            estimatedRowCount = Math.Max(estimatedRowCount, 8);
             return reader.EnumerateNullableValuesInternal(handler, null).ToList(estimatedRowCount);
         }
 

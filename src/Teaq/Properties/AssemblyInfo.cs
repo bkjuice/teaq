@@ -16,8 +16,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: Guid("3b05d8bf-06f4-4b27-9c2b-274ee797484b")]
 
-[assembly: AssemblyVersion("2.0.8.0")]
-[assembly: AssemblyFileVersion("2.0.8.0")]
-[assembly: AssemblyInformationalVersion("2.0.8")]
+[assembly: AssemblyVersion("2.1.*")]
 [assembly: InternalsVisibleTo("Teaq.Tests")]
 [assembly: InternalsVisibleTo("Teaq.Profiling")]
