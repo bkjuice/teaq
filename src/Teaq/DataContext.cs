@@ -38,7 +38,6 @@ namespace Teaq
 
         private static bool ResultIsNull(object result)
         {
-            // TODO: Test a null result with SQL Server (leaky abs):
             if (result == null || ReferenceEquals(DBNull.Value, result))
             {
                 return true;

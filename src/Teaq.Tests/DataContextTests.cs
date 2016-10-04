@@ -13,34 +13,160 @@ namespace Teaq.Tests
     public class DataContextTests
     {
         [TestMethod]
-        public void ExecuteScalarReturnsExpectedStringValue()
+        public void ExecuteScalarInvokesCommandExecuteScalar()
         {
             DbConnectionStub connectionStub;
             var connectionBuilder = BuildConnectionMock(out connectionStub);
 
             var target = new DbCommandStub();
             connectionStub.MockCommand = target;
-            target.ExecuteScalarCallback = () => "result";
+
+            var invoked = false;
+            target.ExecuteScalarCallback = () =>
+            {
+                invoked = true;
+                return "result";
+            };
 
             using (var context = Repository.BuildContext("test", connectionBuilder.Object))
             {
-                context.ExecuteScalar("a query").Should().Be("result");
+                context.ExecuteScalar("a query");
+                invoked.Should().BeTrue();
             }
         }
 
         [TestMethod]
-        public void ExecuteScalarReturnsExpectedIntegerValue()
+        public void ExecuteScalarWithQueryCommandInvokesCommandExecuteScalar()
         {
             DbConnectionStub connectionStub;
             var connectionBuilder = BuildConnectionMock(out connectionStub);
 
             var target = new DbCommandStub();
             connectionStub.MockCommand = target;
-            target.ExecuteScalarCallback = () => 42;
+            var invoked = false;
+            target.ExecuteScalarCallback = () =>
+            {
+                invoked = true;
+                return "result";
+            };
 
             using (var context = Repository.BuildContext("test", connectionBuilder.Object))
             {
-                context.ExecuteScalar<int>("a query").GetValueOrDefault().Should().Be(42);
+                var q = Repository.Default.BuildSelectCommand<Customer>(c => c.CustomerId == 1);
+                context.ExecuteScalar(q);
+                invoked.Should().BeTrue();
+            }
+        }
+
+        [TestMethod]
+        public void ExecuteScalarAsTInvokesCommandExecuteScalar()
+        {
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            var invoked = false;
+            target.ExecuteScalarCallback = () =>
+            {
+                invoked = true;
+                return 42;
+            };
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                context.ExecuteScalar<int>("a query");
+                invoked.Should().BeTrue();
+            }
+        }
+
+        [TestMethod]
+        public async Task ExecuteScalarAsyncInvokesCommandExecuteScalar()
+        {
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            var invoked = false;
+            target.ExecuteScalarCallback = () =>
+            {
+                invoked = true;
+                return "the value";
+            };
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                await context.ExecuteScalarAsync("a query");
+                invoked.Should().BeTrue();
+            }
+        }
+
+        [TestMethod]
+        public async Task ExecuteScalarAsTAsyncInvokesCommandExecuteScalar()
+        {
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            var invoked = false;
+            target.ExecuteScalarCallback = () =>
+            {
+                invoked = true;
+                return 42;
+            };
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                await context.ExecuteScalarAsync<int>("a query");
+                invoked.Should().BeTrue();
+            }
+        }
+
+        [TestMethod]
+        public async Task ExecuteScalarAsyncWithQueryCommandInvokesCommandExecuteScalar()
+        {
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            var invoked = false;
+            target.ExecuteScalarCallback = () =>
+            {
+                invoked = true;
+                return "result";
+            };
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                var q = Repository.Default.BuildSelectCommand<Customer>(c => c.CustomerId == 1);
+                await context.ExecuteScalarAsync(q);
+                invoked.Should().BeTrue();
+            }
+        }
+
+        [TestMethod]
+        public async Task ExecuteScalarAsyncAsTWithQueryCommandInvokesCommandExecuteScalar()
+        {
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            var invoked = false;
+            target.ExecuteScalarCallback = () =>
+            {
+                invoked = true;
+                return 42;
+            };
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                var q = Repository.Default.BuildSelectCommand<Customer>(c => c.CustomerId == 1);
+                await context.ExecuteScalarAsync<int>(q);
+                invoked.Should().BeTrue();
             }
         }
 
