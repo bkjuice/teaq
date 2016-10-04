@@ -69,7 +69,7 @@ namespace Teaq
             return (TValue)converter(result);
         }
 
-        private object ExecuteScalar(string commandText, IDbDataParameter[] parameters)
+        private object ExecuteScalarPrivate(string commandText, IDbDataParameter[] parameters)
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 
@@ -82,7 +82,7 @@ namespace Teaq
             }
         }
 
-        private async Task<object> ExecuteScalarAsync(string commandText, IDbDataParameter[] parameters)
+        private async Task<object> ExecuteScalarPrivateAsync(string commandText, IDbDataParameter[] parameters)
         {
             Contract.Requires(string.IsNullOrEmpty(commandText) == false);
 

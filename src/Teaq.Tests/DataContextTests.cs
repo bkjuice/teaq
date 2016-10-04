@@ -13,6 +13,38 @@ namespace Teaq.Tests
     public class DataContextTests
     {
         [TestMethod]
+        public void ExecuteScalarReturnsExpectedStringValue()
+        {
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            target.ExecuteScalarCallback = () => "result";
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                context.ExecuteScalar("a query").Should().Be("result");
+            }
+        }
+
+        [TestMethod]
+        public void ExecuteScalarReturnsExpectedIntegerValue()
+        {
+            DbConnectionStub connectionStub;
+            var connectionBuilder = BuildConnectionMock(out connectionStub);
+
+            var target = new DbCommandStub();
+            connectionStub.MockCommand = target;
+            target.ExecuteScalarCallback = () => 42;
+
+            using (var context = Repository.BuildContext("test", connectionBuilder.Object))
+            {
+                context.ExecuteScalar<int>("a query").GetValueOrDefault().Should().Be(42);
+            }
+        }
+
+        [TestMethod]
         public async Task QueryNullableValuesAsyncReturnsExpectedValuesWithNulls()
         {
             var tableHelper = BuildNullableValueTable<int>(1, null, 3, null, 5);
@@ -25,7 +57,7 @@ namespace Teaq.Tests
 
             using (var context = Repository.BuildContext("test", connectionBuilder.Object))
             {
-                var results = await context.QueryNullableValuesAsync<int>("blah, blah blah", new { Id = 5 });
+                var results = await context.QueryNullableValuesAsync<int>("a query", new { Id = 5 });
                 var i = 1;
                 foreach (var x in results)
                 {
@@ -51,7 +83,7 @@ namespace Teaq.Tests
 
             using (var context = Repository.BuildContext("test", connectionBuilder.Object))
             {
-                var result = context.QueryNullableValues<int>("blah, blah blah", new { Id = 5 });
+                var result = context.QueryNullableValues<int>("a query", new { Id = 5 });
                 result.Count.Should().Be(5);
                 result[0] = 1;
                 result[1] = null;
@@ -74,7 +106,7 @@ namespace Teaq.Tests
 
             using (var context = Repository.BuildContext("test", connectionBuilder.Object))
             {
-                var result = context.QueryValues<int>("blah, blah blah", new { Id = 5 });
+                var result = context.QueryValues<int>("a query", new { Id = 5 });
                 result.Count.Should().Be(5);
                 result[0] = 1;
                 result[1] = 2;
@@ -97,7 +129,7 @@ namespace Teaq.Tests
 
             using (var context = Repository.BuildContext("test", connectionBuilder.Object))
             {
-                var results = await context.QueryValuesAsync<int>("blah, blah blah", new { Id = 5 });
+                var results = await context.QueryValuesAsync<int>("a query", new { Id = 5 });
 
                 // Once the results are enumerated, the enumeration doesn't reset. Forward only:
                 var i = 1;

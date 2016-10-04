@@ -14,7 +14,7 @@ namespace Teaq
         /// <returns>The first value in the first row returned by the query.</returns>
         public TValue? ExecuteScalar<TValue>(QueryCommand command) where TValue : struct
         {
-            return Convert<TValue>(this.ExecuteScalar(command.CommandText, command.GetParameters()));
+            return Convert<TValue>(this.ExecuteScalarPrivate(command.CommandText, command.GetParameters()));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Teaq
         /// </returns>
         public string ExecuteScalar(QueryCommand command)
         {
-            return Convert(this.ExecuteScalar(command.CommandText, command.GetParameters()));
+            return Convert(this.ExecuteScalarPrivate(command.CommandText, command.GetParameters()));
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Teaq
         /// <returns>The first value in the first row returned by the query.</returns>
         public async Task<TValue?> ExecuteScalarAsync<TValue>(QueryCommand command) where TValue : struct
         {
-            return Convert<TValue>(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
+            return Convert<TValue>(await this.ExecuteScalarPrivateAsync(command.CommandText, command.GetParameters()));
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Teaq
         /// </returns>
         public async Task<string> ExecuteScalarAsync(QueryCommand command)
         {
-            return Convert(await this.ExecuteScalarAsync(command.CommandText, command.GetParameters()));
+            return Convert(await this.ExecuteScalarPrivateAsync(command.CommandText, command.GetParameters()));
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Teaq
         /// </returns>
         public TValue? ExecuteScalar<TValue>(string query, object parameterProps = null) where TValue : struct
         {
-            return Convert<TValue>(this.ExecuteScalar<TValue>(query, parameterProps.GetAnonymousParameters()));
+            return Convert<TValue>(this.ExecuteScalarPrivate(query, parameterProps.GetAnonymousParameters()));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Teaq
         /// </returns>
         public async Task<TValue?> ExecuteScalarAsync<TValue>(string query, object parameterProps = null) where TValue : struct
         {
-            return Convert<TValue>(await this.ExecuteScalarAsync(query, parameterProps.GetAnonymousParameters()));
+            return Convert<TValue>(await this.ExecuteScalarPrivateAsync(query, parameterProps.GetAnonymousParameters()));
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Teaq
         /// </returns>
         public string ExecuteScalar(string query, object parameterProps = null)
         {
-            return Convert(this.ExecuteScalar(query, parameterProps.GetAnonymousParameters()));
+            return Convert(this.ExecuteScalarPrivate(query, parameterProps.GetAnonymousParameters()));
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Teaq
         /// </returns>
         public async Task<string> ExecuteScalarAsync(string query, object parameterProps = null)
         {
-            return Convert(await this.ExecuteScalarAsync(query, parameterProps.GetAnonymousParameters()));
+            return Convert(await this.ExecuteScalarPrivateAsync(query, parameterProps.GetAnonymousParameters()));
         }
     }
 }
